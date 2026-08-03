@@ -2,7 +2,7 @@
 
 All notable public changes are documented here. Versions follow Semantic Versioning.
 
-## 0.9.0-beta.1 — Unreleased
+## 0.9.0-beta.1 — 2026-08-03
 
 ### Added
 

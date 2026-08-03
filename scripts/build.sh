@@ -9,7 +9,8 @@ git rev-parse -q --verify HEAD >/dev/null 2>&1 \
 [ -f VERSION ] || { echo "ERROR: VERSION is missing."; exit 1; }
 
 VERSION=$(tr -d '[:space:]' < VERSION)
-NAME=$(basename "$PWD" | tr ' ' '-' | tr -cd '[:alnum:]_.-')
+NAME=$(python3 -c 'import json; print(json.load(open("project-definition.json"))["project"]["name"])')
+NAME=$(printf '%s' "$NAME" | tr ' ' '-' | tr -cd '[:alnum:]_.-')
 [ -n "$NAME" ] || { echo "ERROR: invalid project name for artifact."; exit 1; }
 
 ./scripts/security-scan.sh --all-history

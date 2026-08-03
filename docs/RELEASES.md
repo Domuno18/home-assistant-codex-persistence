@@ -2,7 +2,7 @@
 
 ## Current status
 
-`0.9.0-beta.1` is the prepared first public-beta candidate. The repository is public with a clean root history; no release tag or GitHub Release has been published yet.
+`0.9.0-beta.1` is the published first GitHub Prerelease. The public repository has a clean root history, while the full development history remains in a separate private archive.
 
 Changing a version file, building an artifact, pushing Git commits, publishing
 a release, and changing repository visibility are deliberately separate

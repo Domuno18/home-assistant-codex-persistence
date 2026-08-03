@@ -1,6 +1,6 @@
 # Release notes
 
-## v0.9.0-beta.1 — prepared, not yet tagged
+## v0.9.0-beta.1 — public beta prerelease
 
 The first public-beta candidate makes it practical to run a durable local Codex agent on a Home Assistant server. The goal is not to modify Codex or Home Assistant, but to keep the complete engineering workspace available when the disposable Studio Code Server container restarts or is recreated.
 
@@ -46,4 +46,4 @@ Hardware and software combinations beyond it need community feedback.
 
 ### Release gate
 
-This public snapshot is not a GitHub Release yet. Tag and release publication require a clean artifact review, successful validation, and explicit owner approval. Independent installation feedback remains preferred beta evidence, but its absence may be accepted transparently as a beta risk.
+This version is published as a GitHub prerelease after a clean artifact review, successful validation, and explicit owner approval. Independent installation feedback remains preferred beta evidence, and its absence is disclosed as a beta risk rather than broad compatibility evidence.
