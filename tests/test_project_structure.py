@@ -14,13 +14,13 @@ class ProjectStructureTest(unittest.TestCase):
     def setUpClass(cls) -> None:
         definition = ROOT / "project-definition.json"
         if not definition.exists():
-            raise unittest.SkipTest("Projektvorlage läuft ohne Projektdefinition")
+            raise unittest.SkipTest("Template mode has no project definition")
         cls.data = json.loads(definition.read_text(encoding="utf-8"))
 
-    def test_repository_defaults_to_private(self) -> None:
+    def test_repository_publication_metadata_is_explicit(self) -> None:
         project = self.data["project"]
-        self.assertEqual(project["repository_visibility"], "private")
-        self.assertIs(project["public_release_allowed"], False)
+        self.assertIn(project["repository_visibility"], {"private", "public"})
+        self.assertIsInstance(project["public_release_allowed"], bool)
 
     def test_core_documentation_exists(self) -> None:
         required = (

@@ -62,10 +62,10 @@ def main() -> int:
         project = data.get("project", {})
         scope = data.get("scope", {})
         visibility = str(project.get("repository_visibility", "")).lower()
-        if visibility != "private":
-            errors.append("Repository-Vorgabe muss private sein.")
-        if project.get("public_release_allowed") is not False:
-            errors.append("Öffentliche Freigabe darf nicht implizit aktiviert sein.")
+        if visibility not in {"private", "public"}:
+            errors.append("repository_visibility must be either private or public.")
+        if not isinstance(project.get("public_release_allowed"), bool):
+            errors.append("public_release_allowed must be an explicit Boolean value.")
 
         for key, relative in (
             ("isa95", "docs/ISA95-MODELL.md"),
@@ -113,10 +113,10 @@ def main() -> int:
             else:
                 warnings.append(message)
 
+        if args.release and project.get("public_release_allowed") is not True:
+            errors.append("Release requires public_release_allowed = true.")
         if args.release and data.get("meta", {}).get("status") != "approved":
-            errors.append(
-                "Release benötigt meta.status = approved in project-definition.json."
-            )
+            errors.append("Release requires meta.status = approved in project-definition.json.")
 
     for warning in warnings:
         print(f"WARNUNG: {warning}")

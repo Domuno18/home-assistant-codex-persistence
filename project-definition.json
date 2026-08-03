@@ -1,25 +1,26 @@
 {
   "schema_version": 1,
   "meta": {
-    "status": "public-beta-candidate-prepared",
+    "status": "public-beta-source-published",
     "confirmed": true,
-    "confirmed_at": "2026-07-30T08:56:31.886551+00:00"
+    "confirmed_at": "2026-07-30T08:56:31.886551+00:00",
+    "published_at": "2026-08-03T07:20:03Z"
   },
   "project": {
     "name": "home-assistant-codex-persistence",
     "repository_name": "home-assistant-codex-persistence",
-    "goal": "Codex-Home mit nativen Sessions, Anmeldung und Konfiguration sowie GitHub-CLI-Anmeldung und benötigte CLI-Programme außerhalb des austauschbaren Studio-Code-Server-Containers persistent führen, bei jedem Add-on-Start automatisch einbinden und das persistierte gh ohne APT- oder Netzwerkabhängigkeit starten.",
-    "users": "Home-Assistant-Betreiber mit Studio Code Server, Codex und GitHub CLI",
-    "owner": "Repository-Projektpflege",
-    "acceptance_owner": "Betreiber des Home-Assistant-Referenzsystems",
+    "goal": "Keep the Codex home, native sessions, sign-in, configuration, GitHub CLI sign-in, and required CLI programs outside the replaceable Studio Code Server container; reconnect them automatically at every add-on start; and start the persisted GitHub CLI without APT or network access.",
+    "users": "Home Assistant operators using Studio Code Server, Codex, and GitHub CLI",
+    "owner": "Domuno18",
+    "acceptance_owner": "Operator of the Home Assistant reference system",
     "target_date": "2026-07-30",
-    "repository_visibility": "private",
+    "repository_visibility": "public",
     "public_release_allowed": false
   },
   "intake": {
-    "success_example": "Nach Add-on-Neustart und Container-Neuerstellung ist eine vorhandene native Codex-Sitzung fortsetzbar, beide Login-Status sind gültig, Projekte und private Memory-Datei sind unverändert, der Auth-Audit meldet keinen BLOCK, gh und github-cli fehlen in packages, fremde Pakete sind unverändert und das persistierte gh startet ohne APT oder Netzwerk.",
-    "systems": "Home Assistant Supervisor, Studio Code Server, Codex-Erweiterung und Codex CLI, GitHub CLI, persistenter Add-on-Speicher, persistenter Workspace sowie install-, boot- und audit-Skript",
-    "confidential_data": "Codex- und GitHub-Anmeldedaten, native Sessiondateien, Datenbanken, private Laufzeitprofile und reale Memory-Inhalte; sie bleiben lokal in geschützten persistenten Bereichen und gelangen nicht in Git oder normale ungeschützte Spiegelungen."
+    "success_example": "After a supported lifecycle event, an existing native Codex session remains resumable, both sign-ins remain valid, projects and the private memory file remain unchanged, the authentication audit reports no BLOCK, gh and github-cli are absent from packages, unrelated packages remain unchanged, and the persisted gh starts without APT or network access.",
+    "systems": "Home Assistant Supervisor, Studio Code Server, the Codex extension and Codex CLI, GitHub CLI, persistent add-on storage, a persistent workspace, and the install, boot, and audit script.",
+    "confidential_data": "Codex and GitHub credentials, native session files, databases, private runtime profiles, and real memory content. They remain local in protected persistent storage and never enter Git or ordinary unprotected mirrors."
   },
   "scope": {
     "mathematical_model": false,
@@ -31,78 +32,82 @@
     "mathematics": {},
     "isa95": {},
     "interfaces": {
-      "purpose": "Einmaliges install persistiert und verifiziert Codex-Home, GitHub-CLI-Konfiguration und CLI-Programme. Nach verifizierter gh-Kopie und Ready-Synchronisierung entfernt dasselbe Supervisor-Update nur gh und github-cli aus packages, erhält fremde Pakete und Befehle und setzt boot zuerst. Automatisches boot stellt vor code-server die erwarteten Links ohne Programm-Upgrade wieder her. audit prüft den Zustand rein lesend.",
-      "failure": "Fehlende Installation, instabile Quellen, beschädigte Programme, unerwartete Links oder konkurrierende nicht leere Pfade führen zu BLOCK. Vorhandene Bestände werden niemals automatisch überschrieben oder zusammengeführt. Fremde verbleibende Pakete können weiterhin vor init_commands APT oder Netzwerk benötigen."
+      "purpose": "A one-time install persists and verifies the Codex home, GitHub CLI configuration, and CLI programs. After the gh copy and ready generation are verified, the same Supervisor update removes only gh and github-cli from packages, preserves unrelated packages and commands, and places boot first. Automatic boot restores the expected links before code-server without upgrading programs. Audit checks the state without modifying it.",
+      "failure": "Missing installation, unstable sources, damaged programs, unexpected links, or competing non-empty paths cause BLOCK. Existing state is never overwritten or merged automatically. Unrelated packages that remain configured may still require APT or network access before init_commands."
     },
     "states": {
-      "states": "nicht installiert, bereit (Ready), aktiv oder blockiert",
-      "safe_state": "Bei jeder Abweichung bleibt der vorhandene Zustand unverändert und der Start wird mit einer konkreten Diagnose blockiert."
+      "states": "not installed, ready, active, or blocked",
+      "safe_state": "For every deviation, existing state remains unchanged and startup is blocked with a specific diagnostic."
     },
     "storage": {
       "generic_runtime_root": "/data/codex-persistence",
       "reference_runtime_root": "/config/Codex/.runtime",
       "addon_vscode_root": "/data/vscode",
-      "workspace_rule": "Projekte und reale Memory-Datei liegen in einem persistenten Workspace unter /config.",
-      "repository_role": "Git und GitHub enthalten ausschließlich das versionierte Installationsprojekt. Sie sind weder Runtime-Persistenz noch Backup; private Runtime liegt unter HACP_RUNTIME_ROOT und die reale lokale MEMORY.md im persistenten Workspace.",
-      "github_cli_package_lifecycle": "gh ist einmaliges Bootstrap-Paket. install entfernt nach verifizierter Persistenz nur gh und github-cli aus packages; fremde Pakete bleiben unverändert. boot ist für das persistierte gh APT-, netz- und upgradefrei."
+      "workspace_rule": "Projects and the real memory file reside in a persistent workspace under /config.",
+      "repository_role": "Git and GitHub contain only the version-controlled installation project. They are neither runtime persistence nor backup; the private runtime resides under HACP_RUNTIME_ROOT and the real local MEMORY.md resides in the persistent workspace.",
+      "github_cli_package_lifecycle": "gh is a one-time bootstrap package. After persistence has been verified, install removes only gh and github-cli from packages while preserving unrelated packages. For the persisted gh, boot requires no APT or network access and performs no upgrade."
     }
   },
   "open_items": [
     {
-      "id": "OFFEN-001",
-      "text": "Reale Referenzabnahme TC-012 mit Add-on-Neustart und Container-Neuerstellung durchführen."
+      "id": "OPEN-001",
+      "text": "Record Home Assistant host-reboot evidence under TC-012."
     },
     {
-      "id": "OFFEN-002",
-      "text": "Hybrid-Pakettransition im Installationsskript implementieren und mit TC-016 automatisiert nachweisen (BL-014)."
+      "id": "OPEN-002",
+      "text": "Test a future real add-on update or container recreation as a TC-012 regression event."
+    },
+    {
+      "id": "OPEN-003",
+      "text": "Design and verify the persisted CLI upgrade and rollback workflow described by BL-005."
     }
   ],
   "assumptions": [
     {
       "id": "ANN-001",
-      "text": "Der konfigurierte Zielpfad bleibt über Add-on-Neustart, Update und Container-Neuerstellung persistent."
+      "text": "The configured target path remains persistent across add-on restart, update, and container recreation."
     },
     {
       "id": "ANN-002",
-      "text": "init_commands werden bei jedem Add-on-Start mit den nötigen Rechten vor code-server ausgeführt."
+      "text": "init_commands run with the required permissions before code-server at every add-on start."
     },
     {
       "id": "ANN-003",
-      "text": "Studio Code und Erweiterungen bleiben unabhängig von diesem Projekt unter /data/vscode persistent."
+      "text": "Studio Code and extensions remain independently persistent under /data/vscode."
     },
     {
       "id": "ANN-004",
-      "text": "Das Add-on verarbeitet eine nicht leere packages-Liste über APT vor init_commands; eine leere Liste überspringt diesen Schritt."
+      "text": "The add-on processes a non-empty packages list through APT before init_commands; an empty list skips this step."
     }
   ],
   "risks": [
     {
       "id": "RISK-001",
-      "text": "Ein Neustart vor erfolgreichem install kann einen ausschließlich unter /root vorhandenen Zustand verlieren."
+      "text": "A restart before a successful install can lose state that exists only under /root."
     },
     {
       "id": "RISK-002",
-      "text": "Eine während der Kopie veränderte Session- oder Datenbankquelle ist nicht konsistent und muss blockieren."
+      "text": "A session or database source that changes during copying is inconsistent and must cause a block."
     },
     {
       "id": "RISK-003",
-      "text": "Private Runtime-Daten oder reale Memory-Inhalte dürfen nicht in Git, Logs oder normale ungeschützte Spiegelungen gelangen."
+      "text": "Private runtime data or real memory content must not enter Git, logs, or ordinary unprotected mirrors."
     },
     {
       "id": "RISK-004",
-      "text": "Persistierte Anbieteranmeldungen können serverseitig ablaufen oder widerrufen werden."
+      "text": "Persisted provider sign-ins can expire or be revoked server-side."
     },
     {
       "id": "RISK-005",
-      "text": "Container-Persistenz ersetzt kein verschlüsseltes Backup des persistenten Home-Assistant-Speichers."
+      "text": "Container persistence does not replace an encrypted backup of persistent Home Assistant storage."
     },
     {
       "id": "RISK-006",
-      "text": "Fremde verbleibende Add-on-Pakete können vor init_commands APT oder Netzwerk benötigen und einen vollständig offlinefähigen Start verhindern."
+      "text": "Unrelated add-on packages that remain configured may require APT or network access before init_commands and prevent fully offline startup."
     },
     {
       "id": "RISK-007",
-      "text": "Persistierte CLI-Programme können veralten oder mit einem späteren Container inkompatibel werden; Upgrades erfolgen nur über den geplanten geprüften Ablauf BL-005 und niemals in boot."
+      "text": "Persisted CLI programs may become outdated or incompatible with a later container; upgrades must use the planned verified BL-005 workflow and never run during boot."
     }
   ]
 }
