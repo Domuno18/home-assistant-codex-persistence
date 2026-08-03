@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = (
     "README.md",
     "AGENTS.md",
-    "PROJEKT-STECKBRIEF.md",
+    "PROJECT-PROFILE.md",
     "docs/PROJEKTAUFTRAG.md",
     "docs/ANFORDERUNGEN.md",
     "docs/DOMAENENMODELL.md",
@@ -92,7 +92,7 @@ def main() -> int:
 
         open_pattern = re.compile(r"\bOFFEN(?:-|\s*\()")
         relevant_files = [
-            ROOT / "PROJEKT-STECKBRIEF.md",
+            ROOT / "PROJECT-PROFILE.md",
             ROOT / "docs/PROJEKTAUFTRAG.md",
             ROOT / "docs/ANFORDERUNGEN.md",
             ROOT / "docs/DOMAENENMODELL.md",
