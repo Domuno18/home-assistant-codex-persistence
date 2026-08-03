@@ -1,5 +1,5 @@
-# Datenverträge
+# Data contracts
 
-Maschinenlesbare Schemas für externe Nachrichten und persistierte Daten liegen
-hier versioniert. Jeder Vertrag dokumentiert fachliche Bedeutung, Identität,
-Einheit, Zeitstempel, Qualitätsstatus und Schema-Version.
+Versioned, machine-readable schemas for external messages and persisted data
+are stored in this directory. Each contract documents its domain meaning,
+identity, unit, timestamp, quality status, and schema version.
