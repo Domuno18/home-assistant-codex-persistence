@@ -1,11 +1,11 @@
 # Tests
 
-- `domain/`: Fachregeln, Wertobjekte und Invarianten
-- `model/`: Einheiten, Gleichungen, Referenz- und Grenzfälle
-- `unit/`: kleine technische Einheiten
-- `integration/`: Adapter, Verträge und Ausfallverhalten
-- `architecture/`: erlaubte Abhängigkeitsrichtungen
-- `acceptance/`: bestätigte Auftraggeber-Szenarien
+- `domain/`: domain rules, value objects, and invariants
+- `model/`: units, equations, reference cases, and boundary cases
+- `unit/`: small technical units
+- `integration/`: adapters, contracts, and failure behavior
+- `architecture/`: permitted dependency directions
+- `acceptance/`: confirmed stakeholder scenarios
 
-Ein Test zählt nur mit konkretem Prüforakel und Bezug zu `REQ-*`, `DOM-*`,
-`AC-*` oder `RISK-*` als Nachweis.
+A test qualifies as evidence only when it has a concrete test oracle and
+references `REQ-*`, `DOM-*`, `AC-*`, or `RISK-*`.
