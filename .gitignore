@@ -1,0 +1,71 @@
+# Echte Secrets und lokale Konfiguration
+.env
+.env.*
+!.env.example
+secrets.yaml
+secrets.*.yaml
+!secrets.example.yaml
+!config/secrets.example.yaml
+config.local.*
+*.credentials.*
+.roo/mcp.json
+
+# Schlüsselmaterial und Credential Stores
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.kdbx
+id_rsa*
+id_ed25519*
+.aws/
+.azure/
+.gcloud/
+.kube/
+kubeconfig
+
+# Reale Daten, Logs und Sitzungen
+*.db
+*.sqlite*
+*.log
+*.tmp
+context_portal/
+.claude/
+docs/chatverlauf-*
+
+# Binäre Inhalte standardmäßig nicht versionieren
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.pdf
+*.zip
+*.tar
+*.gz
+
+# Build und Laufzeit
+dist/
+.coverage
+htmlcov/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE und Betriebssystem
+.idea/
+.vscode/settings.local.json
+.DS_Store
+Thumbs.db
+
+# Backup- und Merge-Reste
+*.bak
+*.orig
+*.rej
+*~

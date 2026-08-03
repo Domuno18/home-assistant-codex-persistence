@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "meta": {
+    "status": "public-beta-candidate-prepared",
+    "confirmed": true,
+    "confirmed_at": "2026-07-30T08:56:31.886551+00:00"
+  },
+  "project": {
+    "name": "home-assistant-codex-persistence",
+    "repository_name": "home-assistant-codex-persistence",
+    "goal": "Codex-Home mit nativen Sessions, Anmeldung und Konfiguration sowie GitHub-CLI-Anmeldung und benötigte CLI-Programme außerhalb des austauschbaren Studio-Code-Server-Containers persistent führen, bei jedem Add-on-Start automatisch einbinden und das persistierte gh ohne APT- oder Netzwerkabhängigkeit starten.",
+    "users": "Home-Assistant-Betreiber mit Studio Code Server, Codex und GitHub CLI",
+    "owner": "Repository-Projektpflege",
+    "acceptance_owner": "Betreiber des Home-Assistant-Referenzsystems",
+    "target_date": "2026-07-30",
+    "repository_visibility": "private",
+    "public_release_allowed": false
+  },
+  "intake": {
+    "success_example": "Nach Add-on-Neustart und Container-Neuerstellung ist eine vorhandene native Codex-Sitzung fortsetzbar, beide Login-Status sind gültig, Projekte und private Memory-Datei sind unverändert, der Auth-Audit meldet keinen BLOCK, gh und github-cli fehlen in packages, fremde Pakete sind unverändert und das persistierte gh startet ohne APT oder Netzwerk.",
+    "systems": "Home Assistant Supervisor, Studio Code Server, Codex-Erweiterung und Codex CLI, GitHub CLI, persistenter Add-on-Speicher, persistenter Workspace sowie install-, boot- und audit-Skript",
+    "confidential_data": "Codex- und GitHub-Anmeldedaten, native Sessiondateien, Datenbanken, private Laufzeitprofile und reale Memory-Inhalte; sie bleiben lokal in geschützten persistenten Bereichen und gelangen nicht in Git oder normale ungeschützte Spiegelungen."
+  },
+  "scope": {
+    "mathematical_model": false,
+    "isa95": false,
+    "external_interfaces": true,
+    "state_or_safety_logic": true
+  },
+  "details": {
+    "mathematics": {},
+    "isa95": {},
+    "interfaces": {
+      "purpose": "Einmaliges install persistiert und verifiziert Codex-Home, GitHub-CLI-Konfiguration und CLI-Programme. Nach verifizierter gh-Kopie und Ready-Synchronisierung entfernt dasselbe Supervisor-Update nur gh und github-cli aus packages, erhält fremde Pakete und Befehle und setzt boot zuerst. Automatisches boot stellt vor code-server die erwarteten Links ohne Programm-Upgrade wieder her. audit prüft den Zustand rein lesend.",
+      "failure": "Fehlende Installation, instabile Quellen, beschädigte Programme, unerwartete Links oder konkurrierende nicht leere Pfade führen zu BLOCK. Vorhandene Bestände werden niemals automatisch überschrieben oder zusammengeführt. Fremde verbleibende Pakete können weiterhin vor init_commands APT oder Netzwerk benötigen."
+    },
+    "states": {
+      "states": "nicht installiert, bereit (Ready), aktiv oder blockiert",
+      "safe_state": "Bei jeder Abweichung bleibt der vorhandene Zustand unverändert und der Start wird mit einer konkreten Diagnose blockiert."
+    },
+    "storage": {
+      "generic_runtime_root": "/data/codex-persistence",
+      "reference_runtime_root": "/config/Codex/.runtime",
+      "addon_vscode_root": "/data/vscode",
+      "workspace_rule": "Projekte und reale Memory-Datei liegen in einem persistenten Workspace unter /config.",
+      "repository_role": "Git und GitHub enthalten ausschließlich das versionierte Installationsprojekt. Sie sind weder Runtime-Persistenz noch Backup; private Runtime liegt unter HACP_RUNTIME_ROOT und die reale lokale MEMORY.md im persistenten Workspace.",
+      "github_cli_package_lifecycle": "gh ist einmaliges Bootstrap-Paket. install entfernt nach verifizierter Persistenz nur gh und github-cli aus packages; fremde Pakete bleiben unverändert. boot ist für das persistierte gh APT-, netz- und upgradefrei."
+    }
+  },
+  "open_items": [
+    {
+      "id": "OFFEN-001",
+      "text": "Reale Referenzabnahme TC-012 mit Add-on-Neustart und Container-Neuerstellung durchführen."
+    },
+    {
+      "id": "OFFEN-002",
+      "text": "Hybrid-Pakettransition im Installationsskript implementieren und mit TC-016 automatisiert nachweisen (BL-014)."
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "ANN-001",
+      "text": "Der konfigurierte Zielpfad bleibt über Add-on-Neustart, Update und Container-Neuerstellung persistent."
+    },
+    {
+      "id": "ANN-002",
+      "text": "init_commands werden bei jedem Add-on-Start mit den nötigen Rechten vor code-server ausgeführt."
+    },
+    {
+      "id": "ANN-003",
+      "text": "Studio Code und Erweiterungen bleiben unabhängig von diesem Projekt unter /data/vscode persistent."
+    },
+    {
+      "id": "ANN-004",
+      "text": "Das Add-on verarbeitet eine nicht leere packages-Liste über APT vor init_commands; eine leere Liste überspringt diesen Schritt."
+    }
+  ],
+  "risks": [
+    {
+      "id": "RISK-001",
+      "text": "Ein Neustart vor erfolgreichem install kann einen ausschließlich unter /root vorhandenen Zustand verlieren."
+    },
+    {
+      "id": "RISK-002",
+      "text": "Eine während der Kopie veränderte Session- oder Datenbankquelle ist nicht konsistent und muss blockieren."
+    },
+    {
+      "id": "RISK-003",
+      "text": "Private Runtime-Daten oder reale Memory-Inhalte dürfen nicht in Git, Logs oder normale ungeschützte Spiegelungen gelangen."
+    },
+    {
+      "id": "RISK-004",
+      "text": "Persistierte Anbieteranmeldungen können serverseitig ablaufen oder widerrufen werden."
+    },
+    {
+      "id": "RISK-005",
+      "text": "Container-Persistenz ersetzt kein verschlüsseltes Backup des persistenten Home-Assistant-Speichers."
+    },
+    {
+      "id": "RISK-006",
+      "text": "Fremde verbleibende Add-on-Pakete können vor init_commands APT oder Netzwerk benötigen und einen vollständig offlinefähigen Start verhindern."
+    },
+    {
+      "id": "RISK-007",
+      "text": "Persistierte CLI-Programme können veralten oder mit einem späteren Container inkompatibel werden; Upgrades erfolgen nur über den geplanten geprüften Ablauf BL-005 und niemals in boot."
+    }
+  ]
+}
