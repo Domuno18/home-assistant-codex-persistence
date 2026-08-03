@@ -1,9 +1,10 @@
-# Projektabhängigkeiten
+# Project dependencies
 #
-# Die Vorlage selbst benötigt nur Python 3 und Bash; keine Python-Pakete.
-# Projektspezifische Laufzeitabhängigkeiten hier mit exakten Versionen ergänzen:
+# This project requires Python 3 and Bash; it has no Python package
+# dependencies. Add project-specific runtime dependencies below using exact
+# version pins:
 #
-# paketname==1.2.3  # Zweck, Verantwortungsbereich und Lizenz
+# package-name==1.2.3  # purpose, ownership boundary, and license
 #
-# Optionale Entwicklungswerkzeuge getrennt dokumentieren. Ein neuer Pin wird
-# erst nach Lizenz-, Security- und Kompatibilitätsprüfung übernommen.
+# Document optional development tools separately. Add a new version pin only
+# after reviewing its license, security, and compatibility.
