@@ -157,6 +157,6 @@ Deleting a value from only the latest working-tree file is not sufficient.
 - [x] English public user documentation review is complete; supplementary
       internal engineering records may remain in German.
 - [x] The owner has explicitly approved public repository visibility.
-- [ ] The owner has explicitly approved the beta tag and GitHub Release.
+- [x] The owner has explicitly approved the beta tag and GitHub Prerelease.
 
-The repository is public. A tag and GitHub Release remain blocked until the remaining release evidence and explicit release approval exist.
+The repository and `v0.9.0-beta.1` GitHub Prerelease are public. Later releases remain subject to the same security evidence and explicit approval.

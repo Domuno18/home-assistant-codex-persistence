@@ -10,7 +10,7 @@
 - [x] Contributing, security, conduct, and release-note files.
 - [x] SemVer candidate `0.9.0-beta.1` prepared consistently.
 - [x] English installation, architecture, release, security, and memory guides.
-- [x] Clean public repository created; no tag or GitHub Release created.
+- [x] Clean public repository and `v0.9.0-beta.1` GitHub Prerelease published.
 
 ## Required before public visibility
 
@@ -25,13 +25,12 @@
 - [x] Confirm the repository description and public-beta marketing message on
       GitHub.
 - [x] Confirm repository topics on GitHub.
-- [ ] Confirm first release text on GitHub.
-- [ ] Enable and verify GitHub private vulnerability reporting as soon as the
-      repository visibility permits it.
+- [x] Confirm first release text on GitHub.
+- [x] Enable and verify GitHub private vulnerability reporting.
 - [x] Obtain explicit owner approval for public visibility.
-- [ ] Create and inspect the release artifact and annotated tag.
+- [x] Create and inspect the release artifact and annotated tag.
 - [x] Publish the clean repository.
-- [ ] Publish the GitHub prerelease as a separately approved operation.
+- [x] Publish the GitHub prerelease as a separately approved operation.
 
 ## Later beta evidence
 

@@ -107,4 +107,4 @@ workspace.
 - [x] Clean public repository created without the private development history
 - [ ] Home Assistant host reboot accepted under TC-012
 - [ ] Future add-on update or container recreation accepted as a regression test
-- [ ] Public beta tag and GitHub Release explicitly approved
+- [x] Public beta tag and GitHub Prerelease explicitly approved and published
