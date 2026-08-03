@@ -1,71 +1,70 @@
 # Deployment
 
-## Zielumgebungen
+## Target environments
 
-| Umgebung | Zweck | Daten | Freigabe |
+| Environment | Purpose | Data | Approval |
 |---|---|---|---|
-| isolierter Test | automatisierte Container-, Fehler- und Security-Tests | ausschließlich künstliche Daten | `./scripts/validate.sh` erfolgreich |
-| Home-Assistant-Referenzsystem | reale Installation, Neustart und Container-Neuerstellung | private lokale Runtime | Betreiber bestätigt TC-012 |
-| weitere Home-Assistant-Systeme | wiederverwendbare Installation | jeweilige private lokale Runtime | lokale Betriebs- und Sicherheitsfreigabe |
+| isolated test | automated container, failure, and security tests | artificial data only | `./scripts/validate.sh` succeeds |
+| Home Assistant reference system | real installation, restart, and container recreation | private local runtime | operator confirms TC-012 |
+| additional Home Assistant systems | reusable installation | each system's private local runtime | local operational and security approval |
 
-Das GitHub-Repository bleibt privat, bis der Public-Release-Check in
-`docs/SECURITY.md` vollständig und ausdrücklich freigegeben wurde.
+The public repository contains the reviewed source snapshot. Release tags and
+GitHub Releases remain separate, explicitly approved operations governed by
+`docs/SECURITY.md`.
 
-## Installationsreihenfolge
+## Installation sequence
 
-### 1. Studio Code Server installieren
+### 1. Install Studio Code Server
 
-Das Home-Assistant-Add-on Studio Code Server installieren und einmal starten.
-Studio-Code-Einstellungen und Erweiterungen werden vom Add-on bereits unter
-`/data/vscode` persistent gehalten. Seine globale Git-Konfiguration liegt
-bereits persistent unter `/data/git/.gitconfig` und wird von diesem Projekt
-nicht in die eigene Runtime übernommen. Das Projekt ersetzt ihren Gesamtinhalt
-nicht und veröffentlicht nur zwei gezielte Helper-Schlüssel atomar.
+Install the Home Assistant Studio Code Server add-on and start it once. The
+add-on already persists Studio Code settings and extensions under
+`/data/vscode`. Its global Git configuration is already persistent under
+`/data/git/.gitconfig` and is not copied into this project's runtime. This
+project does not replace the complete Git configuration; it atomically updates
+only two specific credential-helper keys.
 
-### 2. Codex-Erweiterung installieren
+### 2. Install the Codex extension
 
-Die Codex-Erweiterung in der Studio-Code-Erweiterungsansicht installieren und
-prüfen, dass der Befehl `codex` in einem neuen Terminal verfügbar ist.
+Install the Codex extension from the Studio Code extensions view and verify
+that the `codex` command is available in a new terminal.
 
-### 3. GitHub CLI einmalig als Bootstrap-Paket installieren
+### 3. Install GitHub CLI once as a bootstrap package
 
-In der Add-on-Konfiguration das Paket `gh` ergänzen. Eine minimale sichere
-Konfiguration steht in `config/config.example.yaml`. Anschließend das Add-on
-neu starten und prüfen:
+Add the `gh` package to the add-on configuration. A minimal safe configuration
+is provided in `config/config.example.yaml`. Restart the add-on and verify:
 
 ```sh
 gh --version
 ```
 
-Das Paket ist nur die Quelle für die einmalige persistente Übernahme der
-Programmdatei. Nach erfolgreichem `install` wird die geprüfte persistente
-Programmdatei verwendet.
+The package serves only as the source for the one-time persistent copy of the
+executable. After a successful `install`, the verified persistent executable is
+used instead.
 
-### 4. Beide Programme anmelden
+### 4. Sign in to both programs
 
-Falls der Device-Code-Login für ChatGPT noch deaktiviert ist, muss er zuerst in
-den Sicherheitseinstellungen oder durch den Workspace-Admin freigeschaltet
-werden. Codex schreibt den Anmeldecache bei diesem Aufruf ausdrücklich in sein
-Home:
+If device-code sign-in for ChatGPT is disabled, enable it first in the security
+settings or ask the workspace administrator to enable it. This invocation
+explicitly writes the Codex sign-in cache to the Codex home:
 
 ```sh
 CODEX_HOME=/root/.codex \
 codex -c 'cli_auth_credentials_store="file"' login --device-auth
 ```
 
-Den von Codex ausgegebenen Link im Browser öffnen, den einmaligen Code eingeben
-und die Freigabe bestätigen. Danach erkennt folgender Befehl den lokalen Cache:
+Open the link displayed by Codex in a browser, enter the one-time code, and
+approve access. The following command should then recognize the local cache:
 
 ```sh
 CODEX_HOME=/root/.codex \
 codex -c 'cli_auth_credentials_store="file"' login status
 ```
 
-`codex login status` ist eine Cache- und Methodenprüfung, kein eigenständiger
-Nachweis der serverseitigen Gültigkeit.
+`codex login status` verifies the cache and authentication method; it is not an
+independent check of server-side validity.
 
-GitHub CLI wird mit festem Konfigurationspfad und bewusst dateibasierter
-Credential-Ablage angemeldet:
+Sign in to GitHub CLI with a fixed configuration path and deliberately
+file-backed credential storage:
 
 ```sh
 (
@@ -81,17 +80,18 @@ Credential-Ablage angemeldet:
 )
 ```
 
-GitHub CLI zeigt einen einmaligen Gerätecode. Öffnet sich der Browser nicht,
-`https://github.com/login/device` aufrufen, den Code eingeben, **Continue** und
-danach **Authorize GitHub CLI** wählen. `--insecure-storage` ist hier bewusst
-nötig: Der geheime Wert muss statt in einem flüchtigen Container-Keyring in der
-privaten persistenten Runtime liegen. Deren Verzeichnisse gehören `root:root`
-und besitzen Modus `0700`. Niemals `gh auth status --show-token` verwenden.
+GitHub CLI displays a one-time device code. If no browser opens, visit
+`https://github.com/login/device`, enter the code, select **Continue**, and then
+select **Authorize GitHub CLI**. `--insecure-storage` is deliberately required
+for this architecture: the credential must be stored in the private persistent
+runtime rather than in a volatile container keyring. These directories are
+owned by `root:root` and use mode `0700`. Never use
+`gh auth status --show-token`.
 
-Keine Ausgabe mit Anmeldedaten oder Gerätecodes in Logs, Issues oder
-Dokumentation übernehmen.
+Never copy output containing credentials or device codes into logs, issues, or
+documentation.
 
-### 5. Installationsprojekt unter `/config` klonen und einmal installieren
+### 5. Clone the installation project under `/config` and install once
 
 ```sh
 GH_CONFIG_DIR=/root/.config/gh \
@@ -100,26 +100,25 @@ cd /config/home-assistant-codex-persistence
 ./scripts/validate.sh
 ```
 
-Danach alle Codex-Chats und Codex-Prozesse schließen. In einem normalen
-Studio-Code-Terminal ausführen:
+Then close every Codex chat and Codex process. Run the following command from a
+normal Studio Code terminal:
 
 ```sh
 cd /config/home-assistant-codex-persistence
 HACP_INSTALL_OK=YES sh ./scripts/ha-codex-persistence.sh install
 ```
 
-Das Standardziel ist `/data/codex-persistence`. `install` prüft beide
-Anmeldungen, erstellt stabile verifizierte Kopien, persistiert die aufgelösten
-CLI-Programme, setzt die Kompatibilitätslinks und ergänzt den automatischen
-`boot`-Befehl in den bestehenden Add-on-Optionen. Erst nachdem die persistente
-`gh`-Kopie geprüft und die Ready-Generation synchronisiert ist, entfernt
-dasselbe Supervisor-Update ausschließlich `gh` beziehungsweise `github-cli`
-aus `packages`, erhält fremde Pakete und Befehle in ihrer Reihenfolge und setzt
-den verwalteten Bootbefehl an die erste Stelle. Vor der Erfolgsmeldung setzt
-`install` außerdem ausschließlich die beiden Git-Credential-Helper für
-`github.com` und `gist.github.com` auf die persistente `gh`-Binary.
+The default target is `/data/codex-persistence`. `install` verifies both
+sign-ins, creates stable verified copies, persists the resolved CLI programs,
+creates the compatibility links, and adds the automatic `boot` command to the
+existing add-on options. Only after the persistent `gh` copy has been verified
+and the ready generation synchronized does the same Supervisor update remove
+only `gh` or `github-cli` from `packages`. It preserves unrelated packages and
+commands in their original order and places the managed boot command first.
+Before reporting success, `install` also sets only the Git credential helpers
+for `github.com` and `gist.github.com` to the persistent `gh` binary.
 
-Für die Referenzinstallation wird nur der Installationsbefehl angepasst:
+Only the installation command changes for the documented reference setup:
 
 ```sh
 cd /config/Codex/Projekte/home-assistant-codex-persistence
@@ -128,22 +127,22 @@ HACP_INSTALL_OK=YES \
 sh ./scripts/ha-codex-persistence.sh install
 ```
 
-Git und GitHub verteilen dabei ausschließlich das versionierte
-Installationsprojekt mit Skript, Tests und Dokumentation. Sie sind weder
-Persistenzmechanismus noch Backup: Die private Runtime liegt ausschließlich
-unter `HACP_RUNTIME_ROOT`, die reale lokale `MEMORY.md` im persistenten
-Workspace unter `/config`.
+Git and GitHub distribute only the version-controlled installation project,
+including its script, tests, and documentation. They are neither the
+persistence mechanism nor a backup. The private runtime exists only under
+`HACP_RUNTIME_ROOT`, while the real local `MEMORY.md` resides in the persistent
+workspace under `/config`.
 
-## Einmalige Installationsabnahme
+## One-time installation acceptance
 
-Standardpfad:
+Default path:
 
 ```sh
 HACP_CHECK_AUTH=YES \
 sh /data/codex-persistence/bootstrap/ha-codex-persistence.sh audit
 ```
 
-Referenzpfad:
+Reference path:
 
 ```sh
 HACP_RUNTIME_ROOT=/config/Codex/.runtime \
@@ -151,128 +150,122 @@ HACP_CHECK_AUTH=YES \
 sh /config/Codex/.runtime/bootstrap/ha-codex-persistence.sh audit
 ```
 
-Der Audit muss ausschließlich `OK` und abschließend `OK result active`
-melden. Außerdem wird in den Add-on-Optionen geprüft, dass alle bisherigen
-`init_commands` erhalten sind, genau ein persistenter `boot`-Befehl an erster
-Stelle vorhanden ist, `packages` weder `gh` noch `github-cli` enthält und alle
-fremden Pakete unverändert geblieben sind.
+The audit must report only `OK` checks and end with `OK result active`. Also
+verify in the add-on options that every previous `init_commands` entry remains,
+exactly one persistent `boot` command appears first, `packages` contains
+neither `gh` nor `github-cli`, and every unrelated package remains unchanged.
 
-Zusätzlich muss `audit` den exakten persistenten GitHub- und Gist-Helper als
-`OK` melden. Die Add-on-eigene `/data/git/.gitconfig` bleibt erhalten; es werden
-nur die beiden ausdrücklich verwalteten Schlüssel geändert.
+The audit must additionally report the exact persistent GitHub and Gist
+credential helpers as `OK`. The add-on-owned `/data/git/.gitconfig` remains in
+place; only the two explicitly managed keys are changed.
 
-Diese Abnahme kontrolliert die einmalige Übernahme. Sie ist kein Chat-Backup
-und kein Prepare-Schritt für spätere Neustarts. Nach erfolgreichem `install`
-werden neue Zustände direkt persistent geschrieben; normale Neustarts
-benötigen keine vorherige Sicherung, keinen Export und keinen manuellen
-Skriptaufruf.
+This acceptance check verifies the one-time migration. It is not a chat backup
+or a preparation step for later restarts. After a successful `install`, new
+state is written directly to persistent storage. Normal restarts require no
+prior backup, export, or manual script invocation.
 
-## Gezielte Git-Credential-Helper
+## Targeted Git credential helpers
 
-Der normale Add-on-Pfad `/root/.gitconfig` verweist auf die persistente
-`/data/git/.gitconfig`. Weder `install` noch `boot` übernimmt diese Datei in die
-eigene Runtime oder ersetzt ihren Gesamtinhalt. Beide veröffentlichen atomar
-ausschließlich:
+The standard add-on path `/root/.gitconfig` points to the persistent
+`/data/git/.gitconfig`. Neither `install` nor `boot` copies this file into the
+project runtime or replaces its complete contents. Both commands atomically
+publish only:
 
 ```text
 credential.https://github.com.helper
 credential.https://gist.github.com.helper
 ```
 
-Für jeden Schlüssel müssen danach genau zwei Werte in dieser Reihenfolge
-vorhanden sein:
+Each key must then contain exactly two values in this order:
 
 ```text
-1. <leer>  (Reset niedriger priorisierter beziehungsweise System-Helper)
+1. <empty>  (resets lower-priority or system helpers)
 2. !GH_CONFIG_DIR=/root/.config/gh /usr/local/bin/gh auth git-credential
 ```
 
-Fehlende, leere und bekannte alte `!…/gh auth git-credential`-Einträge werden
-migriert. Alle sonstigen Git-Einstellungen bleiben erhalten. Ein fremder
-benutzerdefinierter Wert in einem der beiden verwalteten Schlüssel wird niemals
-automatisch ersetzt und führt vor der Aktivierung zu `BLOCK`. Der persistente
-Bootbefehl prüft denselben Vertrag bei jedem Containerstart automatisch; es ist
-kein Prepare-Schritt vor späteren Neustarts erforderlich. Die atomare
-Veröffentlichung erhält alle übrigen Werte sowie Modus und Eigentümer.
+Missing values, empty values, and recognized older
+`!…/gh auth git-credential` entries are migrated. Every other Git setting is
+preserved. An unknown custom value in either managed key is never replaced
+automatically and causes `BLOCK` before activation. The persistent boot command
+checks the same contract automatically at every container start; no preparation
+step is required before later restarts. Atomic publication preserves every
+other value as well as the file mode and owner.
 
-## Offline-Steady-State
+## Offline steady state
 
-Nach der erfolgreichen Installation benötigt der Normalstart des persistenten
-`gh` weder APT noch Netzwerkzugriff. `boot` installiert und aktualisiert keine
-Programme. Verbleiben fremde Einträge in `packages`, verarbeitet das Add-on
-diese weiterhin vor `init_commands`; deren Paketquellen bleiben deshalb ein
-dokumentiertes Restrisiko für einen vollständig offlinefähigen Add-on-Start.
-Upgrades persistierter Programme erfolgen später nur über den geprüften Ablauf
-aus BL-005, niemals während `boot`.
+After successful installation, normal startup of the persistent `gh` requires
+neither APT nor network access. `boot` does not install or update programs. If
+unrelated entries remain in `packages`, the add-on continues to process them
+before `init_commands`; their package sources therefore remain a documented
+risk to a fully offline add-on start. Persisted program upgrades must later use
+the verified workflow described by BL-005 and never run during `boot`.
 
-## Einmaliger Neustart-Nachweis
+## One-time restart evidence
 
-Für die einmalige reale TC-012-Abnahme werden vor dem Testneustart ohne private
-Inhalte Vergleichswerte erfasst:
+For the one-time real TC-012 acceptance, record comparison values without
+private content before the test restart:
 
-- Anzahl nativer Codex-Sitzungsdateien,
-- eine gezielt fortsetzbare Sitzung,
-- beide Login-Status,
-- Projektpfade, Git-HEADs und Working-Tree-Status,
-- Prüfsumme der privaten Memory-Datei,
-- installierte Studio-Code-Erweiterungen.
+- number of native Codex session files;
+- one deliberately resumable session;
+- both sign-in statuses;
+- project paths, Git HEADs, and working-tree status;
+- checksum of the private memory file;
+- installed Studio Code extensions.
 
-Danach das Add-on kontrolliert neu starten. `boot` läuft automatisch vor
-`code-server`; kein manueller Chatimport und keine erneute Anmeldung sind
-vorgesehen. Nach dem Start werden Audit und Baseline-Vergleich wiederholt.
+Then restart the add-on in a controlled manner. `boot` runs automatically
+before `code-server`; no manual chat import or repeated sign-in is expected.
+Repeat the audit and baseline comparison after startup.
 
-Diese Vergleichswerte dienen nur dem Projektnachweis. Im späteren Normalbetrieb
-ist vor einem Neustart keine Baseline, Sicherung oder Vorbereitung erforderlich.
+These comparison values serve only as project acceptance evidence. Normal
+operation does not require a baseline, backup, or preparation before a restart.
 
-Für die vollständige TC-012-Abnahme folgt anschließend eine kontrollierte
-Container-Neuerstellung beziehungsweise ein Add-on-Update mit demselben
-Nachweis.
+Complete TC-012 acceptance later with a controlled container recreation or
+add-on update using the same evidence.
 
-## Memory einbinden
+## Include memory
 
-`install` erzeugt aus `examples/memory` ausschließlich fehlende
-`Memories/AGENTS.md` und `Memories/MEMORY.md`. Vorhandene Dateien bleiben
-bytegenau unangetastet. Als globale Startdatei verwendet Codex die nicht leere
-`$CODEX_HOME/AGENTS.override.md`, falls sie existiert, andernfalls
-`$CODEX_HOME/AGENTS.md`. Ein verwalteter Block verweist mit absoluten Pfaden
-zuerst auf die Memory-Regeln und danach auf die private `MEMORY.md`; vorhandener
-fremder Inhalt wird nicht ersetzt. Die globale Lage und absoluten Pfade wirken
-auch beim Start in verschachtelten Git-Repositories.
+`install` creates only missing `Memories/AGENTS.md` and `Memories/MEMORY.md`
+files from `examples/memory`. Existing files remain byte-for-byte unchanged.
+Codex uses a non-empty `$CODEX_HOME/AGENTS.override.md` as the global startup
+file when it exists; otherwise it uses `$CODEX_HOME/AGENTS.md`. A managed block
+references the memory rules first and the private `MEMORY.md` second using
+absolute paths. Existing unrelated content is not replaced. The global
+location and absolute paths also work when Codex starts inside nested Git
+repositories.
 
-Der persistente Workspace darf nicht das Installationsrepository selbst sein
-und nicht unter dessen Checkout liegen. Die befüllte Arbeitskopie wird niemals
-in dieses Repository zurückkopiert. Native Chats bleiben unter
-`codex-home/sessions`.
+The persistent workspace must not be the installation repository itself or be
+located below its checkout. The populated working copy is never copied back
+into this repository. Native chats remain under `codex-home/sessions`.
 
-## Fehlgeschlagenes Deployment
+## Failed deployment
 
-- Bei `BLOCK` weder Quell- noch Zielpfade löschen, verschieben oder mischen.
-- Einen fehlenden oder falschen Link nicht manuell über einen gefüllten Pfad
-  legen.
-- Add-on-Logs und Audit-Ausgabe ohne Geheimniswerte sichern.
-- Wenn die Supervisor-Option erst im letzten Installationsschritt scheiterte,
-  den Zustand auditieren, Supervisor-Zugriff klären und denselben
-  `install`-Aufruf wiederholen. Bis das atomare Optionsupdate erfolgreich war,
-  kann `gh` noch als Bootstrap-Paket konfiguriert und damit von APT oder dem
-  Netzwerk abhängig sein.
-- Bei ungültiger Programmprüfsumme das Programm nicht ausführen.
-- Bei ungültiger Anmeldung das betroffene Konto rotieren oder erneut anmelden
-  und danach den Auth-Audit wiederholen.
-- Bei `BLOCK git-helper` den gemeldeten vorhandenen Helper nicht löschen oder
-  überschreiben. Seine Herkunft und gewünschte Funktion klären; erst danach
-  bewusst auf den dokumentierten Sollwert migrieren oder die Projektinstallation
-  unverändert abgebrochen lassen.
+- When a check reports `BLOCK`, do not delete, move, or combine source and
+  target paths.
+- Do not manually place a missing or incorrect link over a populated path.
+- Preserve add-on logs and audit output only after removing secret values.
+- If the Supervisor option update fails during the final installation step,
+  audit the state, resolve Supervisor access, and repeat the same `install`
+  invocation. Until the atomic option update succeeds, `gh` may remain
+  configured as a bootstrap package and may therefore still depend on APT or
+  network access.
+- Do not execute a program whose checksum is invalid.
+- If a sign-in is invalid, rotate or sign in to the affected account again,
+  then repeat the authentication audit.
+- For `BLOCK git-helper`, do not delete or overwrite the reported existing
+  helper. Determine its origin and intended function first. Only then either
+  migrate it deliberately to the documented target value or leave the project
+  installation safely aborted without changes.
 
-Es gibt keinen automatischen Daten-Merge und kein automatisches
-Programm-Upgrade während `boot`.
+There is no automatic data merge and no automatic program upgrade during
+`boot`.
 
-## Rücknahme und Wiederherstellung
+## Removal and recovery
 
-Vor einer Rücknahme wird der persistente Runtime-Bereich unverändert erhalten.
-Eine Löschung ist kein Rollback. Soll die Lösung außer Betrieb genommen werden,
-müssen zuerst Add-on-Starteintrag, erwartete Links, benötigte Arbeitsdaten und
-ein verschlüsselter Wiederherstellungspunkt einzeln geprüft werden.
+Preserve the persistent runtime unchanged before removing the integration.
+Deletion is not a rollback. Before taking the solution out of service, inspect
+the add-on startup entry, expected links, required working data, and an
+encrypted recovery point individually.
 
-Nach einer Wiederherstellung aus einem vertraulichen Backup werden Eigentümer,
-Modi, Marker, Programmprüfsummen und Links per read-only Audit geprüft, bevor
-Codex oder GitHub CLI gestartet werden.
+After restoring from a trusted backup, use the read-only audit to verify owners,
+modes, markers, program checksums, and links before starting Codex or GitHub
+CLI.
