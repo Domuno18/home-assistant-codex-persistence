@@ -27,7 +27,7 @@ anwendbar. Es gibt keine zusätzlichen Modellierungspakete.
 
 ### AP-100
 
-- `project-definition.json`, `INTAKE.md` und Projekt-Steckbrief,
+- `project-definition.json`, `INTAKE.md` und project profile,
 - Projektauftrag und User-Storys,
 - atomare REQ-/AC-Anforderungen,
 - Domänenobjekte, Invarianten und Zustände.

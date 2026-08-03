@@ -2,7 +2,7 @@
 
 ## Order of work
 
-1. Read `README.md` and `PROJEKT-STECKBRIEF.md`.
+1. Read `README.md` and `PROJECT-PROFILE.md`.
 2. Review requirements and terminology before changing code.
 3. Clarify domain rules in the domain model first.
 4. Implement each change with tests and documentation.
