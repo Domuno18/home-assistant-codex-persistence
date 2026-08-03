@@ -60,5 +60,3 @@ never part of a release.
 5. Inspect the artifact and manifest.
 6. Push the reviewed tag to the public repository only after explicit release approval.
 7. Create and inspect the GitHub prerelease as a separately approved action.
-
-The maintainer-only `scripts/publish.sh` retains its private-staging guard and is not used to publish from the public repository.

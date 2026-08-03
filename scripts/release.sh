@@ -20,4 +20,4 @@ grep -qF "## $VERSION" CHANGELOG.md \
 git tag -a "$TAG" -m "Release $VERSION"
 
 echo "✔ Local release $VERSION created with tag $TAG."
-echo "  Publication is separate: ./scripts/publish.sh"
+echo "  Publication requires explicit approval; push the reviewed tag separately."
