@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "meta": {
+    "status": "draft",
+    "confirmed": false
+  },
+  "project": {
+    "name": "Beispielprojekt",
+    "goal": "Messwerte nachvollziehbar prüfen und als Status bereitstellen",
+    "users": "Betriebsteam",
+    "owner": "Projektauftraggeber",
+    "acceptance_owner": "Fachabnahme",
+    "target_date": "offen"
+  },
+  "intake": {
+    "success_example": "Ein gültiger Referenzwert erzeugt den erwarteten Status",
+    "systems": "generische Messquelle",
+    "confidential_data": "nur synthetische Beispieldaten"
+  },
+  "scope": {
+    "mathematical_model": true,
+    "isa95": true,
+    "external_interfaces": true,
+    "state_or_safety_logic": true
+  },
+  "details": {
+    "mathematics": {
+      "quantities": "Messwert mit projektspezifischer Einheit",
+      "limits": "fachlich festzulegen",
+      "reference_case": "fachlich freizugebender Referenzfall"
+    },
+    "isa95": {
+      "equipment": "generische Work Unit",
+      "responsibility": "fachlich festzulegen",
+      "information_flow": "Statusinformation"
+    },
+    "interfaces": {
+      "purpose": "Messwert übernehmen",
+      "failure": "keine Aktion mit ungültigem Wert"
+    },
+    "states": {
+      "states": "bereit, degradiert",
+      "safe_state": "keine automatische Aktion"
+    }
+  },
+  "open_items": [],
+  "assumptions": [],
+  "risks": []
+}

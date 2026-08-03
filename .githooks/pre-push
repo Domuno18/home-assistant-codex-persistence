@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT=$(git rev-parse --show-toplevel)
+"$ROOT/scripts/security-scan.sh" --working-tree
+exec "$ROOT/scripts/security-scan.sh" --history

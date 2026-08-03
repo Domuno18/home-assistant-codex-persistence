@@ -1,0 +1,23 @@
+# Sichere Beispielkonfiguration für das Home-Assistant-Add-on
+# Studio Code Server vor der einmaligen Installation.
+
+log_level: info
+config_path: /config
+# `gh` ist nur das einmalige Bootstrap-Paket für Schritt 3.
+packages:
+  - gh
+init_commands: []
+
+# Nach geprüfter persistenter Kopie und Ready-Synchronisierung entfernt
+# `install` nur `gh`/`github-cli` aus `packages`, erhält fremde Pakete und
+# Befehle und setzt den verwalteten Bootbefehl an die erste Stelle. Wenn `gh`
+# der einzige Eintrag war, lautet das Ergebnis `packages: []`.
+#
+# Jeder fremde verbleibende Paket-Eintrag löst beim Add-on-Start weiterhin APT
+# vor `init_commands` aus; nur der Start des persistenten `gh` ist unabhängig
+# von APT und Netzwerk.
+# Für den Standardpfad wird sinngemäß dieser Befehl eingetragen:
+# HACP_RUNTIME_ROOT=/data/codex-persistence HACP_GIT_CONFIG_SOURCE=/root/.gitconfig HACP_BOOT_OK=YES sh /data/codex-persistence/bootstrap/ha-codex-persistence.sh boot
+#
+# Den generierten Starteintrag nicht vor dem erfolgreichen `install` manuell
+# hinzufügen. Diese Datei enthält keine Anmeldedaten.

@@ -1,0 +1,9 @@
+# Projektabhängigkeiten
+#
+# Die Vorlage selbst benötigt nur Python 3 und Bash; keine Python-Pakete.
+# Projektspezifische Laufzeitabhängigkeiten hier mit exakten Versionen ergänzen:
+#
+# paketname==1.2.3  # Zweck, Verantwortungsbereich und Lizenz
+#
+# Optionale Entwicklungswerkzeuge getrennt dokumentieren. Ein neuer Pin wird
+# erst nach Lizenz-, Security- und Kompatibilitätsprüfung übernommen.
