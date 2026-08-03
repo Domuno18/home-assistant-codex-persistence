@@ -20,8 +20,9 @@
 
 - [x] BL-003 — Betriebsstatus und bisherigen TC-012-Nachweis dokumentiert, ohne Chats,
       Anmeldedaten oder reale Memory-Inhalte aufzunehmen.
-- [ ] BL-004 — Public-Release-Check vollständig durchführen; Sichtbarkeit nur
-      nach ausdrücklicher Freigabe ändern. Quelle: REQ-S-001, REQ-S-002.
+- [x] BL-004 — Public-Release-Check vollständig durchgeführt; sauberes
+      öffentliches Repository und `v0.9.0-beta.1`-Prerelease nach ausdrücklicher
+      Freigabe veröffentlicht. Quelle: REQ-S-001, REQ-S-002.
 
 ## Spätere Verbesserungen
 
