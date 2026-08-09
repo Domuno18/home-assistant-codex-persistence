@@ -32,12 +32,12 @@ does not upgrade the persisted Codex or GitHub CLI executables.
 
 ### Verified
 
-- Both private and public source repositories passed the complete validation,
-  regression-test, traceability, and security-scan gates.
+- The published source passed the complete validation, regression-test,
+  traceability, and security-scan gates.
 - The reference installation was upgraded through the documented repeated
   `install` path and passed authenticated runtime and network cold-start audits
   before and after a real Studio Code Server restart.
-- The installed bootstrap is byte-identical to the reviewed private source.
+- The installed bootstrap is byte-identical to the reviewed release source.
 
 ## v0.9.0-beta.1 — public beta prerelease
 
