@@ -1,5 +1,35 @@
 # Release notes
 
+## v0.9.0-beta.2 — unreleased maintenance candidate
+
+This maintenance candidate restores the guarded persistent bootstrap as the
+automatic Studio Code Server startup entry. The generated `init_commands`
+entry now invokes the installed `boot` command instead of deleting and
+recreating runtime links directly.
+
+### Fixed
+
+- Startup verifies the runtime ownership marker, active generation, manifests,
+  persisted executables, Git credential helpers, process state, and every
+  conflicting container path before restoring links.
+- Unexpected non-disposable Codex or GitHub CLI state blocks startup without
+  being removed; only the narrowly defined fresh-container IPC, temporary, and
+  empty GitHub CLI directories remain disposable.
+- Re-running the explicitly confirmed `install` command on an already active
+  installation upgrades the persistent bootstrap copy and managed Supervisor
+  startup entry without remigrating sessions, credentials, or CLI programs.
+- The read-only audit and repeated install accept both exact official manual
+  memory startup blocks from `v0.1.0` and `v0.9.0-beta.1`. Modified, partial,
+  duplicated, or mixed managed blocks still fail closed.
+
+### Upgrade
+
+Close active Codex chats and run the documented `install` command again from
+this release checkout. A successful repeat installation preserves the sealed
+runtime generation, updates the bootstrap and `init_commands`, and must be
+followed by the authenticated audit. This is a control-plane update only; it
+does not upgrade the persisted Codex or GitHub CLI executables.
+
 ## v0.9.0-beta.1 — public beta prerelease
 
 The first public-beta candidate makes it practical to run a durable local Codex agent on a Home Assistant server. The goal is not to modify Codex or Home Assistant, but to keep the complete engineering workspace available when the disposable Studio Code Server container restarts or is recreated.

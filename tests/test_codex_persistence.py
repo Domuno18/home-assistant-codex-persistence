@@ -1291,6 +1291,63 @@ exec {real_flock} "$@"
         self.assertEqual(global_agents.read_bytes(), global_before)
         self.assertEqual(global_before.count(b"<!-- BEGIN HACP MEMORY -->"), 1)
 
+    def test_repeated_install_accepts_sealed_legacy_memory_block(self) -> None:
+        self.harness.seed_logged_in_state()
+        first = self.harness.install()
+        self.assertEqual(first.returncode, 0, first.stdout + first.stderr)
+
+        persistent_home = self.harness.runtime / "current" / "codex-home"
+        global_agents = persistent_home / "AGENTS.md"
+        legacy_block = (
+            "<!-- BEGIN HACP MEMORY -->\n"
+            "## Persistentes manuell gepflegtes Codex-Langzeitgedaechtnis\n"
+            f"1. Bei jedem Sitzungsstart `{self.harness.workspace}/Memories/AGENTS.md` vollstaendig lesen.\n"
+            f"2. Danach `{self.harness.workspace}/Memories/MEMORY.md` vollstaendig lesen.\n"
+            "3. Nach bestaetigten dauerhaften Entscheidungen die Pflegeregeln anwenden.\n"
+            "<!-- END HACP MEMORY -->\n"
+        )
+        global_agents.write_text(legacy_block, encoding="utf-8")
+
+        manifest = self.harness.runtime / "current" / "meta" / "codex.tree"
+        lines = manifest.read_text(encoding="utf-8").splitlines()
+        digest = subprocess.run(
+            ["sha256sum", "--", str(global_agents)],
+            text=True,
+            capture_output=True,
+            check=True,
+        ).stdout.split()[0]
+        lines = [
+            f"{digest}  ./AGENTS.md" if line.endswith("  ./AGENTS.md") else line
+            for line in lines
+        ]
+        manifest.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        metadata = self.harness.runtime / "current" / "meta"
+        sums = subprocess.run(
+            ["sha256sum", "generation", "codex.tree", "github.tree"],
+            cwd=metadata,
+            text=True,
+            capture_output=True,
+            check=True,
+        ).stdout
+        (metadata / "SHA256SUMS").write_text(sums, encoding="utf-8")
+        self.harness.installed_script.write_text(
+            "#!/bin/sh\nprintf '%s\\n' legacy-bootstrap\n",
+            encoding="utf-8",
+        )
+        self.harness.installed_script.chmod(0o700)
+
+        second = self.harness.install()
+
+        self.assertEqual(second.returncode, 0, second.stdout + second.stderr)
+        self.assertIn("already installed as generation", second.stdout)
+        self.assertEqual(global_agents.read_text(encoding="utf-8"), legacy_block)
+        self.assertEqual(
+            self.harness.installed_script.read_bytes(),
+            SCRIPT.read_bytes(),
+        )
+        audited = self.harness.audit()
+        self.assertEqual(audited.returncode, 0, audited.stdout + audited.stderr)
+
     def test_repeated_install_does_not_add_memory_when_initially_disabled(self) -> None:
         self.harness.seed_logged_in_state()
         first = self.harness.install(HACP_MEMORY_SETUP="NO")
@@ -1537,23 +1594,15 @@ exec {real_flock} "$@"
         )
         options = json.loads(paths["state"].read_text(encoding="utf-8"))
         self.assertEqual(options["packages"], ["ripgrep"])
-        current_root = self.harness.runtime / "current"
-        codex_target = current_root / "codex-home"
-        github_target = current_root / "gh"
-        codex_tool = current_root / "tools" / "bin" / "codex"
-        github_tool = current_root / "tools" / "bin" / "gh"
-        codex_link = self.harness.bin_link_root / "codex"
-        github_link = self.harness.bin_link_root / "gh"
         expected_command = (
             "HACP_MANAGED=home-assistant-codex-persistence "
-            f"rm -rf {self.harness.codex} {self.harness.gh} && "
-            f"mkdir -p {self.harness.gh.parent} && "
-            f"ln -s {codex_target} {self.harness.codex} && "
-            f"ln -s {github_target} {self.harness.gh} && "
-            f"ln -sf {codex_tool} {codex_link} && "
-            f"ln -sf {github_tool} {github_link}"
+            f"HACP_RUNTIME_ROOT={self.harness.runtime} "
+            f"HACP_GIT_CONFIG_SOURCE={self.harness.gitconfig} "
+            "HACP_BOOT_OK=YES sh "
+            f"{self.harness.installed_script} boot"
         )
         self.assertEqual(options["init_commands"][0], expected_command)
+        self.assertNotIn("rm -rf", options["init_commands"][0])
         self.assertEqual(options["init_commands"][1:], ["echo preserve"])
         self.assertEqual(
             options["nested"],

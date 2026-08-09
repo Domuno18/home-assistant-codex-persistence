@@ -196,18 +196,24 @@ Sicherung, kein Export und kein manueller Skriptaufruf nötig.
 
 ## Automatischer Start
 
-`install` trägt einen absoluten Befehl in `init_commands` ein. Für den
-Standardpfad entspricht er diesem Vertrag:
+`install` trägt einen absoluten, explizit bestätigten Bootstrap-Aufruf in
+`init_commands` ein. Für den Standardpfad entspricht er diesem Vertrag:
 
 ```sh
-HACP_MANAGED=home-assistant-codex-persistence rm -rf /root/.codex /root/.config/gh && mkdir -p /root/.config && ln -s /data/codex-persistence/current/codex-home /root/.codex && ln -s /data/codex-persistence/current/gh /root/.config/gh && ln -sf /data/codex-persistence/current/tools/bin/codex /usr/local/bin/codex && ln -sf /data/codex-persistence/current/tools/bin/gh /usr/local/bin/gh
+HACP_MANAGED=home-assistant-codex-persistence HACP_RUNTIME_ROOT=/data/codex-persistence HACP_GIT_CONFIG_SOURCE=/root/.gitconfig HACP_BOOT_OK=YES sh /data/codex-persistence/bootstrap/ha-codex-persistence.sh boot
 ```
 
 Der Befehl läuft bei jedem Add-on-Start vor `code-server`. Er kopiert keine
-Sessions und importiert keine Chats. Er prüft die installierte Generation und
-stellt die fehlenden Links auf den bereits persistenten Bestand sowie die zwei
-gezielt verwalteten GitHub-Helper wieder her. Er installiert weder `gh` noch
-andere Pakete und führt kein Programm-Upgrade aus.
+Sessions und importiert keine Chats. `boot` prüft Eigentumsmarker, Generation,
+Manifeste, Programme, Prozesszustand, GitHub-Helper und jeden Quellpfad, bevor
+es fehlende Links wiederherstellt. Unerwarteter Zustand wird nicht gelöscht,
+sondern blockiert den Start. `boot` installiert weder `gh` noch andere Pakete
+und führt kein Programm-Upgrade aus.
+
+Eine bereits aktive Installation wird mit demselben ausdrücklich bestätigten
+`install`-Aufruf kontrolliert aktualisiert. Dabei bleiben die versiegelte
+Runtime-Generation, Sessions, Anmeldungen und Programme unverändert; ersetzt
+werden nur die persistente Bootstrap-Kopie und der verwaltete Starteintrag.
 
 Ein erfolgreicher wiederholter `boot` ist normal. Eine Blockierung beendet die
 Add-on-Initialisierung bewusst, damit kein leerer oder konkurrierender Zustand

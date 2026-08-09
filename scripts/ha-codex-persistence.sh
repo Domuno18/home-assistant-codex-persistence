@@ -10,7 +10,7 @@
 
 set -u
 
-PROGRAM_VERSION=0.9.0-beta.1
+PROGRAM_VERSION=0.9.0-beta.2
 RUNTIME_ROOT=${HACP_RUNTIME_ROOT:-/data/codex-persistence}
 CODEX_SOURCE=${HACP_CODEX_SOURCE:-/root/.codex}
 GH_SOURCE=${HACP_GH_SOURCE:-/root/.config/gh}
@@ -1527,10 +1527,8 @@ install_bootstrap_copy() {
 }
 
 boot_command() {
-    printf "HACP_MANAGED=home-assistant-codex-persistence rm -rf %s %s && mkdir -p %s && ln -s %s %s && ln -s %s %s && ln -sf %s %s && ln -sf %s %s" \
-        "$CODEX_SOURCE" "$GH_SOURCE" "$(dirname "$GH_SOURCE")" \
-        "$CODEX_TARGET" "$CODEX_SOURCE" "$GH_TARGET" "$GH_SOURCE" \
-        "$CODEX_TOOL" "$CODEX_LINK" "$GH_TOOL" "$GH_LINK"
+    printf "HACP_MANAGED=home-assistant-codex-persistence HACP_RUNTIME_ROOT=%s HACP_GIT_CONFIG_SOURCE=%s HACP_BOOT_OK=YES sh %s boot" \
+        "$RUNTIME_ROOT" "$GIT_CONFIG_SOURCE" "$BOOTSTRAP_SCRIPT"
 }
 
 supervisor_token_valid() {
@@ -1698,8 +1696,19 @@ memory_start_block() {
         "$MEMORY_BLOCK_END"
 }
 
-memory_start_block_matches() (
+legacy_memory_start_block() {
+    printf '%s\n' \
+        "$MEMORY_BLOCK_BEGIN" \
+        "## Persistentes manuell gepflegtes Codex-Langzeitgedaechtnis" \
+        "1. Bei jedem Sitzungsstart \`$MEMORY_ROOT/AGENTS.md\` vollstaendig lesen." \
+        "2. Danach \`$MEMORY_ROOT/MEMORY.md\` vollstaendig lesen." \
+        "3. Nach bestaetigten dauerhaften Entscheidungen die Pflegeregeln anwenden." \
+        "$MEMORY_BLOCK_END"
+}
+
+memory_start_block_matches_expected() (
     agents_file=$1
+    expected_command=$2
     [ -f "$agents_file" ] && [ ! -L "$agents_file" ] || return 1
     [ "$(stat -c '%h' "$agents_file" 2>/dev/null)" = 1 ] || return 1
     begin_count=$(grep -Fxc "$MEMORY_BLOCK_BEGIN" "$agents_file" || true)
@@ -1713,9 +1722,22 @@ memory_start_block_matches() (
             $0 == end && capture { capture = 0 }
         ' "$agents_file"
     ) || return 1
-    expected=$(memory_start_block) || return 1
+    expected=$($expected_command) || return 1
     [ "$actual" = "$expected" ]
 )
+
+memory_start_block_matches() {
+    memory_start_block_matches_expected "$1" memory_start_block
+}
+
+legacy_memory_start_block_matches() {
+    memory_start_block_matches_expected "$1" legacy_memory_start_block
+}
+
+supported_memory_start_block_matches() {
+    memory_start_block_matches "$1" ||
+        legacy_memory_start_block_matches "$1"
+}
 
 effective_global_agents_path() {
     codex_root=$1
@@ -1754,13 +1776,13 @@ verify_effective_memory_start_rules() (
     codex_root=$1
     label=$2
     effective_global_agents_path "$codex_root" "$label" || return 1
-    if ! memory_start_block_matches "$EFFECTIVE_GLOBAL_AGENTS"; then
+    if ! supported_memory_start_block_matches "$EFFECTIVE_GLOBAL_AGENTS"; then
         report BLOCK "$label" "$EFFECTIVE_GLOBAL_AGENTS" \
-            "exact effective global memory startup block missing"
+            "supported exact effective global memory startup block missing"
         return 1
     fi
     report OK "$label" "$EFFECTIVE_GLOBAL_AGENTS" \
-        "exact effective global memory startup block verified"
+        "supported exact effective global memory startup block verified"
 )
 
 verify_memory_setup_read_only() (
@@ -2628,7 +2650,8 @@ audit_all() {
                 memory_valid=no
         fi
         if [ "$memory_valid" = yes ] &&
-            ! memory_start_block_matches "$EFFECTIVE_GLOBAL_AGENTS"; then
+            ! supported_memory_start_block_matches \
+                "$EFFECTIVE_GLOBAL_AGENTS"; then
             memory_valid=no
         fi
         if [ "$memory_valid" = yes ]; then
