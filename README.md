@@ -67,7 +67,8 @@ Server add-on restart preserved Codex sessions, both sign-ins, and both CLI
 programs. The generated `init_commands` entry now matches that verified
 startup path.
 
-This public repository contains the reviewed `v0.9.0-beta.1` prerelease. The private development history is not published.
+This public repository contains the reviewed `v0.9.0-beta.2` maintenance
+prerelease. The private development history is not published.
 
 Independent installation feedback, host-reboot evidence, and a later add-on update remain valuable beta evidence. They are not presented as compatibility that has already been proven.
 

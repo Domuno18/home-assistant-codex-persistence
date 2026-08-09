@@ -2,7 +2,7 @@
 
 All notable public changes are documented here. Versions follow Semantic Versioning.
 
-## 0.9.0-beta.2 — Unreleased
+## 0.9.0-beta.2 — 2026-08-09
 
 ### Fixed
 
@@ -20,6 +20,8 @@ All notable public changes are documented here. Versions follow Semantic Version
 
 - Added regression coverage for the generated safe startup command and a
   sealed legacy-memory installation upgraded in place.
+- Upgraded the reference installation and passed authenticated runtime and
+  network cold-start audits before and after a real restart.
 
 ## 0.9.0-beta.1 — 2026-08-03
 
