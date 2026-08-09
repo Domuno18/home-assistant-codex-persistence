@@ -2,6 +2,25 @@
 
 All notable public changes are documented here. Versions follow Semantic Versioning.
 
+## 0.9.0-beta.2 — Unreleased
+
+### Fixed
+
+- Replaced the direct `rm -rf` startup entry with the guarded persistent
+  bootstrap `boot` command.
+- Preserved unexpected container state by failing closed while still allowing
+  narrowly defined disposable fresh-container paths.
+- Allowed explicitly confirmed repeated installation to update an existing
+  bootstrap and managed Supervisor startup entry without remigrating private
+  runtime data or persisted executables.
+- Added exact compatibility for the official legacy manual-memory startup
+  block while continuing to reject modified or ambiguous managed blocks.
+
+### Verified
+
+- Added regression coverage for the generated safe startup command and a
+  sealed legacy-memory installation upgraded in place.
+
 ## 0.9.0-beta.1 — 2026-08-03
 
 ### Added

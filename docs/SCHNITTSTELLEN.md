@@ -68,7 +68,7 @@ danach den zurückgelesenen Zustand:
 Der generische Starteintrag lautet:
 
 ```sh
-HACP_MANAGED=home-assistant-codex-persistence rm -rf /root/.codex /root/.config/gh && mkdir -p /root/.config && ln -s /data/codex-persistence/current/codex-home /root/.codex && ln -s /data/codex-persistence/current/gh /root/.config/gh && ln -sf /data/codex-persistence/current/tools/bin/codex /usr/local/bin/codex && ln -sf /data/codex-persistence/current/tools/bin/gh /usr/local/bin/gh
+HACP_MANAGED=home-assistant-codex-persistence HACP_RUNTIME_ROOT=/data/codex-persistence HACP_GIT_CONFIG_SOURCE=/root/.gitconfig HACP_BOOT_OK=YES sh /data/codex-persistence/bootstrap/ha-codex-persistence.sh boot
 ```
 
 Authentifizierung erfolgt ausschließlich mit dem vom Add-on bereitgestellten
@@ -79,8 +79,9 @@ ihn nicht.
 
 Studio Code Server führt `init_commands` bei jedem Start vor `code-server`
 aus. Add-on-Pakete werden noch vor diesen Befehlen verarbeitet. Der verwaltete
-direkte Befehl entfernt die flüchtigen Containerpfade und setzt Codex-,
-GitHub-CLI- und Werkzeuglinks auf die bei `install` verifizierte Runtime.
+Befehl ruft die persistente `boot`-Schnittstelle auf. Sie validiert die aktive
+Generation und stellt Codex-, GitHub-CLI- und Werkzeuglinks nur nach
+erfolgreicher Konflikt- und Integritätsprüfung wieder her.
 
 Der Aufruf ist bei jedem neuen Container gleich. Ein Fehlercode verhindert bewusst den Start mit
 einem leeren, beschädigten oder konkurrierenden Zustand. Weil `gh` nach
