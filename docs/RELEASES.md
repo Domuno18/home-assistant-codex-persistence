@@ -2,7 +2,9 @@
 
 ## Current status
 
-`0.9.0-beta.1` is the published first GitHub Prerelease. The public repository has a clean root history, while the full development history remains in a separate private archive.
+`0.9.0-beta.2` is the current GitHub Prerelease. The public repository has a
+clean root history, while the full development history remains in a separate
+private archive. `0.9.0-beta.1` remains the first published prerelease.
 
 Changing a version file, building an artifact, pushing Git commits, publishing
 a release, and changing repository visibility are deliberately separate
@@ -25,7 +27,7 @@ platform coverage and possible migration work before a later release.
 
 ## Beta release gate
 
-Before publishing `v0.9.0-beta.1`:
+Before publishing any beta, including `v0.9.0-beta.2`:
 
 1. Finish the English public-documentation review.
 2. Run `./scripts/validate.sh` and

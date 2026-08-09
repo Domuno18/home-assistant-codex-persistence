@@ -1,6 +1,6 @@
 # Release notes
 
-## v0.9.0-beta.2 — unreleased maintenance candidate
+## v0.9.0-beta.2 — public beta maintenance prerelease
 
 This maintenance candidate restores the guarded persistent bootstrap as the
 automatic Studio Code Server startup entry. The generated `init_commands`
@@ -29,6 +29,15 @@ this release checkout. A successful repeat installation preserves the sealed
 runtime generation, updates the bootstrap and `init_commands`, and must be
 followed by the authenticated audit. This is a control-plane update only; it
 does not upgrade the persisted Codex or GitHub CLI executables.
+
+### Verified
+
+- Both private and public source repositories passed the complete validation,
+  regression-test, traceability, and security-scan gates.
+- The reference installation was upgraded through the documented repeated
+  `install` path and passed authenticated runtime and network cold-start audits
+  before and after a real Studio Code Server restart.
+- The installed bootstrap is byte-identical to the reviewed private source.
 
 ## v0.9.0-beta.1 — public beta prerelease
 
