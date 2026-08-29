@@ -37,6 +37,11 @@ does not upgrade the persisted Codex or GitHub CLI executables.
 - The reference installation was upgraded through the documented repeated
   `install` path and passed authenticated runtime and network cold-start audits
   before and after a real Studio Code Server restart.
+- With bootstrap `0.9.0-beta.2` installed, a real Studio Code Server update
+  from `6.0.1` to `7.0.0` replaced the container. Sessions, manual memory,
+  Codex and GitHub sign-ins, persisted CLI programs, Git credential helpers,
+  and the managed startup entry remained available. Authenticated runtime and
+  network cold-start audits also passed after a subsequent container restart.
 - The installed bootstrap is byte-identical to the reviewed release source.
 
 ## v0.9.0-beta.1 — public beta prerelease
@@ -75,8 +80,7 @@ Hardware and software combinations beyond it need community feedback.
 - This is a community beta, not an official Home Assistant, OpenAI, or GitHub
   product.
 - A Home Assistant host reboot still needs explicit reference evidence.
-- A future add-on update or container recreation is treated as a regression
-  test when an update is available.
+- Additional add-on updates and container recreations remain regression tests.
 - CLI upgrades and rollback are not automated. Startup intentionally performs
   no package download or tool upgrade.
 - Backup and restore of the private runtime are outside this release.

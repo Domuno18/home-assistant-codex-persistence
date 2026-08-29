@@ -90,7 +90,10 @@ Die Testimplementierung liegt in `tests/test_codex_persistence.py`.
 - **Toleranz:** keine fehlende Sitzung, kein geänderter Git-Stand oder fremder
   Git-Konfigurationswert, keine erneute Anmeldung, Helper-Einrichtung oder
   manuelle Linkreparatur.
-- **Status:** Add-on-Neustart erfolgreich bestätigt; Host-Neustart steht noch aus; Add-on-Update oder Container-Neuerstellung ist ein zukünftiger Regressionstest.
+- **Status:** Add-on-Neustart erfolgreich bestätigt; reales Studio-Code-Server-
+  Update von `6.0.1` auf `7.0.0` einschließlich Container-Neuerstellung und
+  anschließendem Container-Neustart erfolgreich bestätigt; Host-Neustart
+  steht noch aus.
 
 ## Ausführung
 

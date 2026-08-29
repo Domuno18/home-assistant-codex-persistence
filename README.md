@@ -63,14 +63,18 @@ It distributes only this project code and neutral templates. It does not redistr
 ## Current beta status
 
 The reference system has been migrated successfully. A real Studio Code
-Server add-on restart preserved Codex sessions, both sign-ins, and both CLI
-programs. The generated `init_commands` entry now matches that verified
-startup path.
+Server add-on update from `6.0.1` to `7.0.0`, including container replacement
+and a subsequent container restart, preserved Codex sessions, manual memory,
+both sign-ins, both CLI programs, Git credential helpers, and the managed
+startup entry. Authenticated runtime and network cold-start audits passed
+afterward.
 
-This public repository contains the reviewed `v0.9.0-beta.2` maintenance
-prerelease. The private development history is not published.
+The reviewed `v0.9.0-beta.2` maintenance prerelease is the installed bootstrap
+version used for this evidence.
 
-Independent installation feedback, host-reboot evidence, and a later add-on update remain valuable beta evidence. They are not presented as compatibility that has already been proven.
+Independent installation feedback and Home Assistant host-reboot evidence
+remain valuable beta evidence. They are not presented as compatibility that
+has already been proven.
 
 ## Tested environment
 
@@ -85,7 +89,9 @@ Independent installation feedback, host-reboot evidence, and a later add-on upda
 | Agent | OpenAI Codex IDE extension and CLI |
 | Git integration | GitHub CLI |
 
-✅ Successfully tested for installation and add-on restart on this environment.
+✅ Successfully tested for installation, an add-on update from `6.0.1` to
+`7.0.0`, container replacement, and a subsequent container restart on this
+environment.
 
 Other architectures and hardware combinations are welcome as community test
 reports.

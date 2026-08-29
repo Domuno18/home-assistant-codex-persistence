@@ -18,8 +18,7 @@
       English. Remaining German engineering records are supplementary and are
       not required for installation or operation.
 - [x] Review repository content and local links from the clean public snapshot.
-- [x] Create a clean public root history without the private development history.
-- [x] Keep the development history in the separate private repository.
+- [x] Review and approve the published repository history.
 - [x] Use `Domuno18` as the MIT copyright holder.
 
 - [x] Confirm the repository description and public-beta marketing message on
@@ -37,8 +36,8 @@
 - [ ] Obtain an independent installation report; until then, describe the tested reference environment as the only proven environment.
 - [ ] Record Home Assistant host-reboot evidence.
 
-- [ ] Test a real add-on update or container recreation when an update is
-      available; treat any failure as a regression bug.
+- [x] Test a real add-on update and container replacement: Studio Code Server
+      `6.0.1` to `7.0.0` passed, including a subsequent container restart.
 - [ ] Collect additional CPU architecture, Home Assistant version, and storage
       layout reports from community testers.
 - [ ] Design a verified CLI upgrade and rollback workflow outside normal
