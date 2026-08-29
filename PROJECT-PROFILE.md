@@ -10,8 +10,8 @@
 | Ownership and priorities | Repository maintainers |
 | Operational acceptance | Operator of the Home Assistant reference system |
 | Target date of the first version | 2026-07-30 |
-| Status | Runtime migrated and real add-on restart confirmed; host reboot and a future add-on update or container recreation remain additional beta evidence |
-| Visibility | Clean public source repository; full development history retained separately in the private archive |
+| Status | Runtime migrated; real add-on update, container replacement, and subsequent container restart confirmed; host reboot remains additional beta evidence |
+| Visibility | Published community-beta source repository |
 
 ## Goal and value
 
@@ -104,7 +104,7 @@ workspace.
 - [x] Git helper migration and conflict handling automated through TC-017
 - [x] Automated Supervisor test TC-016 completed
 - [x] Real installation and add-on restart confirmed under TC-012
-- [x] Clean public repository created without the private development history
+- [x] Published repository history reviewed and approved
 - [ ] Home Assistant host reboot accepted under TC-012
-- [ ] Future add-on update or container recreation accepted as a regression test
+- [x] Real add-on update from `6.0.1` to `7.0.0`, container replacement, and subsequent container restart accepted under TC-012
 - [x] Public beta tag and GitHub Prerelease explicitly approved and published

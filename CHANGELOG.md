@@ -22,6 +22,10 @@ All notable public changes are documented here. Versions follow Semantic Version
   sealed legacy-memory installation upgraded in place.
 - Upgraded the reference installation and passed authenticated runtime and
   network cold-start audits before and after a real restart.
+- Passed a real Studio Code Server update from `6.0.1` to `7.0.0`, including
+  container replacement and a subsequent container restart, with sessions,
+  manual memory, both sign-ins, persisted CLI programs, Git credential
+  helpers, and the managed startup entry intact.
 
 ## 0.9.0-beta.1 — 2026-08-03
 
@@ -53,5 +57,5 @@ All notable public changes are documented here. Versions follow Semantic Version
 
 - Independent installation feedback is still pending.
 - Home Assistant host-reboot evidence is still pending.
-- A future add-on update or container recreation remains a regression test.
+- Additional add-on updates and container recreations remain regression tests.
 - Persisted CLI upgrade/rollback and encrypted runtime backup/restore are not implemented.

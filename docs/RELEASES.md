@@ -2,9 +2,8 @@
 
 ## Current status
 
-`0.9.0-beta.2` is the current GitHub Prerelease. The public repository has a
-clean root history, while the full development history remains in a separate
-private archive. `0.9.0-beta.1` remains the first published prerelease.
+`0.9.0-beta.2` is the current GitHub Prerelease. `0.9.0-beta.1` remains the
+first published prerelease.
 
 Changing a version file, building an artifact, pushing Git commits, publishing
 a release, and changing repository visibility are deliberately separate
