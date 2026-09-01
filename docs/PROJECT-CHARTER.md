@@ -1,8 +1,8 @@
 # Project charter
 
 > Status: runtime migration, add-on restart, Studio Code Server update from
-> `6.0.1` to `7.0.0`, container replacement, and subsequent container
-> restart are accepted. Home Assistant host-reboot evidence remains open.
+> `6.0.1` to `7.0.0`, container replacement, subsequent container restart,
+> and Home Assistant host cold start are accepted.
 
 ## Assignment
 
@@ -82,4 +82,4 @@ must block without deletion.
 - [x] Real installation and add-on restart accepted.
 - [x] Real add-on update, container replacement, and subsequent restart accepted.
 - [x] Publication review, tag, and prerelease approved.
-- [ ] Home Assistant host reboot accepted under TC-012.
+- [x] Home Assistant host cold start accepted under TC-012.

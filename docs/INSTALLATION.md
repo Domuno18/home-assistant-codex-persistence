@@ -158,11 +158,13 @@ The reference system has passed:
 - initial installation and add-on restart;
 - Studio Code Server update from `6.0.1` to `7.0.0`, including container
   replacement;
-- a subsequent container restart.
+- a subsequent container restart;
+- a complete Home Assistant host cold start.
 
 Codex sessions, manual memory, both sign-ins, persisted CLI programs, Git
 credential helpers, projects, and the managed startup entry remained
-available. Home Assistant host-reboot evidence remains open.
+available. Authenticated runtime and network cold-start audits passed after the
+host returned.
 
 ## Troubleshooting
 

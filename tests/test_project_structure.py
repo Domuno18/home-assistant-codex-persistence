@@ -69,8 +69,9 @@ class ProjectStructureTest(unittest.TestCase):
 
     def test_backlog_separates_completed_lifecycle_evidence(self) -> None:
         backlog = (ROOT / "docs/BACKLOG.md").read_text(encoding="utf-8")
-        self.assertIn("[ ] BL-001 — Complete the remaining TC-012 evidence", backlog)
+        self.assertIn("[x] BL-001 — Complete TC-012 lifecycle acceptance", backlog)
         self.assertIn("[x] BL-016 — Real Studio Code Server update", backlog)
+        self.assertNotIn("[ ] BL-001", backlog)
         self.assertNotIn("future regression test", backlog.lower())
 
     def test_obsolete_or_duplicate_docs_are_absent(self) -> None:

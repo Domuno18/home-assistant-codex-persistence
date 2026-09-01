@@ -8,9 +8,9 @@ All notable public changes are documented here. Versions follow Semantic Version
 
 - Converted all remaining public engineering documentation below `docs/` to
   English and removed the obsolete mixed-language disclaimer.
-- Consolidated the backlog, leaving only the Home Assistant host reboot open
-  under TC-012 and recording the completed add-on update, container
-  replacement, and subsequent restart as done.
+- Consolidated the lifecycle evidence under TC-012 and recorded the completed
+  add-on update, container replacement, subsequent restart, and Home Assistant
+  host cold start.
 - Added regression tests for the English-only public documentation gate and
   lifecycle-backlog status.
 - Consolidated each topic into one canonical document, renamed engineering
@@ -20,6 +20,8 @@ All notable public changes are documented here. Versions follow Semantic Version
 - Folded unique operational guidance into `docs/INSTALLATION.md`, assumptions
   into the project charter, and release-note maintenance into the changelog;
   removed the superseded intake, deployment, and release-note documents.
+- Accepted the complete Home Assistant host cold start after authenticated
+  runtime and network cold-start audits passed.
 
 ## 0.9.0-beta.2 — 2026-08-09
 

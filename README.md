@@ -72,9 +72,9 @@ afterward.
 The reviewed `v0.9.0-beta.2` maintenance prerelease is the installed bootstrap
 version used for this evidence.
 
-Independent installation feedback and Home Assistant host-reboot evidence
-remain valuable beta evidence. They are not presented as compatibility that
-has already been proven.
+Independent installation feedback remains valuable beta evidence. The
+reference environment has now also passed a complete Home Assistant host cold
+start.
 
 ## Tested environment
 
@@ -90,8 +90,8 @@ has already been proven.
 | Git integration | GitHub CLI |
 
 ✅ Successfully tested for installation, an add-on update from `6.0.1` to
-`7.0.0`, container replacement, and a subsequent container restart on this
-environment.
+`7.0.0`, container replacement, a subsequent container restart, and a
+complete Home Assistant host cold start on this environment.
 
 Other architectures and hardware combinations are welcome as community test
 reports.

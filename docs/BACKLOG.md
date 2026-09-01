@@ -3,14 +3,6 @@
 > Remaining operational evidence and later improvements. The project structure
 > plan and evidence matrix define the binding scope and traceability.
 
-## In progress
-
-- [ ] BL-001 — Complete the remaining TC-012 evidence with a Home Assistant
-      host reboot. Installation, add-on restart, the real Studio Code Server
-      update from `6.0.1` to `7.0.0`, container replacement, and the
-      subsequent container restart are already accepted. Sources: REQ-O-004,
-      AC-001 through AC-012.
-
 ## Later improvements
 
 - [ ] BL-017 — Obtain an independent installation report; until then, treat
@@ -29,6 +21,10 @@
 
 ## Done
 
+- [x] BL-001 — Complete TC-012 lifecycle acceptance: installation, add-on
+      restart, Studio Code Server update from `6.0.1` to `7.0.0`, container
+      replacement, subsequent container restart, and Home Assistant host cold
+      start passed. Sources: REQ-O-004, AC-001 through AC-012.
 - [x] BL-002 — Repository created, validated, pushed, and publication controls
       verified. Source: REQ-S-002.
 - [x] BL-003 — Operational status and TC-012 evidence documented without

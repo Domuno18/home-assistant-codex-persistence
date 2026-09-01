@@ -44,5 +44,6 @@
 - The runtime root must be a narrow persistent path below `/data`, `/config`,
   or `/share`, outside every Git checkout.
 - All Codex processes must be closed during installation or upgrade.
-- Home Assistant host-reboot evidence remains open; the add-on update and
-  container restart evidence is complete.
+- Installation, add-on restart, add-on update, container replacement,
+  subsequent container restart, and Home Assistant host cold-start evidence
+  are complete for the reference environment.
