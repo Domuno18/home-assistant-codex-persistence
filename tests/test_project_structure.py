@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import unittest
 from pathlib import Path
 
@@ -48,6 +49,28 @@ class ProjectStructureTest(unittest.TestCase):
                 text = (ROOT / relative).read_text(encoding="utf-8")
                 with self.subTest(flag=flag):
                     self.assertNotIn("\n**Nicht anwendbar:**", text)
+
+    def test_public_docs_are_english(self) -> None:
+        if self.data["project"]["repository_visibility"] != "public":
+            self.skipTest("English-only documentation is a public-repository gate")
+
+        german_markers = re.compile(
+            r"[äöüÄÖÜß]|"
+            r"\b(?:anforderungen|arbeitspaket|ausstehend|automatisiert|"
+            r"domänenmodell|erfolgreich|geprüft|nachweismatrix|neustart|"
+            r"projektauftrag|projektstrukturplan|schnittstellen|"
+            r"testkonzept)\b",
+            re.IGNORECASE,
+        )
+        for path in sorted((ROOT / "docs").rglob("*.md")):
+            with self.subTest(path=path.relative_to(ROOT)):
+                self.assertIsNone(german_markers.search(path.read_text(encoding="utf-8")))
+
+    def test_backlog_separates_completed_lifecycle_evidence(self) -> None:
+        backlog = (ROOT / "docs/BACKLOG.md").read_text(encoding="utf-8")
+        self.assertIn("[ ] BL-001 — Complete the remaining TC-012 evidence", backlog)
+        self.assertIn("[x] BL-016 — Real Studio Code Server update", backlog)
+        self.assertNotIn("future regression test", backlog.lower())
 
 
 if __name__ == "__main__":

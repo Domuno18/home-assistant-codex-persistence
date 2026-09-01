@@ -246,10 +246,7 @@ backup.
 
 ## Documentation
 
-The English README, installation guide, architecture, security model, release
-policy, and memory guide are the authoritative public user documentation.
-Some additional engineering records retain their original German language;
-they are not required to install or operate the project.
+All public user and engineering documentation is maintained in English.
 
 - [Installation and operations](docs/INSTALLATION.md)
 - [Architecture](docs/ARCHITECTURE.md)

@@ -1,53 +1,51 @@
 # Backlog
 
-> Operative Restarbeit und spätere Verbesserungen. Verbindlicher Umfang und
-> Traceability stehen im Projektstrukturplan und in der Nachweismatrix.
+> Remaining operational evidence and later improvements. The project structure
+> plan and evidence matrix define the binding scope and traceability.
 
-## In Arbeit
+## In progress
 
-- [ ] BL-001 — Host-Neustart; Add-on-Update/Container-Neuerstellung als zukünftiger Regressionstest als
-      Rest der TC-012-Abnahme durchführen. Der Add-on-Neustart ist bestätigt.
-      Quellen: REQ-O-004, AC-001 bis AC-012.
-## Erledigt
+- [ ] BL-001 — Complete the remaining TC-012 evidence with a Home Assistant
+      host reboot. Installation, add-on restart, the real Studio Code Server
+      update from `6.0.1` to `7.0.0`, container replacement, and the
+      subsequent container restart are already accepted. Sources: REQ-O-004,
+      AC-001 through AC-012.
 
-- [x] BL-015 — SemVer-Strategie, private Beta und separate
-      Veröffentlichungsentscheidung dokumentiert. Quelle: REQ-S-002.
-- [x] BL-014 — TC-016 automatisiert: gehärteter Supervisor-Transport,
-      selektive Pakettransition, Erhalt fremder Optionen, Konkurrenzabbruch und
-      Read-back vor `ACTIVE`. Quellen: REQ-I-001, REQ-O-004, DOM-R-009,
-      AC-009, AC-010.
-## Nach der realen Abnahme
+## Later improvements
 
-- [x] BL-003 — Betriebsstatus und bisherigen TC-012-Nachweis dokumentiert, ohne Chats,
-      Anmeldedaten oder reale Memory-Inhalte aufzunehmen.
-- [x] BL-004 — Public-Release-Check vollständig durchgeführt; sauberes
-      öffentliches Repository und `v0.9.0-beta.1`-Prerelease nach ausdrücklicher
-      Freigabe veröffentlicht. Quelle: REQ-S-001, REQ-S-002.
+- [ ] BL-005 — Design a verified, atomic upgrade and rollback workflow for the
+      persisted Codex and GitHub CLI programs. Verify version, checksum,
+      architecture, and compatibility before activation; remove any temporary
+      bootstrap package afterward. `boot` remains network- and upgrade-free.
+      Source: RISK-007.
+- [ ] BL-006 — Investigate optional encrypted backup and restore evidence for
+      the private runtime. Source: RISK-005.
+- [ ] BL-007 — Automate TC-015 to prove that a complete audit run is
+      mutation-free. Source: REQ-O-002.
 
-## Spätere Verbesserungen
+## Done
 
-- BL-005 — Geprüften, atomaren Upgrade- und Rollback-Ablauf für persistierte
-  Codex- und GitHub-CLI-Programme entwerfen. Version, Prüfsumme, Architektur
-  und Kompatibilität werden vor Aktivierung geprüft; ein temporäres
-  Bootstrap-Paket wird anschließend wieder entfernt. `boot` bleibt netz- und
-  upgradefrei. Quelle: RISK-007.
-- BL-006 — Optionalen verschlüsselten Backup-/Restore-Nachweis für die private
-  Runtime untersuchen. Quelle: RISK-005.
-- BL-007 — TC-015 zum maschinellen Nachweis eines vollständig mutationsfreien
-  Audit-Laufs automatisieren. Quelle: REQ-O-002.
-
-## Erledigt
-
-- [x] BL-002 — Privates GitHub-Repository
-      `home-assistant-codex-persistence` erstellt, validierten Stand gepusht und
-      private Sichtbarkeit technisch geprüft. Quelle: REQ-S-002.
-- [x] BL-008 — Projekt aus Projektvorlage_20 initialisiert.
-- [x] BL-009 — Anforderungen, Domänenmodell, Architektur, Schnittstellen,
-      Security, Betrieb und Traceability projektspezifisch dokumentiert.
-- [x] BL-010 — `install`, automatisches `boot` und read-only `audit`
-      implementiert.
-- [x] BL-011 — Container-Neuerstellung, Konflikte, beschädigte Programme,
-      Spezialdateien und fehlende Anmeldungen isoliert getestet.
-- [x] BL-012 — Neutrale Memory-Vorlage ohne reale Inhalte erstellt.
-- [x] BL-013 — Working Tree auf Secrets geprüft und Projektvalidierung
-      erfolgreich ausgeführt.
+- [x] BL-002 — Repository created, validated, pushed, and publication controls
+      verified. Source: REQ-S-002.
+- [x] BL-003 — Operational status and TC-012 evidence documented without
+      recording chats, credentials, or real memory content.
+- [x] BL-004 — Public-release review completed and approved prereleases
+      published. Sources: REQ-S-001, REQ-S-002.
+- [x] BL-008 — Project initialized from Projektvorlage_20.
+- [x] BL-009 — Requirements, domain model, architecture, interfaces, security,
+      operations, and traceability documented for the project.
+- [x] BL-010 — `install`, automatic `boot`, and read-only `audit`
+      implemented.
+- [x] BL-011 — Container replacement, conflicts, damaged programs, special
+      files, and missing sign-ins tested in isolation.
+- [x] BL-012 — Neutral manual-memory template created without real content.
+- [x] BL-013 — Working tree scanned for secrets and project validation passed.
+- [x] BL-014 — TC-016 automated for hardened Supervisor transport, selective
+      package transition, preservation of unrelated options, concurrency
+      rejection, and read-back before `ACTIVE`. Sources: REQ-I-001,
+      REQ-O-004, DOM-R-009, AC-009, AC-010.
+- [x] BL-015 — Semantic-versioning strategy, beta stage, and separate
+      publication approval documented. Source: REQ-S-002.
+- [x] BL-016 — Real Studio Code Server update from `6.0.1` to `7.0.0`,
+      container replacement, and subsequent container restart accepted under
+      TC-012.

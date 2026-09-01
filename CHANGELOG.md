@@ -2,6 +2,18 @@
 
 All notable public changes are documented here. Versions follow Semantic Versioning.
 
+## Unreleased
+
+### Documentation
+
+- Converted all remaining public engineering documentation below `docs/` to
+  English and removed the obsolete mixed-language disclaimer.
+- Consolidated the backlog, leaving only the Home Assistant host reboot open
+  under TC-012 and recording the completed add-on update, container
+  replacement, and subsequent restart as done.
+- Added regression tests for the English-only public documentation gate and
+  lifecycle-backlog status.
+
 ## 0.9.0-beta.2 — 2026-08-09
 
 ### Fixed

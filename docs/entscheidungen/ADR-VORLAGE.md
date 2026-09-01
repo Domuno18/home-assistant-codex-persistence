@@ -1,25 +1,26 @@
-# ADR-OFFEN (nummer): OFFEN (entscheidung)
+# ADR-OPEN (number): OPEN (decision)
 
-- **Status:** vorgeschlagen
-- **Datum:** OFFEN (datum)
-- **Bezug:** OFFEN (req oder risk)
+- **Status:** proposed
+- **Date:** OPEN (YYYY-MM-DD)
+- **Owners:** OPEN
 
-## Kontext
+## Context
 
-OFFEN (kontext)
+OPEN (problem, constraints, and evidence)
 
-## Entscheidung
+## Decision
 
-OFFEN (entscheidungstext)
+OPEN (selected option and boundary)
 
-## Alternativen
+## Alternatives
 
-OFFEN (alternativen)
+- OPEN (alternative and reason not selected)
 
-## Konsequenzen
+## Consequences
 
-OFFEN (positive und negative folgen)
+- OPEN (positive consequence)
+- OPEN (trade-off or follow-up)
 
-## Nachweis
+## Verification
 
-OFFEN (test review oder messung)
+OPEN (test, review, or operational evidence)
