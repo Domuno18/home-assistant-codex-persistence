@@ -1,4 +1,4 @@
-# ISA-95-Modell
+# ISA-95 model
 
-**Nicht anwendbar:** kein Anlagen-, Produktions- oder operativer Betriebsbezug angegeben
-Bei einer späteren Scope-Änderung wird der Intake für diesen Bereich erneut durchgeführt.
+**Not applicable:** the project has no manufacturing, plant, production, or
+ISA-95 operational hierarchy.

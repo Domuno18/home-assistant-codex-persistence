@@ -1,20 +1,22 @@
-# OFFEN (ap-id) — OFFEN (bezeichnung)
+# OPEN (AP ID) — OPEN (title)
 
-- **Ziel/Ergebnis:** OFFEN (ergebnis)
-- **Verantwortlich:** OFFEN (verantwortlich)
-- **Termin:** OFFEN (termin)
-- **Abhängigkeiten:** OFFEN (abhaengigkeiten)
-- **Deckt ab:** OFFEN (anforderungen)
-- **Nicht enthalten:** OFFEN (abgrenzung)
+## Objective
 
-## Eingaben
+OPEN (verifiable result)
 
-OFFEN (eingaben)
+## Scope
 
-## Tätigkeiten
+- OPEN (included work)
+- OPEN (explicit exclusion)
 
-OFFEN (taetigkeiten)
+## Traceability
 
-## Abnahmekriterien und Nachweise
+- requirements: OPEN
+- acceptance criteria: OPEN
+- tests or evidence: OPEN
 
-Domuno18
+## Completion criteria
+
+- [ ] implementation or documentation complete
+- [ ] objective evidence recorded
+- [ ] security and operational impact reviewed

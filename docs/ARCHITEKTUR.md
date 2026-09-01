@@ -1,258 +1,105 @@
-# Architektur
+# Detailed architecture
 
-## Architekturziele
+## Architecture goals
 
-1. native Codex- und GitHub-CLI-Daten direkt außerhalb des austauschbaren
-   Containers führen,
-2. eine einmalige, vollständig verifizierte Installation ermöglichen,
-3. bei jedem Add-on-Start vor `code-server` nur bekannte Links wiederherstellen,
-4. bei Widersprüchen ohne Merge, Überschreiben oder leere Neuerzeugung
-   blockieren,
-5. die Add-on-eigene persistente Git-Konfiguration erhalten und darin nur zwei
-   ausdrücklich bekannte GitHub-Credential-Helper binden,
-6. Runtime-Geheimnisse strikt von Quellcode, Projekten und neutraler
-   Memory-Vorlage trennen.
+1. Preserve native Codex and GitHub CLI state across disposable-container
+   lifecycle events.
+2. Activate only complete and verified runtime generations.
+3. Restore standard paths before `code-server` starts.
+4. Preserve unexpected state and fail closed.
+5. Keep projects, add-on-owned persistence, and real memory outside the runtime.
+6. Perform no network download or executable upgrade during normal startup.
 
-## Systemkontext
-
-Das Studio-Code-Server-Add-on verwaltet Studio-Code-Einstellungen und
-Erweiterungen bereits persistent unter `/data/vscode`. Ebenso verwaltet es
-Git-Konfiguration, SSH-Daten und Shell-History in eigenen `/data`-Bereichen.
-Diese Lösung ergänzt den bislang nicht vom Add-on verwalteten Zustand von Codex
-CLI und GitHub CLI sowie bei Bedarf ihre ausführbaren Dateien. Die bestehende
-Git-Konfiguration wird nicht in die Projekt-Runtime übernommen und ihr
-Gesamtinhalt wird nicht ersetzt; nur ihre zwei Helper-Schlüssel für `github.com`
-und `gist.github.com` werden atomar an die persistente GitHub CLI gebunden.
+## Storage layout
 
 ```text
-Home Assistant Supervisor
-        │ entfernt gh-Bootstrap und setzt boot zuerst
-        ▼
-install ──> persistente Runtime ──> init_commands: boot
-                    │                         │
-                    │                         ▼ vor code-server
-                    └────────────────────── boot
-                                              │
-                 /root/.codex <───────────────┤
-             /root/.config/gh <───────────────┤
-        vorgesehene CLI-Pfade <───────────────┘
+HACP_RUNTIME_ROOT/
+├── .hacp-runtime
+├── bootstrap/ha-codex-persistence.sh
+├── generations/<id>/
+│   ├── codex-home/
+│   ├── gh/
+│   ├── tools/bin/{codex,gh}
+│   └── manifests/
+└── current -> generations/<id>
 
-/root/.gitconfig ─ Add-on ─> /data/git/.gitconfig
-                         └─ nur zwei GitHub-Helper ─> persistentes gh
-
-audit ── nur lesend ──> Runtime, Links, Helper, Rechte und optionale Anmeldung
+/root/.codex       -> HACP_RUNTIME_ROOT/current/codex-home
+/root/.config/gh   -> HACP_RUNTIME_ROOT/current/gh
+managed tool links -> HACP_RUNTIME_ROOT/current/tools/bin/*
 ```
 
-## Speicherentscheidung
+The runtime root and active generation use mode `0700`. Projects and manual
+memory remain in an independent persistent workspace. Studio Code and
+extensions remain under the add-on's native `/data/vscode` persistence.
 
-Der generische Standard ist `/data/codex-persistence`, weil `/data` der native
-private Persistenzbereich eines Home-Assistant-Add-ons ist. Der Zielpfad ist
-über `HACP_RUNTIME_ROOT` konfigurierbar und muss absolut, kanonisch und sicher
-unter `/data`, `/config` oder `/share` liegen. Die Referenzinstallation nutzt
-`/config/Codex/.runtime`, damit sie zum vorhandenen persistenten Workspace
-passt. Beide Varianten erfüllen denselben Vertrag.
+## Components
 
-```text
-RUNTIME_ROOT/
-├── current/
-│   ├── codex-home/              native Sessions, Auth, Konfiguration
-│   ├── gh/                      GitHub-CLI-Konfiguration und Auth
-│   ├── tools/
-│   │   ├── bin/codex
-│   │   ├── bin/gh
-│   │   └── SHA256SUMS
-│   └── meta/                    verifizierte Baummanifeste
-├── state/
-│   ├── ready-generation           verifiziert, Hook-Cutover noch nicht bestätigt
-│   └── active-generation          für boot freigegebene Generation
-├── locks/                       Schutz vor parallelen Operationen
-└── bootstrap/
-    └── ha-codex-persistence.sh  persistenter boot-/audit-Einstieg
-```
+| ID | Component | Responsibility |
+|---|---|---|
+| ARC-001 | installation controller | validate, copy stable state, create manifests, and prepare a generation |
+| ARC-002 | generation store | retain complete immutable runtime generations |
+| ARC-003 | bootstrap controller | verify active state and restore links before `code-server` |
+| ARC-004 | audit adapter | report runtime, integrity, helper, and optional auth state without mutation |
+| ARC-005 | workspace/memory boundary | keep projects and real memory separate from private runtime and examples |
+| ARC-006 | Supervisor/Git adapter | perform narrow package, startup-command, and helper changes |
 
-Alle privaten Runtime-Verzeichnisse sind reguläre Verzeichnisse mit Modus
-`0700`. Die aktive Generation wird erst nach erfolgreicher Prüfung markiert.
-Temporäre Arbeitsverzeichnisse dürfen ausschließlich unter dem Runtime-Root
-liegen und werden nur über eng begrenzte Pfadmuster entfernt.
+## Install sequence
 
-Die globale Git-Konfiguration ist kein Bestandteil von `RUNTIME_ROOT`.
-`/root/.gitconfig` muss auf eine reguläre persistente Datei unter `/data`,
-`/config` oder `/share` auflösbar sein; im Add-on ist das Ziel
-`/data/git/.gitconfig`. Die Datei bleibt Add-on-eigen. Das Projekt verwendet
-`git config --file` nur für zwei exakt benannte Credential-Helper-Schlüssel.
+1. Require explicit `HACP_INSTALL_OK=YES` and no active Codex process.
+2. Resolve and validate the persistent runtime root.
+3. Validate file-backed Codex and GitHub authentication.
+4. Resolve Codex and `gh`, check regular-file boundaries, version, and
+   architecture, then create checksums.
+5. Copy native state and tools into a new generation while verifying source
+   stability.
+6. Create and verify manifests and neutral memory setup.
+7. Compare current Supervisor options, remove only `gh`/`github-cli`, place
+   the managed boot command first, write, and verify by read-back.
+8. Migrate only supported GitHub and Gist credential-helper values.
+9. Mark the generation ready, activate it atomically, and restore managed links.
 
-## Komponenten
+Repeated installation upgrades only the reviewed bootstrap and managed control
+plane when the existing active generation passes every invariant.
 
-| ID | Komponente | Verantwortung | Abhängigkeiten | Ausfallverhalten |
-|---|---|---|---|---|
-| ARC-001 | Installationscontroller | Voraussetzungen, stabile Kopien, Programme, Links, Marker und Add-on-Option atomar geordnet einrichten | Dateisystem, Codex CLI, GitHub CLI, Supervisor API | bricht mit Diagnose ab; keine konkurrierenden Daten mischen |
-| ARC-002 | Persistente Generation | hält Codex-Home, GitHub-CLI-Home, Werkzeuge, Prüfsummen und Marker als Konsistenzgrenze | persistenter Home-Assistant-Pfad | unmarkierter oder beschädigter Bestand ist nicht aktivierbar |
-| ARC-003 | Boot-Adapter | prüft die Generation und rekonstruiert Links vor `code-server` | `init_commands`, ARC-002 | blockiert Add-on-Start bei Abweichung |
-| ARC-004 | Audit-Adapter | bewertet Zustand, Links, Rechte, Sitzungsanzahl und optional beide Anmeldungen | ARC-002, lokale CLI-Programme | meldet `OK` oder `BLOCK`, schreibt nichts |
-| ARC-005 | Workspace-/Memory-Grenze | trennt persistente Projekte und reale Memory-Datei von privater Runtime und öffentlicher Vorlage | persistenter Workspace, `examples/memory` | keine automatische Kopie realer Inhalte ins Repository |
-| ARC-006 | Git-Helper-Adapter | bindet ausschließlich GitHub und Gist in der Add-on-eigenen Git-Konfiguration an die persistente `gh`-Binary | `/root/.gitconfig`, `/data/git/.gitconfig`, ARC-002 | migriert nur bekannte Werte; fremder Helper bleibt erhalten und blockiert |
+## Package lifecycle and offline boundary
 
-## Ablauf `install`
+The add-on package `gh` is a one-time bootstrap source. After a verified
+persistent executable exists, installation removes only `gh` or
+`github-cli` from `packages`. Unrelated packages remain untouched and may
+still impose their own network requirements. Persisted program upgrades are a
+separate, explicit operation under BL-005 and never occur in `boot`.
 
-1. Eine ausdrückliche Installationsbestätigung, Root-Rechte, sichere Pfade und
-   benötigte Werkzeuge prüfen.
-2. Sicherstellen, dass kein Codex-Prozess läuft und beide CLIs installiert sind.
-   Codex muss vor `install` per Gerätecode und
-   `cli_auth_credentials_store="file"` angemeldet sein; sein Statusbefehl
-   erkennt nur den Cache. Ein externer `sqlite_home` oder Codex-Keyring
-   blockiert. GitHub CLI muss ohne vorrangige Umgebungs-Tokens ein
-   dateibasiertes Credential in `/root/.config/gh/hosts.yml` führen; ein
-   Keyring-only-Zustand blockiert.
-3. `/root/.gitconfig` auf die persistente reguläre Zieldatei auflösen und die
-   vorhandenen Werte der zwei GitHub-Helper prüfen. Fehlende, leere und bekannte
-   alte `!…/gh auth git-credential`-Werte sind migrierbar; jeder fremde Wert
-   bleibt unverändert und blockiert vor dem Cutover.
-4. Ausschließlich fehlende Memory-Dateien atomar anlegen und vorhandene
-   Dateien bytegenau erhalten. Die wirksame globale
-   `$CODEX_HOME/AGENTS.override.md`, andernfalls `$CODEX_HOME/AGENTS.md`, erhält
-   genau einen verwalteten Block mit absoluten Pfaden. Damit wirkt die Logik in
-   verschachtelten Git-Repositories; der Workspace liegt nicht im
-   Installationsrepository.
-5. Codex-Home und GitHub-CLI-Home jeweils mehrfach inventarisieren, kopieren
-   und auf Quellruhe sowie Inhaltsgleichheit prüfen. Nur der flüchtige native
-   Socket `ipc/ipc.sock` wird ausgelassen; andere Spezialdateien blockieren.
-6. Aufgelöste Codex- und GitHub-CLI-Programme stabil kopieren,
-   SHA-256-Prüfsummen schreiben und die Programme per `--version` prüfen.
-7. Den verifizierten Bestand atomar als `current` ablegen, die persistente
-   Bootstrap-Kopie schreiben und mit `ready-generation` als wiederanlauffähig
-   markieren.
-8. Über die Supervisor API in einem Update ausschließlich das einmalige
-   Bootstrap-Paket `gh` und den veralteten Alias `github-cli` aus `packages`
-   entfernen und den eindeutig markierten `boot`-Befehl als ersten
-   `init_commands`-Eintrag setzen. Fremde Pakete, Optionen und Startbefehle
-   bleiben unverändert und in ihrer bisherigen Reihenfolge erhalten.
-9. Unmittelbar vor dem Cutover erneut Prozessruhe und Inhaltsgleichheit prüfen,
-   nur konfliktfreie Containerpfade und Werkzeugpfade verlinken und anschließend
-   ausschließlich die zwei GitHub-Helper auf je zwei geordnete Werte setzen:
-   leerer Reset und danach
-   `!GH_CONFIG_DIR=/root/.config/gh /usr/local/bin/gh auth git-credential`.
-   Erst nach exakter Verifikation der Wertepaare wird `active-generation`
-   veröffentlicht.
+## Boot sequence
 
-`install` wird einmal nach Installation und Anmeldung beider CLIs ausgeführt.
-Ein erneuter Aufruf auf einer gültigen aktiven Generation erneuert
-idempotent Bootstrap und Add-on-Starteintrag und prüft die Links. Eine nach
-Unterbrechung vollständig verifizierte Ready-Generation kann ohne neue Kopie
-fortgesetzt werden; es gibt dafür keinen zusätzlichen Benutzerbefehl.
+1. Verify runtime claim, active marker, generation path, manifests, modes,
+   executable checksums, and versions.
+2. Verify the managed Supervisor command and exact Git helper contract.
+3. Reject unexpected non-disposable container paths without deleting them.
+4. Remove only narrowly defined disposable fresh-container IPC/temp paths.
+5. Restore Codex, GitHub CLI, and tool links atomically.
+6. Return `OK result active`; otherwise return `BLOCK`.
 
-## Paket-Lifecycle und Offline-Grenze
+## Audit sequence
 
-Das Add-on verarbeitet jede nicht leere `packages`-Liste vor den
-`init_commands`: zuerst werden die Paketindizes aktualisiert, danach die
-Pakete installiert. Deshalb darf `gh` nach erfolgreichem `install` nicht als
-dauerhaftes Add-on-Paket verbleiben. Andernfalls würde jeder Wiederanlauf trotz
-vorhandener persistenter Binary von APT, DNS und Paketservern abhängen.
+`audit` performs the same ownership, integrity, link, tool, startup, and Git
+helper checks without mutation. With `HACP_CHECK_AUTH=YES`, it also invokes
+the supported Codex and GitHub status commands without printing credentials.
 
-Der Zielzustand ist:
+## Supervisor and Git configuration
 
-```text
-einmalig: packages enthält gh -> lokale gh-Binary verfügbar
-install:  Binary + SHA-256 + Version persistent und geprüft
-          Supervisor-Update entfernt nur gh/github-cli und setzt boot zuerst
-danach:   boot verwendet current/tools/bin/gh ohne Paketinstallation oder Netz
-```
+Supervisor changes use GET, comparison, POST, and GET read-back. Concurrent
+changes abort before the write. The add-on-owned `/data/git/.gitconfig`
+remains outside the runtime. Only these keys are managed:
 
-Eine leere `packages`-Liste löst keinen Paketlauf aus. Fremde Pakete werden
-nicht entfernt, verursachen aber weiterhin vor dem Boot-Hook einen APT-Lauf
-und liegen damit außerhalb der Offline-Garantie dieses Projekts. Ein Upgrade
-der persistierten Programme ist eine bewusste, geprüfte Betriebsänderung und
-kein Bestandteil von `boot`; der Upgrade-Ablauf bleibt in BL-005.
+- `credential.https://github.com.helper`
+- `credential.https://gist.github.com.helper`
 
-## Ablauf `boot`
+Each managed key is the ordered pair of an empty reset value and the persistent
+`gh auth git-credential` helper. Unknown custom values block.
 
-`boot` läuft automatisch als erster Eintrag aus `init_commands`, bevor
-`code-server` startet. Es prüft Marker, private Rechte, Struktur,
-Werkzeugprüfsummen, Prozesszustand und die Migrierbarkeit der zwei GitHub-
-Helper. Nach einer unterbrochenen Installation darf es ausschließlich eine
-vollständig verifizierte `ready-generation` automatisch übernehmen. Danach
-setzt es nur fehlende erwartete Links und verifiziert beziehungsweise migriert
-die zwei Helper:
+## Lifecycle evidence
 
-```text
-/root/.codex       -> RUNTIME_ROOT/current/codex-home
-/root/.config/gh   -> RUNTIME_ROOT/current/gh
-/usr/local/bin/codex -> RUNTIME_ROOT/current/tools/bin/codex
-/usr/local/bin/gh    -> RUNTIME_ROOT/current/tools/bin/gh
-
-/root/.gitconfig     -> /data/git/.gitconfig       vom Add-on bereitgestellt
-GitHub-/Gist-Helper  -> persistentes /usr/local/bin/gh
-```
-
-Bereits korrekte Links bleiben unverändert. Nicht leere neue Containerpfade,
-unerwartete Links oder vorhandene reguläre Dateien an den Werkzeugpfaden
-führen zum sicheren Abbruch. Die Git-Konfigurationsdatei wird nicht in die
-Projekt-Runtime übernommen und ihr semantischer Gesamtinhalt nicht ersetzt.
-Nur die beiden Helper-Schlüssel werden über eine private Geschwisterkopie
-atomar veröffentlicht; alle übrigen Werte sowie Modus und Eigentümer bleiben
-erhalten. Ein fremder Wert in einem der beiden Helper-Schlüssel bleibt erhalten
-und blockiert; fehlende, leere und bekannte alte `gh`-Werte werden gezielt
-migriert. Erst danach wird eine Ready-Generation aktiv markiert.
-
-## Ablauf `audit`
-
-`audit` prüft ausschließlich lesend:
-
-- Konfiguration und aktive Generationskennung,
-- Runtime-Struktur und Werkzeugprüfsummen,
-- alle vier Kompatibilitätslinks,
-- Eigentümer und Modus aller privaten Runtime-Verzeichnisse,
-- Anzahl nativer `sessions`-Dateien,
-- Vorhandensein der neutralen Memory-Regeln und der wirksamen globalen Referenz,
-- kanonische persistente Git-Konfiguration und je zwei exakt geordnete Werte für
-  den GitHub- und Gist-Credential-Helper: leerer Reset, danach persistentes `gh`,
-- optional Erkennung des Codex-Anmeldecaches und
-  `gh auth status --active --hostname github.com`; der Codex-Status ist keine
-  serverseitige Gültigkeitsprüfung. Ohne diese Option wird Auth als `WARN` markiert.
-
-Der Audit repariert keinen Befund. Maschinenlesbare Ausgaben besitzen vier
-tabulatorgetrennte Felder: Level, Check, Ziel und Detail.
-
-## Workspace und Memory
-
-Projekte liegen unabhängig von der Runtime in einem persistenten Workspace;
-dieser darf nicht innerhalb des Installationsrepository-Checkouts liegen. Das
-Repository liefert unter `examples/memory` nur neutrale Pflege- und Startregeln.
-`install` legt fehlende Memory-Dateien atomar an und lässt vorhandene Dateien
-bytegenau unverändert. Die wirksame globale
-`$CODEX_HOME/AGENTS.override.md`, andernfalls `$CODEX_HOME/AGENTS.md`, enthält
-genau einen verwalteten Block mit absoluten Pfaden. Bereits vorhandener fremder
-Inhalt wird nicht ersetzt; die Startlogik gilt dadurch auch in verschachtelten
-Git-Repositories.
-
-Eine reale, befüllte `MEMORY.md` verbleibt im persistenten Workspace.
-Fortsetzbare Chats bleiben ausschließlich im nativen
-`codex-home/sessions`-Bereich.
-
-## Datenverantwortung
-
-| Datenobjekt | Erzeuger | Führende Quelle | Änderungsrecht | Aufbewahrung |
-|---|---|---|---|---|
-| native Codex-Sitzungen | Codex CLI | `current/codex-home` | Codex CLI | solange vom Betreiber benötigt |
-| Codex-Anmeldung und -Konfiguration | Codex CLI | `current/codex-home` | Codex CLI und Betreiber | bis Abmeldung, Rotation oder Löschung |
-| GitHub-CLI-Anmeldung | GitHub CLI | `current/gh` | GitHub CLI und Betreiber | bis Abmeldung, Rotation oder Löschung |
-| globale Git-Konfiguration | Studio Code Server Add-on | `/data/git/.gitconfig` | Add-on und Betreiber; Projekt nur für zwei Helper | gemäß Add-on- und Betreiberkonfiguration |
-| GitHub-/Gist-Credential-Helper | `install` und `boot` | zwei Schlüssel in `/data/git/.gitconfig` | Git-Helper-Adapter | solange diese Lösung aktiv ist |
-| persistierte CLI-Programme | `install` | `current/tools` | Installationscontroller | bis zu einem bewusst geprüften Upgrade gemäß BL-005 |
-| Add-on-Starteintrag | `install` | Supervisor-Optionen | Betreiber und Installationscontroller | solange die Lösung aktiv ist |
-| gh-Bootstrap-Paket | Betreiber vor `install` | Add-on-Optionen | Installationscontroller entfernt nur bekannte Namen | ausschließlich bis zur verifizierten persistenten Übernahme |
-| Projekte | Nutzer und Git | persistenter Workspace | Nutzer und Git-Werkzeuge | gemäß jeweiligem Projekt |
-| reale Memory-Datei | Codex und Nutzer | persistenter Workspace | gemäß lokalen Memory-Regeln | bis bestätigte Aussagen ersetzt werden |
-| neutrale Memory-Vorlage | Projekt | Git-Repository | Projektpflege | versioniert |
-
-## Architekturgrenzen
-
-- Keine zusätzliche Datenbank, kein Hintergrunddienst und kein Importformat.
-- Kein Wiederherstellen nativer Sitzungen aus Markdown.
-- Kein automatisches Upgrade der persistierten CLI-Programme während `boot`.
-- Keine Verwaltung von `/data/vscode`, Add-on-Erweiterungen oder
-  Add-on-eigener SSH-Konfiguration. Die Add-on-eigene Git-Konfiguration wird
-  nicht in die Projekt-Runtime übernommen und ihr Gesamtinhalt nicht ersetzt;
-  ausschließlich die zwei dokumentierten GitHub-Credential-Helper werden
-  atomar veröffentlicht.
-- Persistenz schützt vor Containerwechsel, ersetzt aber kein geprüftes,
-  vertrauliches Backup des persistenten Speichers.
+The reference installation passed initial installation, add-on restart, a real
+Studio Code Server update from `6.0.1` to `7.0.0` with container
+replacement, and a subsequent container restart. Host-reboot evidence remains
+open and is not implied by those results.

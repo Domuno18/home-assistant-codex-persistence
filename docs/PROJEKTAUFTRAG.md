@@ -1,136 +1,74 @@
-# Projektauftrag
+# Project charter
 
-> Status: Runtime-Migration und Add-on-Neustart sind bestätigt;
-> Host-Neustart; Add-on-Update/Container-Neuerstellung als zukünftiger Regressionstest der TC-012 bleiben offen.
+> Status: runtime migration, add-on restart, Studio Code Server update from
+> `6.0.1` to `7.0.0`, container replacement, and subsequent container
+> restart are accepted. Home Assistant host-reboot evidence remains open.
 
-## Auftrag
+## Assignment
 
-Für Home-Assistant-Nutzer mit dem Add-on Studio Code Server wird eine
-wiederverwendbare Lösung bereitgestellt, die den vollständigen nativen
-Codex-Zustand, die GitHub-CLI-Konfiguration und benötigte CLI-Programme
-außerhalb des austauschbaren Containers persistent hält.
+Provide a guarded persistence layer that keeps Codex sessions, configuration,
+file-backed sign-in, GitHub CLI sign-in, verified CLI programs, Git credential
+helpers, projects, and manual memory usable across Studio Code Server container
+lifecycle events.
 
-Die Bedienung bleibt einfach:
+## Goal and value
 
-1. Studio Code Server installieren.
-2. Codex-Erweiterung installieren.
-3. GitHub CLI einmalig als Add-on-Bootstrap-Paket `gh` installieren.
-4. Beide Programme anmelden.
-5. Installationsprojekt unter `/config` klonen und genau einmal `install`
-   ausführen.
+After one explicit installation, normal starts require no prepare, export,
+restore, package download, link repair, or repeated sign-in. Unexpected state
+must block without deletion.
 
-Danach übernimmt `boot` den automatischen Wiederanlauf vor `code-server`.
-`audit` prüft den Zustand rein lesend.
+## Roles
 
-Nach erfolgreicher Prüfung und Ready-Synchronisierung entfernt `install` im
-selben Supervisor-Update ausschließlich `gh` beziehungsweise `github-cli` aus
-`packages`, erhält fremde Pakete und Befehle und setzt den verwalteten
-Bootbefehl an die erste Stelle. Der Normalstart des persistenten `gh` benötigt
-dadurch weder APT noch Netzwerkzugriff. Fremde Add-on-Pakete bleiben davon
-unberührt und begrenzen gegebenenfalls die vollständige Offline-Fähigkeit.
+| Responsibility | Role |
+|---|---|
+| scope, priorities, releases | repository maintainers |
+| implementation and review | project development |
+| add-on options, lifecycle, audit, backup | Home Assistant operator |
+| real acceptance under TC-012 | reference-system operator |
 
-Git und GitHub sind ausschließlich Ablage und Verteilweg des versionierten
-Installationsprojekts. Sie sind weder Runtime-Persistenz noch Backup. Die
-private Runtime liegt unter `HACP_RUNTIME_ROOT`; die reale lokale `MEMORY.md`
-liegt getrennt im persistenten Workspace.
+## In scope
 
-## Ziel und Nutzen
+- REQ-F-001 through REQ-O-004 and AC-001 through AC-012;
+- `install`, `boot`, and read-only `audit`;
+- immutable runtime generations, manifests, verified tools, and managed links;
+- selective Supervisor package transition and Git helper migration;
+- neutral manual-memory templates;
+- automated tests, security scan, operations, deployment, and acceptance docs.
 
-Nach Neustart, Add-on-Update oder Container-Neuerstellung sollen ohne erneute
-Anmeldung und ohne Chatimport verfügbar sein:
+## Out of scope
 
-- native, fortsetzbare Codex-Sitzungen,
-- Codex-Anmeldung und -Konfiguration,
-- GitHub-CLI-Anmeldung und -Konfiguration,
-- geprüfte Codex- und GitHub-CLI-Programme,
-- Projekte und private Memory-Datei im persistenten Workspace,
-- Studio Code und Erweiterungen über die bereits vorhandene
-  Add-on-Persistenz.
+- modifying or distributing Home Assistant, Studio Code Server, Codex, or
+  GitHub CLI;
+- automatic CLI upgrades during startup;
+- storing projects, chats, credentials, or populated memory in Git;
+- unencrypted runtime backup;
+- restoring native sessions from Markdown exports.
 
-## Rollen
+## Success criteria
 
-| Rolle | Verantwortliche Gruppe | Verantwortung |
+- TC-001 through TC-017 and TC-SEC-001 pass as applicable.
+- A real container lifecycle preserves state with no new sign-in or manual
+  repair.
+- Unknown or damaged state produces `BLOCK` without destructive cleanup.
+- Publication contains no confidential state and has explicit approval.
+
+## Risks
+
+| ID | Risk | Control |
 |---|---|---|
-| Auftrag und Prioritäten | Repository-Projektpflege | Umfang, Anforderungen und Releases |
-| Nutzer | Home-Assistant-Betreiber | lokale Installation und Nutzung |
-| Betrieb | Home-Assistant-Betreiber | Add-on-Optionen, Audit, Neustart und Backup |
-| Konto und Credentials | jeweiliger Kontoinhaber | Anmeldung, Rotation und Sperrung |
-| Abnahme | Betreiber des Referenzsystems | TC-012 und Freigabe des Betriebszustands |
-| Memory-Pflege | Codex nach lokaler Regel, bestätigt durch Nutzer | verdichteten Kontext aktuell und secret-frei halten |
+| RISK-001 | Restart before successful installation loses container-only state. | Require successful authenticated audit first. |
+| RISK-002 | Concurrent state changes produce an inconsistent copy. | Close Codex processes and verify source stability. |
+| RISK-003 | A conflicting path is overwritten. | Fail closed and preserve it. |
+| RISK-004 | Server-side authentication expires. | Audit and controlled reauthentication. |
+| RISK-005 | Persistent storage is damaged. | External encrypted backup and verified restore. |
+| RISK-006 | Secrets enter Git or diagnostics. | Exclusions, scans, neutral fixtures, and review. |
+| RISK-007 | Persisted CLI tools become incompatible. | Explicit verified upgrade/rollback workflow under BL-005. |
 
-## Umfang
+## Acceptance
 
-### Im Projekt
-
-- Anforderungen REQ-F-001 bis REQ-O-004,
-- Shell-Implementierung für `install`, `boot` und `audit`,
-- automatische, deduplizierte Integration in `init_commands`,
-- atomare Supervisor-Transition für das einmalige `gh`-Bootstrap-Paket bei
-  unverändertem Erhalt fremder Pakete und Befehle,
-- Standardziel `/data/codex-persistence`,
-- Referenzbeispiel `/config/Codex/.runtime`,
-- neutrale Memory-Vorlage ohne reale Inhalte,
-- isolierte Integrations-, Konflikt-, Integritäts- und Security-Tests,
-- Betriebs-, Deployment- und Abnahmedokumentation.
-
-### Nicht im Projekt
-
-- Persistenzimplementierung für Studio Code und Erweiterungen; sie besteht
-  bereits unter `/data/vscode`,
-- automatische Installation oder Anmeldung von Benutzerkonten,
-- echte Anmeldedaten, Sessions, Datenbanken oder reale Memory-Inhalte im
-  Repository,
-- automatischer Merge konkurrierender Runtime-Bestände,
-- automatisches Upgrade persistierter CLI-Programme während `boot`,
-- unverschlüsselte Runtime-Sicherung,
-- Chatwiederherstellung aus Markdown-Exporten.
-
-## Erfolgskriterien
-
-Die fachliche Abnahme verwendet AC-001 bis AC-012 aus
-`docs/ANFORDERUNGEN.md`. Der zentrale Systemnachweis TC-012 umfasst einen
-realen Add-on-Neustart und eine Container-Neuerstellung. Kein fehlender Chat,
-kein geänderter Projektzustand, keine erneute Anmeldung und kein manueller
-Startbefehl sind zulässig. Nach `install` sind `gh` und `github-cli` nicht mehr
-als Add-on-Paket konfiguriert, der verwaltete Bootbefehl steht zuerst und das
-persistierte `gh` startet ohne APT- oder Netzwerkzugriff. Die persistente
-Add-on-Git-Konfiguration enthält für GitHub und Gist jeweils das festgelegte
-Reset-plus-Helper-Paar, ohne andere Einstellungen zu verlieren.
-
-## Annahmen
-
-| ID | Aussage | Nachweis |
-|---|---|---|
-| ANN-001 | Der konfigurierte Zielpfad bleibt über Neustart, Update und Container-Neuerstellung persistent. | reale TC-012-Abnahme |
-| ANN-002 | `init_commands` laufen vor `code-server` mit den benötigten Rechten. | Add-on-Quellcode und reale Startabnahme |
-| ANN-003 | Studio Code und Erweiterungen bleiben unabhängig unter `/data/vscode` persistent. | Add-on-Vertrag und TC-012 |
-| ANN-004 | Das Add-on verarbeitet eine nicht leere `packages`-Liste über APT vor `init_commands`; eine leere Liste überspringt diesen Schritt. | gepinnter Add-on-Quellcode, TC-016 und TC-012 |
-
-## Risiken
-
-| ID | Risiko | Maßnahme |
-|---|---|---|
-| RISK-001 | Neustart vor erfolgreichem `install` verliert möglicherweise den einzigen `/root`-Bestand. | Vor Neustart erfolgreichen Auth-Audit verlangen. |
-| RISK-002 | Aktive Codex-Prozesse verändern Sessions oder Datenbanken während der Kopie. | Codex-Prozess blockiert `install`; stabile Mehrfachprüfung. |
-| RISK-003 | Runtime oder reale Memory-Inhalte gelangen in Git oder Spiegelungen. | strikte Speichergrenzen, Ausschlüsse und Security-Scan. |
-| RISK-004 | Persistierte Anmeldung läuft serverseitig ab. | Status prüfen und betroffene CLI kontrolliert erneut anmelden. |
-| RISK-005 | Persistenter Home-Assistant-Speicher wird beschädigt. | verschlüsseltes Backup und geprüfter Restore außerhalb des Containervertrags. |
-| RISK-006 | Ein fremdes verbleibendes Add-on-Paket benötigt vor `init_commands` APT oder Netzwerk und verhindert einen Offline-Start. | fremde Pakete nie automatisch verändern; Restrisiko anzeigen und Betreiberentscheidung dokumentieren. |
-| RISK-007 | Persistierte CLI-Programme veralten oder werden mit einem späteren Container inkompatibel. | expliziter geprüfter Upgrade-/Rollback-Ablauf gemäß BL-005; kein Upgrade in `boot`. |
-
-## Ausstehender Nachweis
-
-Die technische Basis,
-Pakettransition und der gehärtete Supervisor-Vertrag sind einschließlich
-TC-016 isoliert validiert. Runtime-Migration und Add-on-Neustart sind bestätigt; Host-Neustart; Add-on-Update/Container-Neuerstellung als zukünftiger Regressionstest bleiben offen.
-
-## Freigabe
-
-- [x] Auftrag, Umfang und Nicht-Ziele bestätigt
-- [x] Anforderungen und Akzeptanzkriterien prüfbar dokumentiert
-- [x] Schutzbedarf und Sicherheitsgrenzen bestätigt
-- [x] Basisimplementierung und bisherige isolierte Tests erfolgreich
-- [x] Pakettransition im Skript implementiert
-- [x] automatisierter Supervisor-Nachweis TC-016 erfolgreich
-- [ ] reale Referenzabnahme TC-012 erfolgreich
-- [ ] öffentliche Freigabe nach Public-Release-Check erteilt
+- [x] Scope, requirements, security boundary, and architecture approved.
+- [x] Implementation, isolated tests, TC-016, and TC-017 completed.
+- [x] Real installation and add-on restart accepted.
+- [x] Real add-on update, container replacement, and subsequent restart accepted.
+- [x] Publication review, tag, and prerelease approved.
+- [ ] Home Assistant host reboot accepted under TC-012.
