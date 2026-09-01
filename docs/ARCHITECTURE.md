@@ -101,5 +101,5 @@ Each managed key is the ordered pair of an empty reset value and the persistent
 
 The reference installation passed initial installation, add-on restart, a real
 Studio Code Server update from `6.0.1` to `7.0.0` with container
-replacement, and a subsequent container restart. Host-reboot evidence remains
-open and is not implied by those results.
+replacement, a subsequent container restart, and a complete Home Assistant
+host cold start.

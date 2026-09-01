@@ -10,7 +10,7 @@
 | Ownership and priorities | Repository maintainers |
 | Operational acceptance | Operator of the Home Assistant reference system |
 | First beta target | 2026-07-30 |
-| Status | Installation, add-on restart, update `6.0.1` to `7.0.0`, container replacement, and subsequent restart accepted; host reboot pending |
+| Status | Installation, add-on restart, update `6.0.1` to `7.0.0`, container replacement, subsequent restart, and Home Assistant host cold start accepted |
 | Visibility | Published community-beta source repository |
 
 ## Scope references
@@ -41,4 +41,4 @@ empty placeholder documents are intentionally not retained.
 - [x] Real add-on update from `6.0.1` to `7.0.0`, container replacement,
       and subsequent container restart accepted under TC-012
 - [x] Public-beta publication and release controls approved
-- [ ] Home Assistant host reboot accepted under TC-012
+- [x] Home Assistant host cold start accepted under TC-012

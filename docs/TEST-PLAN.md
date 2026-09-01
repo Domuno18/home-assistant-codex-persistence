@@ -44,8 +44,8 @@ the Home Assistant reference system.
 - **Tolerance:** no missing session, changed project state, repeated sign-in,
   helper setup, or manual link repair.
 - **Status:** installation and add-on restart passed; update `6.0.1` to
-  `7.0.0`, container replacement, and subsequent container restart passed;
-  Home Assistant host reboot remains pending.
+  `7.0.0`, container replacement, subsequent container restart, and complete
+  Home Assistant host cold start passed.
 
 ## Execution
 

@@ -7,7 +7,7 @@
 | AP-100 | Charter, user stories, requirements, and domain model | US-001–US-003, all REQ and AC IDs | document and traceability review | complete |
 | AP-200 | Architecture, interfaces, security model, and decisions | integration, quality, and security requirements | architecture and security review | complete |
 | AP-300 | Portable `install`, `boot`, `audit`, tools, helpers, and Supervisor integration | functional and operational requirements | TC-001–TC-010, TC-016, TC-017 | complete |
-| AP-400 | Automated, security, and real lifecycle evidence | all mandatory requirements | TC-SEC-001 and TC-012–TC-017 | complete except host reboot |
+| AP-400 | Automated, security, and real lifecycle evidence | all mandatory requirements | TC-SEC-001 and TC-012–TC-017 | complete |
 | AP-500 | User, operations, deployment, release, and handover documentation | REQ-F-003, REQ-F-004, REQ-I-003, operational requirements | documentation review | complete |
 
 ## Deliverables
@@ -29,4 +29,4 @@
 - [x] Automated tests and security scans pass.
 - [x] Installation, add-on restart, real update, container replacement, and
       subsequent container restart are accepted.
-- [ ] Home Assistant host-reboot evidence remains open under BL-001.
+- [x] Home Assistant host cold start is accepted under BL-001 and TC-012.
