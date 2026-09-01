@@ -1,82 +1,105 @@
-# Architecture overview
+# Detailed architecture
 
-## Goal
+## Architecture goals
 
-The add-on container is disposable; the engineering workspace is not. The
-project keeps private Codex and GitHub state in persistent Home Assistant
-storage while preserving the standard paths expected by the existing tools.
+1. Preserve native Codex and GitHub CLI state across disposable-container
+   lifecycle events.
+2. Activate only complete and verified runtime generations.
+3. Restore standard paths before `code-server` starts.
+4. Preserve unexpected state and fail closed.
+5. Keep projects, add-on-owned persistence, and real memory outside the runtime.
+6. Perform no network download or executable upgrade during normal startup.
 
-## Storage model
+## Storage layout
 
 ```text
-Home Assistant persistent storage
-├── private runtime
-│   ├── codex-home       sessions, sign-in, config, native state
-│   ├── gh               GitHub CLI sign-in
-│   ├── tools            verified codex and gh executables
-│   ├── bootstrap        startup/audit script
-│   └── state            ownership, generation, and checksums
-└── workspace
-    ├── projects
-    └── Memories         optional human-maintained context
+HACP_RUNTIME_ROOT/
+├── .hacp-runtime
+├── bootstrap/ha-codex-persistence.sh
+├── generations/<id>/
+│   ├── codex-home/
+│   ├── gh/
+│   ├── tools/bin/{codex,gh}
+│   └── manifests/
+└── current -> generations/<id>
 
-disposable add-on container
-├── /root/.codex      -> private runtime/codex-home
-├── /root/.config/gh  -> private runtime/gh
-├── /usr/local/bin/codex -> private runtime tool
-└── /usr/local/bin/gh    -> private runtime tool
+/root/.codex       -> HACP_RUNTIME_ROOT/current/codex-home
+/root/.config/gh   -> HACP_RUNTIME_ROOT/current/gh
+managed tool links -> HACP_RUNTIME_ROOT/current/tools/bin/*
 ```
 
-Studio Code and extensions remain under the add-on's existing `/data/vscode`
-storage. The add-on also continues to own `/data/git/.gitconfig`.
+The runtime root and active generation use mode `0700`. Projects and manual
+memory remain in an independent persistent workspace. Studio Code and
+extensions remain under the add-on's native `/data/vscode` persistence.
 
-## Lifecycle
+## Components
 
-### Install
+| ID | Component | Responsibility |
+|---|---|---|
+| ARC-001 | installation controller | validate, copy stable state, create manifests, and prepare a generation |
+| ARC-002 | generation store | retain complete immutable runtime generations |
+| ARC-003 | bootstrap controller | verify active state and restore links before `code-server` |
+| ARC-004 | audit adapter | report runtime, integrity, helper, and optional auth state without mutation |
+| ARC-005 | workspace/memory boundary | keep projects and real memory separate from private runtime and examples |
+| ARC-006 | Supervisor/Git adapter | perform narrow package, startup-command, and helper changes |
 
-`install` is the only one-time migration step. It requires explicit
-confirmation, rejects active Codex processes, verifies stable sources, copies
-the private state, records checksums, registers startup integration, and
-activates only a fully verified generation.
+## Install sequence
 
-### Startup
+1. Require explicit `HACP_INSTALL_OK=YES` and no active Codex process.
+2. Resolve and validate the persistent runtime root.
+3. Validate file-backed Codex and GitHub authentication.
+4. Resolve Codex and `gh`, check regular-file boundaries, version, and
+   architecture, then create checksums.
+5. Copy native state and tools into a new generation while verifying source
+   stability.
+6. Create and verify manifests and neutral memory setup.
+7. Compare current Supervisor options, remove only `gh`/`github-cli`, place
+   the managed boot command first, write, and verify by read-back.
+8. Migrate only supported GitHub and Gist credential-helper values.
+9. Mark the generation ready, activate it atomically, and restore managed links.
 
-The managed add-on startup command restores the four standard container paths
-before `code-server` starts. Startup is idempotent, performs no tool upgrade,
-and blocks unknown conflicting state.
+Repeated installation upgrades only the reviewed bootstrap and managed control
+plane when the existing active generation passes every invariant.
 
-### Audit
+## Package lifecycle and offline boundary
 
-`audit` is read-only. It verifies the active generation, paths, permissions,
-checksums, session presence, memory guidance, Git credential helpers, and
-optionally the two CLI authentication states.
+The add-on package `gh` is a one-time bootstrap source. After a verified
+persistent executable exists, installation removes only `gh` or
+`github-cli` from `packages`. Unrelated packages remain untouched and may
+still impose their own network requirements. Persisted program upgrades are a
+separate, explicit operation under BL-005 and never occur in `boot`.
 
-## Memory mechanisms
+## Boot sequence
 
-The standard mechanism is manual file-based memory. Installation creates only missing `Memories/AGENTS.md` and `Memories/MEMORY.md` files and adds one managed block to the effective global Codex `AGENTS` file. This setup is disabled only when installation explicitly uses `HACP_MEMORY_SETUP=NO`. Codex discovers the global guidance at session start; the block instructs Codex to read the two manual files. The bootstrap itself does not read them, and the project implements no memory engine or technical include mechanism.
+1. Verify runtime claim, active marker, generation path, manifests, modes,
+   executable checksums, and versions.
+2. Verify the managed Supervisor command and exact Git helper contract.
+3. Reject unexpected non-disposable container paths without deleting them.
+4. Remove only narrowly defined disposable fresh-container IPC/temp paths.
+5. Restore Codex, GitHub CLI, and tool links atomically.
+6. Return `OK result active`; otherwise return `BLOCK`.
 
-The installer does not enable `[features] memories = true`. If an operator enables Codex-managed local Memories separately, their configuration and state remain persistent because the complete Codex home is preserved. The two mechanisms have no synchronization, deduplication, conflict resolution, import, or merge logic.
+## Audit sequence
 
-## GitHub credential integration
+`audit` performs the same ownership, integrity, link, tool, startup, and Git
+helper checks without mutation. With `HACP_CHECK_AUTH=YES`, it also invokes
+the supported Codex and GitHub status commands without printing credentials.
 
-The project does not replace the global Git configuration. It atomically
-manages only the credential helpers for `github.com` and `gist.github.com` so
-HTTPS Git operations use the persistent GitHub CLI sign-in. Unknown custom
-helpers cause a fail-closed result.
+## Supervisor and Git configuration
 
-## Failure model
+Supervisor changes use GET, comparison, POST, and GET read-back. Concurrent
+changes abort before the write. The add-on-owned `/data/git/.gitconfig`
+remains outside the runtime. Only these keys are managed:
 
-Potentially destructive ambiguity always results in `BLOCK`. The project does
-not merge unknown directories, replace foreign symlinks, trust unstable source
-data, activate programs with mismatched checksums, or silently overwrite custom
-Git helpers.
+- `credential.https://github.com.helper`
+- `credential.https://gist.github.com.helper`
 
-## Repository boundary
+Each managed key is the ordered pair of an empty reset value and the persistent
+`gh auth git-credential` helper. Unknown custom values block.
 
-The Git repository contains the installer, tests, documentation, and neutral
-templates only. The private runtime, real sessions, credentials, projects, and
-populated memories are never copied into the repository.
+## Lifecycle evidence
 
-For the detailed engineering architecture and traceability records, see the
-remaining documents in this directory. Their English migration is part of the
-public-beta release gate.
+The reference installation passed initial installation, add-on restart, a real
+Studio Code Server update from `6.0.1` to `7.0.0` with container
+replacement, and a subsequent container restart. Host-reboot evidence remains
+open and is not implied by those results.

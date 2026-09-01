@@ -13,6 +13,13 @@ All notable public changes are documented here. Versions follow Semantic Version
   replacement, and subsequent restart as done.
 - Added regression tests for the English-only public documentation gate and
   lifecycle-backlog status.
+- Consolidated each topic into one canonical document, renamed engineering
+  records to clear English filenames, removed duplicate guides, obsolete
+  publication checklists, and empty non-applicable model/template files, and
+  added regression checks for obsolete paths and broken relative links.
+- Folded unique operational guidance into `docs/INSTALLATION.md`, assumptions
+  into the project charter, and release-note maintenance into the changelog;
+  removed the superseded intake, deployment, and release-note documents.
 
 ## 0.9.0-beta.2 — 2026-08-09
 

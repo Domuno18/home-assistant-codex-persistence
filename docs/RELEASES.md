@@ -53,11 +53,11 @@ never part of a release.
 
 ## Release procedure
 
-1. Update `VERSION`, the program version, this policy, `CHANGELOG.md`, and
-   `RELEASE_NOTES.md`.
+1. Update `VERSION`, the program version, this policy, and `CHANGELOG.md`.
 2. Run all validation and security gates.
 3. Commit the complete candidate and obtain explicit release approval.
 4. `./scripts/release.sh` creates the local artifact and annotated tag.
 5. Inspect the artifact and manifest.
 6. Push the reviewed tag to the public repository only after explicit release approval.
-7. Create and inspect the GitHub prerelease as a separately approved action.
+7. Create the GitHub prerelease from the matching `CHANGELOG.md` section and
+   inspect it as a separately approved action.

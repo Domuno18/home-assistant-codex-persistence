@@ -43,8 +43,8 @@
 - Remote repositories stay private by default.
 - Public visibility requires the documented checklist in `docs/SECURITY.md`
   and explicit owner approval.
-- Create releases only through `./release.sh`; deployment remains separate as
-  described in `DEPLOY.md`.
+- Create releases only through `./release.sh`; installation remains a
+  separate operator action described in `docs/INSTALLATION.md`.
 - Preserve unrelated existing changes.
 
 ## Language and quality

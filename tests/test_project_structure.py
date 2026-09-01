@@ -25,13 +25,13 @@ class ProjectStructureTest(unittest.TestCase):
 
     def test_core_documentation_exists(self) -> None:
         required = (
-            "docs/PROJEKTAUFTRAG.md",
-            "docs/ANFORDERUNGEN.md",
-            "docs/DOMAENENMODELL.md",
-            "docs/ARCHITEKTUR.md",
-            "docs/PROJEKTSTRUKTURPLAN.md",
-            "docs/TESTKONZEPT.md",
-            "docs/NACHWEISMATRIX.md",
+            "docs/PROJECT-CHARTER.md",
+            "docs/REQUIREMENTS.md",
+            "docs/DOMAIN-MODEL.md",
+            "docs/ARCHITECTURE.md",
+            "docs/PROJECT-PLAN.md",
+            "docs/TEST-PLAN.md",
+            "docs/EVIDENCE-MATRIX.md",
             "docs/SECURITY.md",
         )
         for relative in required:
@@ -40,15 +40,19 @@ class ProjectStructureTest(unittest.TestCase):
 
     def test_required_optional_models_are_active(self) -> None:
         mapping = {
-            "isa95": "docs/ISA95-MODELL.md",
-            "mathematical_model": "docs/MATHEMATISCHES-MODELL.md",
-            "external_interfaces": "docs/SCHNITTSTELLEN.md",
+            "isa95": "docs/ISA95-MODEL.md",
+            "mathematical_model": "docs/MATHEMATICAL-MODEL.md",
+            "external_interfaces": "docs/INTERFACES.md",
         }
         for flag, relative in mapping.items():
             if self.data["scope"].get(flag):
-                text = (ROOT / relative).read_text(encoding="utf-8")
                 with self.subTest(flag=flag):
-                    self.assertNotIn("\n**Nicht anwendbar:**", text)
+                    path = ROOT / relative
+                    self.assertTrue(path.is_file())
+                    self.assertNotIn(
+                        "\n**Not applicable:**",
+                        path.read_text(encoding="utf-8"),
+                    )
 
     def test_public_docs_are_english(self) -> None:
         if self.data["project"]["repository_visibility"] != "public":
@@ -71,6 +75,38 @@ class ProjectStructureTest(unittest.TestCase):
         self.assertIn("[ ] BL-001 — Complete the remaining TC-012 evidence", backlog)
         self.assertIn("[x] BL-016 — Real Studio Code Server update", backlog)
         self.assertNotIn("future regression test", backlog.lower())
+
+    def test_obsolete_or_duplicate_docs_are_absent(self) -> None:
+        obsolete = (
+            "DEPLOY.md",
+            "INTAKE.md",
+            "RELEASE_NOTES.md",
+            "docs/ARCHITEKTUR.md",
+            "docs/BETRIEB.md",
+            "docs/PROJEKTAUFNAHME.md",
+            "docs/ISA95-MODELL.md",
+            "docs/MATHEMATISCHES-MODELL.md",
+            "docs/PUBLIC_BETA_ROADMAP.md",
+            "docs/arbeitspakete/AP-VORLAGE.md",
+            "docs/entscheidungen/ADR-VORLAGE.md",
+        )
+        for relative in obsolete:
+            with self.subTest(relative=relative):
+                self.assertFalse((ROOT / relative).exists())
+
+    def test_relative_markdown_links_resolve(self) -> None:
+        link_pattern = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+        for source in sorted(ROOT.rglob("*.md")):
+            for target in link_pattern.findall(source.read_text(encoding="utf-8")):
+                target = target.strip().strip("<>")
+                if not target or target.startswith(("#", "http://", "https://", "mailto:")):
+                    continue
+                path_text = target.split("#", 1)[0]
+                if not path_text:
+                    continue
+                resolved = (source.parent / path_text).resolve()
+                with self.subTest(source=source.relative_to(ROOT), target=target):
+                    self.assertTrue(resolved.exists())
 
 
 if __name__ == "__main__":

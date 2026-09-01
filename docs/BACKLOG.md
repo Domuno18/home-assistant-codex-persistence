@@ -13,6 +13,10 @@
 
 ## Later improvements
 
+- [ ] BL-017 — Obtain an independent installation report; until then, treat
+      the documented reference environment as the only proven environment.
+- [ ] BL-018 — Collect additional CPU architecture, Home Assistant version,
+      and persistent-storage layout reports from community testers.
 - [ ] BL-005 — Design a verified, atomic upgrade and rollback workflow for the
       persisted Codex and GitHub CLI programs. Verify version, checksum,
       architecture, and compatibility before activation; remove any temporary

@@ -3,9 +3,8 @@
 This guide is for beta testers who already run the Home Assistant Studio Code
 Server community add-on.
 
-This guide and the project README contain the complete user-facing installation
-path. The German engineering records elsewhere in the repository are not
-required for installation or normal operation.
+This is the canonical installation, normal-operation, troubleshooting, and
+recovery guide. The README provides only a concise project introduction.
 
 ## Before you start
 
@@ -65,8 +64,6 @@ gh repo clone Domuno18/home-assistant-codex-persistence \
 
 cd /config/home-assistant-codex-persistence
 ```
-
-Private beta testers must first be invited as repository collaborators.
 
 ## 4. Close Codex and install once
 
@@ -153,3 +150,60 @@ When reporting a result, include only:
 
 Do not attach the runtime, authentication files, sessions, databases, or real
 memory content.
+
+## Verified lifecycle evidence
+
+The reference system has passed:
+
+- initial installation and add-on restart;
+- Studio Code Server update from `6.0.1` to `7.0.0`, including container
+  replacement;
+- a subsequent container restart.
+
+Codex sessions, manual memory, both sign-ins, persisted CLI programs, Git
+credential helpers, projects, and the managed startup entry remained
+available. Home Assistant host-reboot evidence remains open.
+
+## Troubleshooting
+
+### `boot` reports not installed
+
+Do not create links manually. Complete the guarded installation or restore a
+separately verified encrypted backup.
+
+### A path or symlink conflicts
+
+Do not delete it blindly. Inventory the path, determine its owner and origin,
+and keep it unchanged until a deliberate resolution is approved.
+
+### A persisted executable fails its checksum
+
+Do not run it. Normal startup never upgrades tools; use the future verified
+upgrade and rollback workflow tracked as BL-005.
+
+### Startup still requires APT or network access
+
+Inspect unrelated packages in the add-on configuration. The installer removes
+only the one-time `gh` or `github-cli` bootstrap package.
+
+### Authentication is invalid
+
+Close affected processes and reauthenticate only the affected CLI through the
+documented file-backed device flow.
+
+### `git-helper` reports an unknown value
+
+The project preserves custom helper configuration and blocks automatic
+migration. Review the value and decide explicitly whether it may be replaced.
+
+### Supervisor options cannot be updated
+
+Resolve API availability, permission, or concurrent configuration changes
+before retrying. The installer must not activate a runtime until read-back
+matches the intended narrow update.
+
+## Backup and recovery
+
+The private runtime contains credentials and native sessions. Never place it in
+Git or an unencrypted mirror. Backup and restore require a separately reviewed
+encrypted workflow, followed by a successful authenticated audit.

@@ -96,143 +96,15 @@ environment.
 Other architectures and hardware combinations are welcome as community test
 reports.
 
-## Prerequisites
+## Installation and operation
 
-Before running the installer:
+Use the canonical [installation and operation guide](docs/INSTALLATION.md).
+It contains prerequisites, device sign-in, the one-time installation command,
+audit, normal operation, memory configuration, lifecycle evidence,
+troubleshooting, and recovery guidance.
 
-1. Install and start the Home Assistant **Studio Code Server** community
-   add-on.
-2. Install the OpenAI Codex extension in Studio Code.
-3. Add package `gh` to the add-on configuration and restart the add-on once.
-4. Sign in to Codex and GitHub CLI using device authentication.
-5. Clone this repository into persistent storage below `/config`.
-
-The installer later removes only the temporary `gh`/`github-cli` bootstrap
-package after it has verified the persistent copy. It preserves all unrelated
-packages and startup commands.
-
-## Device sign-in
-
-Codex must use file-backed credential storage because a container-local
-keyring is not persistent:
-
-```sh
-CODEX_HOME=/root/.codex \
-codex -c 'cli_auth_credentials_store="file"' login --device-auth
-
-CODEX_HOME=/root/.codex \
-codex -c 'cli_auth_credentials_store="file"' login status
-```
-
-GitHub CLI must likewise store its credential below its configured directory:
-
-```sh
-(
-  unset GH_TOKEN GITHUB_TOKEN GH_ENTERPRISE_TOKEN GITHUB_ENTERPRISE_TOKEN
-  GH_CONFIG_DIR=/root/.config/gh \
-    gh auth login \
-      --hostname github.com \
-      --git-protocol https \
-      --web \
-      --insecure-storage
-  GH_CONFIG_DIR=/root/.config/gh \
-    gh auth status --active --hostname github.com
-)
-```
-
-GitHub displays a device code. If no browser opens, visit
-<https://github.com/login/device>, enter the code, and authorize GitHub CLI.
-Never print the stored credential with `--show-token`.
-
-## Install once
-
-Close **all Codex chats and Codex processes** before installation. Then run the
-following commands in a normal Studio Code terminal:
-
-```sh
-GH_CONFIG_DIR=/root/.config/gh \
-gh repo clone Domuno18/home-assistant-codex-persistence \
-  /config/home-assistant-codex-persistence
-
-cd /config/home-assistant-codex-persistence
-HACP_INSTALL_OK=YES sh ./scripts/ha-codex-persistence.sh install
-```
-
-The default private runtime is `/data/codex-persistence`. Advanced users may
-select another narrow persistent path below `/data`, `/config`, or `/share`:
-
-```sh
-HACP_RUNTIME_ROOT=/config/Codex/.runtime \
-HACP_INSTALL_OK=YES \
-sh ./scripts/ha-codex-persistence.sh install
-```
-
-The target must be outside every Git checkout. The installer claims it with a
-strict ownership marker and refuses unknown non-empty directories, symlinked
-paths, active Codex processes, unstable source data, and unverifiable sign-in
-state.
-
-After a successful installation, simply restart the add-on whenever needed.
-There is no `prepare` step and no manual chat backup or restore workflow.
-
-## Verify the installation
-
-Run the read-only audit once after installation and optionally after a restart
-or container lifecycle event:
-
-```sh
-HACP_CHECK_AUTH=YES \
-sh /data/codex-persistence/bootstrap/ha-codex-persistence.sh audit
-```
-
-The expected result contains only `OK` checks and ends with:
-
-```text
-OK result active
-```
-
-For a custom runtime root, invoke the bootstrap script below that root.
-
-## What stays persistent
-
-| Data | Default location | Owner |
-|---|---|---|
-| Studio Code and extensions | `/data/vscode` | Studio Code Server add-on |
-| global Git configuration | `/data/git/.gitconfig` | add-on; this project manages only two GitHub credential-helper keys |
-| Codex home and sessions | `/data/codex-persistence/current/codex-home` | Codex and this project |
-| GitHub CLI configuration | `/data/codex-persistence/current/gh` | GitHub CLI and this project |
-| persisted CLI executables | `/data/codex-persistence/current/tools` | this project |
-| projects and manual memory | persistent workspace below `/config` | operator |
-
-The private runtime contains credentials and chat state. Never commit, mirror,
-or attach it to an issue.
-
-## Sessions and memories
-
-The repository implements one memory mechanism and preserves a second optional mechanism. They are independent.
-
-### Included: manual file-based memory
-
-As part of a standard installation, the installer creates missing
-`Memories/AGENTS.md` and `Memories/MEMORY.md` files in the persistent workspace.
-It also adds one managed block to the effective global `AGENTS.override.md` or
-`AGENTS.md` in the persistent Codex home. This setup is skipped only when the
-operator explicitly installs with `HACP_MEMORY_SETUP=NO`.
-
-Codex automatically discovers that global guidance when a session starts. The managed block instructs Codex to read the manual rules first and the manual memory second. The bootstrap does not read either file, and this project implements no memory engine or technical include mechanism. Existing files are preserved and real memory content is never copied back into this repository.
-
-### Optional: Codex-managed local Memories
-
-The installer does **not** add the following setting:
-
-```toml
-[features]
-memories = true
-```
-
-An operator may enable it separately in the persistent `config.toml`. Because this project persists the complete Codex home, the configuration and any Codex-managed `memories/` state remain available after container restarts.
-
-There is no synchronization, deduplication, conflict resolution, automatic import, or merge between Codex-managed Memories and the manual `MEMORY.md`. See [the manual memory guide](examples/memory/README.md) and the [official Codex Memories documentation](https://learn.chatgpt.com/docs/customization/memories#configure-local-memories).
+Do not install from abbreviated commands copied into issues or discussions.
+The guarded procedure and its safety conditions belong to that guide.
 
 ## Community beta
 
@@ -250,10 +122,15 @@ All public user and engineering documentation is maintained in English.
 
 - [Installation and operations](docs/INSTALLATION.md)
 - [Architecture](docs/ARCHITECTURE.md)
+- [Project charter](docs/PROJECT-CHARTER.md)
+- [Requirements](docs/REQUIREMENTS.md)
+- [Domain model](docs/DOMAIN-MODEL.md)
+- [Interfaces](docs/INTERFACES.md)
+- [Test plan](docs/TEST-PLAN.md)
+- [Evidence matrix](docs/EVIDENCE-MATRIX.md)
 - [Detailed security model](docs/SECURITY.md)
 - [Release policy](docs/RELEASES.md)
-- [Public beta roadmap](docs/PUBLIC_BETA_ROADMAP.md)
-- [Release notes](RELEASE_NOTES.md)
+- [Backlog](docs/BACKLOG.md)
 - [Third-party and trademark statement](THIRD_PARTY.md)
 - [Changelog](CHANGELOG.md)
 

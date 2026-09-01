@@ -14,13 +14,13 @@ REQUIRED = (
     "README.md",
     "AGENTS.md",
     "PROJECT-PROFILE.md",
-    "docs/PROJEKTAUFTRAG.md",
-    "docs/ANFORDERUNGEN.md",
-    "docs/DOMAENENMODELL.md",
-    "docs/ARCHITEKTUR.md",
-    "docs/PROJEKTSTRUKTURPLAN.md",
-    "docs/TESTKONZEPT.md",
-    "docs/NACHWEISMATRIX.md",
+    "docs/PROJECT-CHARTER.md",
+    "docs/REQUIREMENTS.md",
+    "docs/DOMAIN-MODEL.md",
+    "docs/ARCHITECTURE.md",
+    "docs/PROJECT-PLAN.md",
+    "docs/TEST-PLAN.md",
+    "docs/EVIDENCE-MATRIX.md",
     "docs/SECURITY.md",
     "scripts/security-scan.sh",
     "scripts/validate.sh",
@@ -68,16 +68,16 @@ def main() -> int:
             errors.append("public_release_allowed must be an explicit Boolean value.")
 
         for key, relative in (
-            ("isa95", "docs/ISA95-MODELL.md"),
-            ("mathematical_model", "docs/MATHEMATISCHES-MODELL.md"),
-            ("external_interfaces", "docs/SCHNITTSTELLEN.md"),
+            ("isa95", "docs/ISA95-MODEL.md"),
+            ("mathematical_model", "docs/MATHEMATICAL-MODEL.md"),
+            ("external_interfaces", "docs/INTERFACES.md"),
         ):
             path = ROOT / relative
             if scope.get(key) and (
                 not path.exists()
-                or "\n**Nicht anwendbar:**" in path.read_text(encoding="utf-8")
+                or "\n**Not applicable:**" in path.read_text(encoding="utf-8")
             ):
-                errors.append(f"{relative} ist laut Intake erforderlich.")
+                errors.append(f"{relative} is required by the confirmed intake.")
 
         docs_text = "\n".join(
             path.read_text(encoding="utf-8", errors="replace")
@@ -93,13 +93,13 @@ def main() -> int:
         open_pattern = re.compile(r"\bOFFEN(?:-|\s*\()")
         relevant_files = [
             ROOT / "PROJECT-PROFILE.md",
-            ROOT / "docs/PROJEKTAUFTRAG.md",
-            ROOT / "docs/ANFORDERUNGEN.md",
-            ROOT / "docs/DOMAENENMODELL.md",
-            ROOT / "docs/ARCHITEKTUR.md",
-            ROOT / "docs/PROJEKTSTRUKTURPLAN.md",
-            ROOT / "docs/TESTKONZEPT.md",
-            ROOT / "docs/NACHWEISMATRIX.md",
+            ROOT / "docs/PROJECT-CHARTER.md",
+            ROOT / "docs/REQUIREMENTS.md",
+            ROOT / "docs/DOMAIN-MODEL.md",
+            ROOT / "docs/ARCHITECTURE.md",
+            ROOT / "docs/PROJECT-PLAN.md",
+            ROOT / "docs/TEST-PLAN.md",
+            ROOT / "docs/EVIDENCE-MATRIX.md",
         ]
         unresolved = [
             str(path.relative_to(ROOT))
