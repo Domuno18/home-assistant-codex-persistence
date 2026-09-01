@@ -54,10 +54,7 @@ class ProjectStructureTest(unittest.TestCase):
                         path.read_text(encoding="utf-8"),
                     )
 
-    def test_public_docs_are_english(self) -> None:
-        if self.data["project"]["repository_visibility"] != "public":
-            self.skipTest("English-only documentation is a public-repository gate")
-
+    def test_project_docs_are_english(self) -> None:
         german_markers = re.compile(
             r"[äöüÄÖÜß]|"
             r"\b(?:anforderungen|arbeitspaket|ausstehend|automatisiert|"
