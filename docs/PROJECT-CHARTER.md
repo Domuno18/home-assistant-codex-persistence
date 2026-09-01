@@ -64,6 +64,17 @@ must block without deletion.
 | RISK-006 | Secrets enter Git or diagnostics. | Exclusions, scans, neutral fixtures, and review. |
 | RISK-007 | Persisted CLI tools become incompatible. | Explicit verified upgrade/rollback workflow under BL-005. |
 
+## Assumptions
+
+- `ANN-001`: The selected runtime root remains persistent across restart,
+  update, and container replacement.
+- `ANN-002`: Supervisor runs `init_commands` with the required permissions
+  before `code-server`.
+- `ANN-003`: Studio Code and extensions remain independently persistent under
+  `/data/vscode`.
+- `ANN-004`: Unrelated add-on packages may require APT or network access
+  before `init_commands` and are outside this project's offline guarantee.
+
 ## Acceptance
 
 - [x] Scope, requirements, security boundary, and architecture approved.

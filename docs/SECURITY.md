@@ -15,7 +15,7 @@
 ## Trust boundaries
 
 ```text
-public/private Git repository
+source repository
         │ project code, tests, docs, neutral examples only
         X no runtime data
         │
@@ -154,8 +154,7 @@ Deleting a value from only the latest working-tree file is not sufficient.
       `THIRD_PARTY.md`; this repository uses MIT.
 - [x] The real reference runtime and workspace remain local.
 - [x] Version and release decision are consistent with `docs/RELEASES.md`.
-- [x] English public user documentation review is complete; supplementary
-      internal engineering records may remain in German.
+- [x] All public user and engineering documentation is maintained in English.
 - [x] The owner has explicitly approved public repository visibility.
 - [x] The owner has explicitly approved the beta tag and GitHub Prerelease.
 
