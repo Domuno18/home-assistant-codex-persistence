@@ -4,7 +4,19 @@ All notable public changes are documented here. Versions follow Semantic Version
 
 ## Unreleased
 
-No changes yet.
+### Documentation correction for 0.9.0-beta.3
+
+- Explain the nested-sandbox failure, the persisted HACP defaults, and the
+  separate effective permissions of local IDE, CLI, and remote chats.
+- Document Full access selection and verification in the next response of the
+  same chat, without requiring a new conversation or container restart.
+- Distinguish configuration audit from real command/file-tool acceptance,
+  and HACP's on-request policy from client-selected approval behavior.
+- Separate Home Assistant current-state API access, direct MariaDB login,
+  and GitHub repository permissions.
+- Correct overbroad access claims; runtime code and existing release archives
+  are unchanged. The current guide and release-page clarification supersede
+  the access guidance bundled in the original beta.3 archives.
 
 ## 0.9.0-beta.3 — 2026-09-13
 

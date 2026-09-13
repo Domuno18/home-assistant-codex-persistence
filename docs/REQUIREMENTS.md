@@ -40,7 +40,7 @@
 | REQ-O-002 | `audit` is read-only and reports runtime, integrity, helper, and optional authentication state without exposing secrets. | AC-002, AC-003, AC-007, AC-008, AC-011, AC-012 |
 | REQ-O-003 | Default and custom runtime roots are documented and constrained to persistent storage. | AC-005, AC-009 |
 | REQ-O-004 | Real lifecycle acceptance records installation, restart, update, container replacement, and host-reboot evidence separately. | AC-001 through AC-006, AC-010, AC-012 |
-| REQ-O-005 | `audit` optionally verifies the effective Codex container-access profile and managed Supervisor startup command without mutation or disclosure. | AC-013 |
+| REQ-O-005 | `audit` optionally verifies the persisted Codex container-access defaults and managed Supervisor startup command without mutation or disclosure; actual chat access requires separate command and file-tool evidence. | AC-013 |
 
 ## Constraints
 
@@ -48,8 +48,10 @@
 - The runtime root must be a narrow persistent path below `/data`, `/config`,
   or `/share`, outside every Git checkout.
 - All Codex processes must be closed during installation or upgrade.
-- Container-access configuration applies to new Codex sessions; an already
-  running session keeps its launch-time permissions.
+- Container-access configuration supplies defaults, not an override of the
+  active chat. Client-selected permissions and approval behavior must be
+  verified in the actual local or remote response. Updating permissions for
+  the same chat does not require discarding its conversation.
 - Installation, add-on restart, add-on update, container replacement,
   subsequent container restart, and Home Assistant host cold-start evidence
   are complete for the reference environment.

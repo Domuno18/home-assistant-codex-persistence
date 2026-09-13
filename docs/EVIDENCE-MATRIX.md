@@ -9,7 +9,7 @@
 | REQ-F-002 | US-001; AC-003, AC-005, AC-009, AC-012 | DOM-R-002, DOM-R-010 | ARC-001, ARC-002, ARC-003, ARC-006 | AP-300, AP-400 | TC-001, TC-008, TC-017, TC-012 | automated and complete real lifecycle acceptance passed |
 | REQ-F-003 | US-001; AC-004, AC-010 | DOM-R-007 | ARC-005 | AP-100, AP-400, AP-500 | TC-012 | complete real lifecycle acceptance passed |
 | REQ-F-004 | US-003; AC-011 | DOM-R-006 | ARC-005 | AP-100, AP-500 | TC-011, TC-012 | template reviewed and real update/container evidence passed |
-| REQ-F-006 | US-004; AC-013 | DOM-O-008, DOM-R-011–DOM-R-013 | ARC-007 | AP-200, AP-300, AP-400, AP-500 | TC-018 | automated; reference-system new-session acceptance pending |
+| REQ-F-006 | US-004; AC-013 | DOM-O-008, DOM-R-011–DOM-R-013 | ARC-007 | AP-200, AP-300, AP-400, AP-500 | TC-018 | automated; same-chat tool acceptance recorded below; client approval override disclosed |
 | REQ-F-005 | US-001; AC-005, AC-010 | DOM-R-005 | ARC-001, ARC-002, ARC-003 | AP-300, AP-400 | TC-001, TC-005, TC-012 | automated plus real update/container evidence |
 | REQ-I-001 | US-001; AC-009, AC-010 | DOM-R-002, DOM-R-009 | ARC-001, ARC-003 | AP-200, AP-300, AP-400 | TC-016, TC-012 | automated plus real update/container evidence |
 | REQ-I-002 | US-001; AC-005, AC-010 | DOM-R-003, DOM-R-004 | ARC-002, ARC-003 | AP-300, AP-400 | TC-001–TC-005, TC-012 | automated plus real update/container evidence |
@@ -44,7 +44,26 @@
 | AC-010 | TC-001, TC-003, TC-016, TC-017, TC-012 |
 | AC-011 | TC-011, TC-012 |
 | AC-012 | TC-001, TC-017, TC-012 |
-| AC-013 | TC-018; reference-system new-session acceptance pending |
+| AC-013 | TC-018; reference same-chat acceptance below (client-selected unrestricted access) |
+
+## Reference same-chat access acceptance — 2026-09-13
+
+After beta.3 installation, the stored-profile audit passed but the existing
+remote chat still failed normal command execution with the nested `bwrap`
+error. The operator selected unrestricted access in the client. The next
+response in the same conversation then passed normal Python execution,
+file-tool creation and modification, content verification, file removal, and
+temporary-directory cleanup. No per-command escalation, new conversation,
+add-on restart, or container restart was needed for these successful checks.
+
+The effective client profile was unrestricted with `approval_policy = "never"`.
+HACP's stored defaults remained `danger-full-access`, `on-request`, and
+user-reviewed approvals. This evidence verifies usable tooling under that
+explicit client selection; it does not attest that HACP changed a running turn
+or that interactive on-request approvals were exercised in this check.
+The authenticated Home Assistant states API was also reachable. No successful
+direct MariaDB login is claimed from that API result. No real sensor values,
+credentials, or chat identifiers are included here.
 
 ## Rules
 

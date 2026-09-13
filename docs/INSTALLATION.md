@@ -112,13 +112,61 @@ approval_policy = "on-request"
 approvals_reviewer = "user"
 ```
 
-The protected add-on container is then the outer isolation boundary. Eligible
-privileged operations still require a user decision in chat. Treat project
-instructions and shell commands as trusted-code inputs. The profile applies
-only to newly started Codex sessions; close and reopen the Codex chat after
-activation.
+The protected add-on container is the outer isolation boundary. HACP writes
+persistent defaults; it does not change a running chat's effective permission
+profile. Treat project instructions and shell commands as trusted-code inputs.
 
-Verify it without changing state:
+### Required Codex access level: local and remote
+
+For this container workaround, the active execution profile must permit
+unrestricted filesystem access: **Full access** (or **unrestricted access**,
+depending on the client), corresponding to `danger-full-access`. A restricted
+`workspace-write` profile still attempts the unavailable nested sandbox.
+This is a permission setting, not a model, reasoning level, or subscription tier.
+
+| Entry point | Operator action | What proves the setting took effect |
+|---|---|---|
+| Codex IDE chat in Studio Code Server | Select Full access in the active chat's permission control. | A normal command and the file-edit tool both work in that chat. |
+| Remote chat connected to the same host | Select Full access for the existing remote task/chat in the controlling client. A host default alone is insufficient evidence. | The next response uses unrestricted access and passes the same tool checks. |
+| Codex CLI | Use `codex --sandbox danger-full-access --ask-for-approval on-request`, or the explicitly configured defaults. | The running session reports the intended permissions and tools succeed. |
+
+Finish the current response after changing the permission setting, then send
+"Test access" in the **same chat**. Keep its conversation and context. Neither a
+new conversation nor a container restart is a prerequisite for this procedure.
+The reference remote chat applied the operator's change on its next response.
+Other client versions must be checked rather than assumed to behave identically.
+If the profile remains restricted, inspect the client selection and any managed
+requirements; restarting the container does not prove those overrides changed.
+
+Filesystem access and approval behavior are separate. HACP sets `on-request`
+and `approvals_reviewer = "user"`, not `never`. These settings do not guarantee
+a confirmation before every command: commands already allowed by Full access
+can run directly. A client permission preset can also change approval behavior.
+In the reference remote check, the client supplied unrestricted access with
+`approval_policy = "never"`; this was the operator's client selection, not an
+HACP setting or a demonstrated requirement. Record the effective profile and
+approval policy separately. Broad technical access does not expand the task
+the operator authorized.
+
+Official background: [Codex approvals and container sandboxing](https://learn.chatgpt.com/docs/agent-approvals-security).
+
+### Verify the running chat, not only the configuration file
+
+Ask the agent in the same chat to:
+
+1. Run `python3 -c 'print("CODEX_ACCESS_TEST_OK")'` through its normal command
+   tool, without a per-command escalation.
+2. Use its normal file-edit tool to create and modify a uniquely named temporary
+   test file; read it back and check the content.
+3. Remove its own test file and verify cleanup.
+
+An approved command running outside the sandbox, or a simple command allowed
+by an existing rule, is not sufficient evidence that normal tooling works.
+A `bwrap: Failed to make / slave: Permission denied` result means the command
+path is still trying the unavailable nested sandbox. Report that path as
+unresolved even if another tool succeeds.
+
+Separately verify the persistent configuration without changing state:
 
 ```sh
 HACP_CHECK_CODEX_ACCESS=YES \
@@ -128,6 +176,26 @@ sh /data/codex-persistence/bootstrap/ha-codex-persistence.sh audit
 The add-on check confirms exactly one managed HACP boot command and rejects the
 retired HACP `rm -rf` command. Audit never repairs Supervisor options; rerun a
 confirmed installation to apply that narrow cleanup.
+
+The access-profile audit reads the stored configuration. It does not inspect
+the active remote turn or execute its command/file tools; a successful audit
+must not be described as end-to-end chat access acceptance.
+
+### Service access is checked separately
+
+Full access permits tools to use the container's available files and network.
+Each service still validates its own credentials and permissions:
+
+- Current sensor values use the authenticated Home Assistant states API.
+  A successful state read proves API access, not a direct SQL login.
+- Home Assistant's Recorder may store history in MariaDB. The agent does not
+  need a MariaDB login to read current states through Home Assistant.
+- Direct SQL work requires a successful MariaDB connection. A password in
+  `secrets.yaml` can be readable while the database rejects that account,
+  source host, or credential; diagnose the actual rejection before claiming
+  SQL access. Never print the password or a credential-bearing database URL.
+- GitHub sign-in and repository permissions are checked independently.
+  File access under the workspace is verified through the tool checks above.
 
 ## 6. Audit
 

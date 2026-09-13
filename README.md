@@ -75,8 +75,12 @@ both sign-ins, both CLI programs, Git credential helpers, and the managed
 startup entry. Authenticated runtime and network cold-start audits passed
 afterward.
 
-`v0.9.0-beta.3` adds the reviewed container-access profile and remains a beta
-until its post-release reference-system checks are recorded.
+`v0.9.0-beta.3` adds the container-access defaults and remains a beta.
+On the reference system, the existing remote chat's command and file tools
+worked after the operator selected Full access and sent the next message.
+No new conversation or container restart was needed. A successful stored-config
+audit alone did not prove that access. Client approval settings are separate;
+see [the required access level and verification](docs/INSTALLATION.md#required-codex-access-level-local-and-remote).
 
 Independent installation feedback remains valuable beta evidence. The
 reference environment has now also passed a complete Home Assistant host cold

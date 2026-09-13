@@ -106,10 +106,15 @@ publication, preserves unrelated settings and metadata, and is idempotent.
 The resulting `danger-full-access` setting means Codex does not attempt a
 second Linux `bwrap` sandbox inside Studio Code Server. Home Assistant add-on
 protection remains the outer isolation boundary. `approval_policy =
-"on-request"` and `approvals_reviewer = "user"` retain user decisions for
-eligible privileged actions. This is not the `--yolo` mode and HACP never
-disables approvals. Only trusted repositories and instructions should be used
-with this profile.
+"on-request"` and `approvals_reviewer = "user"` retain the configured approval
+route for actions that actually require approval. Full access can allow
+commands without an additional prompt; it is not a confirmation gate for every
+write. HACP does not set `approval_policy = "never"`. A client may supply its
+own per-chat access and approval settings, which must be checked independently
+of the persisted defaults. The operator's reference remote selection supplied
+unrestricted access and `never`; that result is not attributed to HACP.
+Only trusted repositories and instructions should be used with this profile.
+Technical permissions do not replace authorization for the task.
 
 ## Read-only audit
 
@@ -118,6 +123,12 @@ checksums, session count, memory guidance, and Git credential helpers without
 mutating them. `HACP_CHECK_AUTH=YES` additionally invokes the two CLI status
 checks. `HACP_CHECK_ADDON_CONFIG=YES` verifies the managed startup command and
 absence of the retired HACP command without changing Supervisor options.
+`HACP_CHECK_CODEX_ACCESS=YES` verifies the persisted configuration only.
+It cannot attest the permissions or successful tool execution of an active
+local or remote chat. Follow the command and file-tool checks in
+[the installation guide](INSTALLATION.md#verify-the-running-chat-not-only-the-configuration-file).
+Home Assistant API access, direct database authentication, and GitHub repository
+permissions are separate evidence.
 
 Diagnostics include only a level, check name, path or logical target, and a
 short result. They must never include file contents, credentials, chat text,

@@ -65,5 +65,5 @@ any invariant violation --> BLOCK without destructive cleanup
 - `RuntimeReady`: runtime trees and tools have passed verification.
 - `RuntimeActivated`: `current` selects the verified generation.
 - `BootstrapConfigured`: the managed startup command is installed.
-- `ContainerAccessConfigured`: the exact access profile was explicitly activated for new sessions.
+- `ContainerAccessConfigured`: persistent access defaults were explicitly set; this does not attest an active chat's effective permissions.
 - `AuditPassed`: all selected read-only checks succeeded.

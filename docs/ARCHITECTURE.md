@@ -100,9 +100,17 @@ metadata. `HACP_CHECK_CODEX_ACCESS=YES` adds a read-only exact-profile check to
 `audit`.
 
 Home Assistant add-on protection remains enabled and supplies the outer
-`HACP_CHECK_ADDON_CONFIG=YES` also verifies exactly one managed boot command
-and the absence of the exact retired HACP `rm -rf` command without mutation.
-container boundary. The profile affects newly started Codex sessions only.
+container boundary. `HACP_CHECK_ADDON_CONFIG=YES` also verifies exactly one
+managed boot command and the absence of the exact retired HACP `rm -rf`
+command without mutation.
+
+The published configuration supplies defaults; the client can select a
+different permission and approval profile for a local or remote chat.
+HACP neither overrides the active turn nor guarantees a new chat will inherit
+its defaults. The operator can update permissions for the existing chat and
+verify the next response without discarding its history. Persisted-config
+validation and actual command/file-tool acceptance are distinct checks.
+See [the operating procedure](INSTALLATION.md#required-codex-access-level-local-and-remote).
 
 ## Supervisor and Git configuration
 
