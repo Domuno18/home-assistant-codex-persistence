@@ -4,8 +4,8 @@ cd "$(dirname "$0")/.."
 
 MODE="${1:-}"
 case "$MODE" in
-  ""|--ci|--release) ;;
-  *) echo "Usage: $0 [--ci|--release]"; exit 2 ;;
+  ""|--ci|--release|--private-release) ;;
+  *) echo "Usage: $0 [--ci|--release|--private-release]"; exit 2 ;;
 esac
 
 echo "Checking shell syntax…"
@@ -25,6 +25,8 @@ python3 -c 'import ast, pathlib, sys; [ast.parse(pathlib.Path(p).read_text(encod
 echo "Checking structure and traceability…"
 if [ "$MODE" = "--release" ]; then
   python3 scripts/validate_project.py --release
+elif [ "$MODE" = "--private-release" ]; then
+  python3 scripts/validate_project.py --private-release
 else
   python3 scripts/validate_project.py
 fi

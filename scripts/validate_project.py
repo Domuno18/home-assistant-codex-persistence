@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate structural invariants of internal project template or a generated project."""
+"""Validate structural invariants of this project repository."""
 
 from __future__ import annotations
 
@@ -32,10 +32,16 @@ TRACE_IDS = ("US-001", "AC-001", "REQ-F-001", "DOM-R-001", "AP-100", "TC-001")
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument(
+    release_group = parser.add_mutually_exclusive_group()
+    release_group.add_argument(
         "--release",
         action="store_true",
-        help="Freigabestatus und offene Platzhalter als harte Gates prüfen",
+        help="öffentlichen Freigabestatus und offene Platzhalter als harte Gates prüfen",
+    )
+    release_group.add_argument(
+        "--private-release",
+        action="store_true",
+        help="privaten Freigabestatus und offene Platzhalter als harte Gates prüfen",
     )
     return parser.parse_args()
 
@@ -108,7 +114,7 @@ def main() -> int:
         ]
         if unresolved:
             message = "Offene Pflichtangaben: " + ", ".join(unresolved)
-            if args.release:
+            if args.release or args.private_release:
                 errors.append(message)
             else:
                 warnings.append(message)
@@ -117,6 +123,10 @@ def main() -> int:
             errors.append("Release requires public_release_allowed = true.")
         if args.release and data.get("meta", {}).get("status") != "approved":
             errors.append("Release requires meta.status = approved in project-definition.json.")
+        if args.private_release and visibility != "private":
+            errors.append("Private release requires repository_visibility = private.")
+        if args.private_release and data.get("meta", {}).get("confirmed") is not True:
+            errors.append("Private release requires meta.confirmed = true in project-definition.json.")
 
     for warning in warnings:
         print(f"WARNUNG: {warning}")

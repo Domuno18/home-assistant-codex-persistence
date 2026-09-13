@@ -2,6 +2,13 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+MODE="${1:-}"
+case "$MODE" in
+  "") VALIDATE_MODE="--release" ;;
+  --private) VALIDATE_MODE="--private-release" ;;
+  *) echo "Usage: $0 [--private]"; exit 2 ;;
+esac
+
 git rev-parse -q --verify HEAD >/dev/null 2>&1 \
   || { echo "ERROR: Release requires a Git repository with a commit."; exit 1; }
 [ -z "$(git status --porcelain)" ] \
@@ -15,9 +22,9 @@ git rev-parse -q --verify "refs/tags/$TAG" >/dev/null 2>&1 \
 grep -qF "## $VERSION" CHANGELOG.md \
   || { echo "ERROR: CHANGELOG entry for $VERSION is missing."; exit 1; }
 
-./scripts/validate.sh --release
+./scripts/validate.sh "$VALIDATE_MODE"
 ./scripts/build.sh
 git tag -a "$TAG" -m "Release $VERSION"
 
 echo "✔ Local release $VERSION created with tag $TAG."
-echo "  Publication requires explicit approval; push the reviewed tag separately."
+echo "  Publication is separate: ./scripts/publish.sh"

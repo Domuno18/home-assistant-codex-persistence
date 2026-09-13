@@ -34,7 +34,7 @@
       recording chats, credentials, or real memory content.
 - [x] BL-004 — Public-release review completed and approved prereleases
       published. Sources: REQ-S-001, REQ-S-002.
-- [x] BL-008 — Project initialized from internal project template.
+- [x] BL-008 — Project initialized from an internal project template.
 - [x] BL-009 — Requirements, domain model, architecture, interfaces, security,
       operations, and traceability documented for the project.
 - [x] BL-010 — `install`, automatic `boot`, and read-only `audit`

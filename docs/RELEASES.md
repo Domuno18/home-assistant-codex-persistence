@@ -56,7 +56,9 @@ never part of a release.
 1. Update `VERSION`, the program version, this policy, and `CHANGELOG.md`.
 2. Run all validation and security gates.
 3. Commit the complete candidate and obtain explicit release approval.
-4. `./scripts/release.sh` creates the local artifact and annotated tag.
+4. `./scripts/release.sh` creates a public release candidate; in the private
+   repository, `./scripts/release.sh --private` creates the private candidate
+   without granting public-release permission.
 5. Inspect the artifact and manifest.
 6. Push the reviewed tag to the public repository only after explicit release approval.
 7. Create the GitHub prerelease from the matching `CHANGELOG.md` section and
