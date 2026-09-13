@@ -28,8 +28,8 @@ must block without deletion.
 
 ## In scope
 
-- REQ-F-001 through REQ-O-004 and AC-001 through AC-012;
-- `install`, `boot`, and read-only `audit`;
+- REQ-F-001 through REQ-O-005 and AC-001 through AC-013;
+- `install`, `boot`, explicit `configure-access`, and read-only `audit`;
 - immutable runtime generations, manifests, verified tools, and managed links;
 - selective Supervisor package transition and Git helper migration;
 - neutral manual-memory templates;
@@ -46,7 +46,7 @@ must block without deletion.
 
 ## Success criteria
 
-- TC-001 through TC-017 and TC-SEC-001 pass as applicable.
+- TC-001 through TC-018 and TC-SEC-001 pass as applicable.
 - A real container lifecycle preserves state with no new sign-in or manual
   repair.
 - Unknown or damaged state produces `BLOCK` without destructive cleanup.
@@ -63,6 +63,7 @@ must block without deletion.
 | RISK-005 | Persistent storage is damaged. | External encrypted backup and verified restore. |
 | RISK-006 | Secrets enter Git or diagnostics. | Exclusions, scans, neutral fixtures, and review. |
 | RISK-007 | Persisted CLI tools become incompatible. | Explicit verified upgrade/rollback workflow under BL-005. |
+| RISK-008 | Nested Linux sandbox is unavailable inside the protected add-on container. | Explicit outer-container profile; retain on-request user approvals and add-on protection. |
 
 ## Assumptions
 

@@ -274,7 +274,7 @@ class PersistenceHarness:
             json.dumps(
                 {
                     "packages": ["gh", "ripgrep"],
-                    "init_commands": ["echo preserve"],
+                    "init_commands": [self.legacy_boot_command, "echo preserve"],
                     "nested": {
                         "private": "supervisor-secret-sentinel",
                         "unchanged": True,
@@ -303,6 +303,18 @@ exec {real_jq} "$@"
             "call_log": call_log,
             "post_log": post_log,
         }
+
+    @property
+    def legacy_boot_command(self) -> str:
+        return (
+            f"rm -rf {self.codex} {self.gh} && mkdir -p {self.gh.parent} "
+            f"&& ln -s {self.runtime}/current/codex-home {self.codex} "
+            f"&& ln -s {self.runtime}/current/gh {self.gh} "
+            f"&& ln -sf {self.runtime}/current/tools/bin/codex "
+            f"{self.bin_link_root}/codex "
+            f"&& ln -sf {self.runtime}/current/tools/bin/gh "
+            f"{self.bin_link_root}/gh"
+        )
 
     @property
     def desired_git_helper(self) -> str:
@@ -437,8 +449,18 @@ exec {real_jq} "$@"
             HACP_BOOT_OK="YES",
         )
 
-    def audit(self, *, check_auth: bool = True) -> subprocess.CompletedProcess[str]:
+    def configure_access(self, *, acknowledge: bool = True) -> subprocess.CompletedProcess[str]:
+        extra = {"HACP_CODEX_CONTAINER_ACCESS": "YES"} if acknowledge else {}
+        return self.run(
+            "configure-access", use_installed_script=True, **extra
+        )
+
+    def audit(
+        self, *, check_auth: bool = True, check_access: bool = False
+    ) -> subprocess.CompletedProcess[str]:
         extra = {"HACP_CHECK_AUTH": "YES"} if check_auth else {}
+        if check_access:
+            extra["HACP_CHECK_CODEX_ACCESS"] = "YES"
         return self.run("audit", use_installed_script=True, **extra)
 
     def delete_container(self) -> None:
@@ -1620,6 +1642,44 @@ exec {real_flock} "$@"
             (self.harness.runtime / "state" / "active-generation").is_file()
         )
 
+    def test_addon_config_audit_detects_legacy_command_without_repair(self) -> None:
+        """TC-018: Read-only audit rejects the retired destructive command."""
+
+        self.harness.seed_logged_in_state()
+        paths = self.harness.configure_fake_supervisor()
+        supervisor_env = {
+            "HACP_SKIP_ADDON_CONFIG": "NO",
+            "HACP_CHECK_ADDON_CONFIG": "YES",
+            "HACP_TEST_SUPERVISOR_STATE": str(paths["state"]),
+            "HACP_TEST_SUPERVISOR_COUNTER": str(paths["counter"]),
+            "HACP_TEST_SUPERVISOR_CALL_LOG": str(paths["call_log"]),
+            "HACP_TEST_SUPERVISOR_POST_LOG": str(paths["post_log"]),
+            "SUPERVISOR" + "_" + "TO" + "KEN": "test.only-token_123",
+        }
+        installed = self.harness.install(**supervisor_env)
+        self.assertEqual(installed.returncode, 0, installed.stdout + installed.stderr)
+
+        audited = self.harness.run(
+            "audit", use_installed_script=True, **supervisor_env
+        )
+        self.assertEqual(audited.returncode, 0, audited.stdout + audited.stderr)
+        self.assertIn("legacy rm-rf command absent", audited.stdout)
+
+        options = json.loads(paths["state"].read_text(encoding="utf-8"))
+        options["init_commands"].append(self.harness.legacy_boot_command)
+        paths["state"].write_text(
+            json.dumps(options, sort_keys=True), encoding="utf-8"
+        )
+        before = paths["state"].read_bytes()
+
+        drifted = self.harness.run(
+            "audit", use_installed_script=True, **supervisor_env
+        )
+
+        self.assertNotEqual(drifted.returncode, 0)
+        self.assertIn("legacy rm-rf remains", drifted.stdout)
+        self.assertEqual(paths["state"].read_bytes(), before)
+
     def test_supervisor_pre_post_race_blocks_without_overwrite(self) -> None:
         self.harness.seed_logged_in_state()
         paths = self.harness.configure_fake_supervisor()
@@ -1700,6 +1760,93 @@ exec {real_flock} "$@"
                 self.assertIn("existing non-file store preserved", result.stdout)
                 self.assertEqual(config.read_bytes(), original)
                 self.assertFalse((self.harness.runtime / "current").exists())
+
+    def test_explicit_container_access_profile_preserves_unrelated_config(self) -> None:
+        """TC-018: Explicit activation changes only the three access keys."""
+
+        self.harness.seed_logged_in_state()
+        config = self.harness.codex / "config.toml"
+        config.write_text(
+            'cli_auth_credentials_store = "file"\n'
+            'model = "test-model"\n'
+            'sandbox_mode = "workspace-write"\n'
+            'approval_policy = "untrusted"\n'
+            'approvals_reviewer = "guardian_subagent"\n'
+            '\n[mcp_servers.example]\n'
+            'command = "preserve-me"\n',
+            encoding="utf-8",
+        )
+        installed = self.harness.install()
+        self.assertEqual(installed.returncode, 0, installed.stdout + installed.stderr)
+        persistent_config = self.harness.runtime / "current" / "codex-home" / "config.toml"
+        before = persistent_config.read_bytes()
+
+        denied = self.harness.configure_access(acknowledge=False)
+        self.assertNotEqual(denied.returncode, 0)
+        self.assertIn("HACP_CODEX_CONTAINER_ACCESS=YES is required", denied.stdout)
+        self.assertEqual(persistent_config.read_bytes(), before)
+
+        configured = self.harness.configure_access()
+        self.assertEqual(configured.returncode, 0, configured.stdout + configured.stderr)
+        content = persistent_config.read_text(encoding="utf-8")
+        self.assertEqual(content.count('sandbox_mode = "danger-full-access"'), 1)
+        self.assertEqual(content.count('approval_policy = "on-request"'), 1)
+        self.assertEqual(content.count('approvals_reviewer = "user"'), 1)
+        self.assertIn('model = "test-model"', content)
+        self.assertIn('[mcp_servers.example]\ncommand = "preserve-me"', content)
+
+        audited = self.harness.audit(check_auth=False, check_access=True)
+        self.assertEqual(audited.returncode, 0, audited.stdout + audited.stderr)
+        self.assertIn("exact outer-container profile active", audited.stdout)
+
+        configured_again = self.harness.configure_access()
+        self.assertEqual(configured_again.returncode, 0)
+        self.assertEqual(persistent_config.read_text(encoding="utf-8"), content)
+
+    def test_ambiguous_container_access_config_blocks_unchanged(self) -> None:
+        """TC-018: Duplicate or nested access keys are never rewritten."""
+
+        self.harness.seed_logged_in_state()
+        config = self.harness.codex / "config.toml"
+        config.write_text(
+            'cli_auth_credentials_store = "file"\n'
+            'sandbox_mode = "workspace-write"\n'
+            'sandbox_mode = "read-only"\n',
+            encoding="utf-8",
+        )
+        installed = self.harness.install()
+        self.assertEqual(installed.returncode, 0, installed.stdout + installed.stderr)
+        persistent_config = self.harness.runtime / "current" / "codex-home" / "config.toml"
+        before = persistent_config.read_bytes()
+
+        result = self.harness.configure_access()
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("ambiguous, duplicate, nested", result.stdout)
+        self.assertEqual(persistent_config.read_bytes(), before)
+
+    def test_container_access_audit_detects_drift(self) -> None:
+        """TC-018: Audit reports access-profile drift without repairing it."""
+
+        self.harness.seed_logged_in_state()
+        installed = self.harness.install()
+        self.assertEqual(installed.returncode, 0, installed.stdout + installed.stderr)
+        configured = self.harness.configure_access()
+        self.assertEqual(configured.returncode, 0, configured.stdout + configured.stderr)
+        persistent_config = self.harness.runtime / "current" / "codex-home" / "config.toml"
+        drifted = persistent_config.read_text(encoding="utf-8").replace(
+            'approvals_reviewer = "user"',
+            'approvals_reviewer = "guardian_subagent"',
+        )
+        persistent_config.write_text(drifted, encoding="utf-8")
+        before = persistent_config.read_bytes()
+
+        audited = self.harness.audit(check_auth=False, check_access=True)
+
+        self.assertNotEqual(audited.returncode, 0)
+        self.assertIn("exact access profile missing or ambiguous", audited.stdout)
+        self.assertEqual(persistent_config.read_bytes(), before)
+
 
     def test_prepare_is_not_a_user_facing_command(self) -> None:
         result = self.harness.run("prepare")

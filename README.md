@@ -37,6 +37,12 @@ The project provides:
 - persistence of Codex-managed local Memories when the operator enables them separately;
 - automatic bootstrap on every add-on start;
 - read-only runtime and authentication validation;
+- an explicitly activated container-access profile for protected add-on
+  environments where a second Linux `bwrap` sandbox is unavailable;
+- on-request approvals routed to the user while the add-on container remains
+  the outer isolation boundary;
+- targeted removal and read-only detection of the retired HACP `rm -rf`
+  startup command while preserving unrelated add-on commands;
 - fail-closed protection against conflicting paths or damaged state;
 - no prepare, export, or restore step before a normal restart.
 
@@ -69,8 +75,8 @@ both sign-ins, both CLI programs, Git credential helpers, and the managed
 startup entry. Authenticated runtime and network cold-start audits passed
 afterward.
 
-The reviewed `v0.9.0-beta.2` maintenance prerelease is the installed bootstrap
-version used for this evidence.
+`v0.9.0-beta.3` adds the reviewed container-access profile and remains a beta
+until its post-release reference-system checks are recorded.
 
 Independent installation feedback remains valuable beta evidence. The
 reference environment has now also passed a complete Home Assistant host cold

@@ -10,7 +10,7 @@
 
 set -u
 
-PROGRAM_VERSION=0.9.0-beta.2
+PROGRAM_VERSION=0.9.0-beta.3
 RUNTIME_ROOT=${HACP_RUNTIME_ROOT:-/data/codex-persistence}
 CODEX_SOURCE=${HACP_CODEX_SOURCE:-/root/.codex}
 GH_SOURCE=${HACP_GH_SOURCE:-/root/.config/gh}
@@ -639,6 +639,131 @@ ensure_codex_file_credentials_store() (
     fi
     report OK codex-config cli_auth_credentials_store \
         "file storage appended without replacing existing config bytes"
+)
+codex_access_profile_matches() (
+    config_path=$1
+    [ -s "$config_path" ] && [ -f "$config_path" ] &&
+        [ ! -L "$config_path" ] || return 1
+    [ "$(stat -c '%h' "$config_path" 2>/dev/null)" = 1 ] || return 1
+    [ "$(wc -c < "$config_path" | tr -d ' ')" -le 1048576 ] 2>/dev/null ||
+        return 1
+    ! grep -q "$(printf '\r')" "$config_path" || return 1
+    ! grep -Fq "$(printf '\047\047\047')" "$config_path" || return 1
+    ! grep -Fq "$(printf '\042\042\042')" "$config_path" || return 1
+    awk '
+        BEGIN { section = 0; sandbox = 0; approval = 0; reviewer = 0; bad = 0 }
+        /^[[:space:]]*\[/ { section = 1 }
+        /^[[:space:]]*sandbox_mode[[:space:]]*=/ {
+            sandbox++
+            if (section || $0 !~ /^[[:space:]]*sandbox_mode[[:space:]]*=[[:space:]]*"danger-full-access"[[:space:]]*(#[^[:cntrl:]]*)?$/) bad = 1
+        }
+        /^[[:space:]]*approval_policy[[:space:]]*=/ {
+            approval++
+            if (section || $0 !~ /^[[:space:]]*approval_policy[[:space:]]*=[[:space:]]*"on-request"[[:space:]]*(#[^[:cntrl:]]*)?$/) bad = 1
+        }
+        /^[[:space:]]*approvals_reviewer[[:space:]]*=/ {
+            reviewer++
+            if (section || $0 !~ /^[[:space:]]*approvals_reviewer[[:space:]]*=[[:space:]]*"user"[[:space:]]*(#[^[:cntrl:]]*)?$/) bad = 1
+        }
+        END { exit !(!bad && sandbox == 1 && approval == 1 && reviewer == 1) }
+    ' "$config_path"
+)
+
+render_codex_access_profile() (
+    config_path=$1
+    awk '
+        function emit_missing() {
+            if (!sandbox) print "sandbox_mode = \"danger-full-access\""
+            if (!approval) print "approval_policy = \"on-request\""
+            if (!reviewer) print "approvals_reviewer = \"user\""
+        }
+        BEGIN { section = 0; sandbox = 0; approval = 0; reviewer = 0; bad = 0 }
+        /^[[:space:]]*\[/ && !section { emit_missing(); section = 1 }
+        /^[[:space:]]*sandbox_mode[[:space:]]*=/ {
+            sandbox++
+            if (section || sandbox > 1 || $0 !~ /^[[:space:]]*sandbox_mode[[:space:]]*=[[:space:]]*"(read-only|workspace-write|danger-full-access)"[[:space:]]*(#[^[:cntrl:]]*)?$/) bad = 1
+            print "sandbox_mode = \"danger-full-access\""
+            next
+        }
+        /^[[:space:]]*approval_policy[[:space:]]*=/ {
+            approval++
+            if (section || approval > 1 || $0 !~ /^[[:space:]]*approval_policy[[:space:]]*=[[:space:]]*"(untrusted|on-failure|on-request|never)"[[:space:]]*(#[^[:cntrl:]]*)?$/) bad = 1
+            print "approval_policy = \"on-request\""
+            next
+        }
+        /^[[:space:]]*approvals_reviewer[[:space:]]*=/ {
+            reviewer++
+            if (section || reviewer > 1 || $0 !~ /^[[:space:]]*approvals_reviewer[[:space:]]*=[[:space:]]*"(user|guardian_subagent|auto_review)"[[:space:]]*(#[^[:cntrl:]]*)?$/) bad = 1
+            print "approvals_reviewer = \"user\""
+            next
+        }
+        { print }
+        END {
+            if (!section) emit_missing()
+            if (bad) exit 42
+        }
+    ' "$config_path"
+)
+
+configure_codex_access_profile() (
+    config_path=$1
+    config_parent=$(dirname "$config_path")
+    if [ ! -d "$config_parent" ] || [ -L "$config_parent" ] ||
+        [ ! -s "$config_path" ] || [ ! -f "$config_path" ] ||
+        [ -L "$config_path" ] ||
+        [ "$(stat -c '%h' "$config_path" 2>/dev/null)" != 1 ]; then
+        report BLOCK codex-access "$config_path"             "non-empty, single-link regular config in a regular parent required"
+        return 1
+    fi
+    if [ "$(wc -c < "$config_path" | tr -d ' ')" -gt 1048576 ] 2>/dev/null ||
+        grep -q "$(printf '\r')" "$config_path" ||
+        grep -Fq "$(printf '\047\047\047')" "$config_path" ||
+        grep -Fq "$(printf '\042\042\042')" "$config_path"; then
+        report BLOCK codex-access "$config_path"             "unsupported size, control character, or multiline TOML syntax"
+        return 1
+    fi
+    if codex_access_profile_matches "$config_path"; then
+        report OK codex-access "$config_path"             "container access profile already active"
+        return 0
+    fi
+
+    before_identity=$(stat -c '%d:%i' "$config_path") || return 1
+    before_hash=$(sha256sum "$config_path" | awk '{print $1}') || return 1
+    before_mode=$(stat -c '%a' "$config_path") || return 1
+    before_owner=$(stat -c '%u:%g' "$config_path") || return 1
+    temporary=$(mktemp "$config_parent/.hacp-access.XXXXXX") || return 1
+    trap 'rm -f -- "$temporary"' 0 1 2 3 15
+    if ! render_codex_access_profile "$config_path" > "$temporary"; then
+        report BLOCK codex-access "$config_path"             "ambiguous, duplicate, nested, or unsupported access setting"
+        return 1
+    fi
+    chmod "$before_mode" "$temporary" || return 1
+    chown "$before_owner" "$temporary" 2>/dev/null || {
+        is_test_mode || return 1
+    }
+    codex_access_profile_matches "$temporary" || {
+        report BLOCK codex-access "$config_path"             "rendered access profile failed exact verification"
+        return 1
+    }
+    sync "$temporary" 2>/dev/null || sync || return 1
+
+    current_identity=$(stat -c '%d:%i' "$config_path" 2>/dev/null || true)
+    current_hash=$(sha256sum "$config_path" 2>/dev/null | awk '{print $1}')
+    if [ "$current_identity" != "$before_identity" ] ||
+        [ "$current_hash" != "$before_hash" ] ||
+        [ "$(stat -c '%h' "$config_path" 2>/dev/null || true)" != 1 ]; then
+        report BLOCK codex-access "$config_path"             "config changed before publication; nothing was overwritten"
+        return 1
+    fi
+    mv "$temporary" "$config_path" || return 1
+    temporary=
+    trap - 0 1 2 3 15
+    sync "$config_path" "$config_parent" 2>/dev/null || sync || return 1
+    if ! codex_access_profile_matches "$config_path"; then
+        report BLOCK codex-access "$config_path"             "published access profile failed verification"
+        return 1
+    fi
+    report OK codex-access "$config_path"         "outer-container mode active; approvals remain on-request with the user"
 )
 validate_codex_storage_rules() (
     root=$1
@@ -1530,6 +1655,13 @@ boot_command() {
     printf "HACP_MANAGED=home-assistant-codex-persistence HACP_RUNTIME_ROOT=%s HACP_GIT_CONFIG_SOURCE=%s HACP_BOOT_OK=YES sh %s boot" \
         "$RUNTIME_ROOT" "$GIT_CONFIG_SOURCE" "$BOOTSTRAP_SCRIPT"
 }
+legacy_boot_command() {
+    printf "rm -rf %s %s && mkdir -p %s && ln -s %s %s && ln -s %s %s && ln -sf %s %s && ln -sf %s %s" \
+        "$CODEX_SOURCE" "$GH_SOURCE" "$(dirname "$GH_SOURCE")" \
+        "$CODEX_TARGET" "$CODEX_SOURCE" "$GH_TARGET" "$GH_SOURCE" \
+        "$CODEX_TOOL" "$CODEX_LINK" "$GH_TOOL" "$GH_LINK"
+}
+
 
 supervisor_token_valid() {
     token_value=${SUPERVISOR_TOKEN:-}
@@ -1589,8 +1721,42 @@ supervisor_read_options() {
         ' 2>/dev/null
 }
 
+supervisor_startup_matches() {
+    options=$1
+    command_text=$(boot_command)
+    legacy_text=$(legacy_boot_command)
+    printf '%s' "$options" |
+        jq -e             --arg command "$command_text"             --arg legacy "$legacy_text"             '
+                (.init_commands | type) == "array"
+                and .init_commands[0] == $command
+                and ([.init_commands[] | select(
+                    contains("HACP_MANAGED=home-assistant-codex-persistence")
+                    or contains("ha-codex-persistence.sh boot")
+                )] | length) == 1
+                and (.init_commands | index($legacy) | not)
+            ' >/dev/null 2>&1
+}
+
+audit_addon_startup() {
+    if ! supervisor_token_valid; then
+        report BLOCK addon-config supervisor "valid SUPERVISOR_TOKEN unavailable"
+        return 1
+    fi
+    options=$(supervisor_read_options) || {
+        report BLOCK addon-config supervisor             "could not read strict Supervisor option snapshot"
+        return 1
+    }
+    if supervisor_startup_matches "$options"; then
+        report OK addon-config init_commands             "one managed boot command active and legacy rm-rf command absent"
+        return 0
+    fi
+    report BLOCK addon-config init_commands         "managed command missing, duplicated, misplaced, or legacy rm-rf remains"
+    return 1
+}
+
 configure_addon_startup() {
     command_text=$(boot_command)
+    legacy_text=$(legacy_boot_command)
     if is_test_mode &&
         [ "${HACP_SKIP_ADDON_CONFIG:-}" = YES ]; then
         report WARN addon-config init_commands \
@@ -1612,6 +1778,7 @@ configure_addon_startup() {
         printf '%s' "$baseline" |
             jq -e -S -c \
                 --arg command "$command_text" \
+                --arg legacy "$legacy_text" \
                 '
                     .packages = (
                         (.packages // [])
@@ -1626,7 +1793,8 @@ configure_addon_startup() {
                             | if type == "array" then .
                               else error("init_commands must be an array") end
                             | map(select(
-                                (contains("HACP_MANAGED=home-assistant-codex-persistence")
+                                (. == $legacy
+                                 or contains("HACP_MANAGED=home-assistant-codex-persistence")
                                  or contains("ha-codex-persistence.sh boot"))
                                 | not
                             ))
@@ -2561,6 +2729,33 @@ boot_all() {
     return 0
 }
 
+configure_access_all() {
+    if [ "${HACP_CODEX_CONTAINER_ACCESS:-}" != YES ]; then
+        report BLOCK codex-access acknowledgement             "HACP_CODEX_CONTAINER_ACCESS=YES is required"
+        return 8
+    fi
+    check_tools || return "$EXIT_CODE"
+    validate_configuration || return 5
+    verify_runtime_layout || return 8
+
+    exec 9<"$LOCK_ROOT" || return 9
+    if ! flock -n 9; then
+        report BLOCK lock "$LOCK_ROOT" "another operation is active"
+        return 9
+    fi
+    generation=$(read_active_marker 2>/dev/null) || {
+        report BLOCK codex-access "$ACTIVE_MARKER"             "active persistent installation required"
+        return 8
+    }
+    verify_active_runtime "$generation" || {
+        report BLOCK codex-access "$CURRENT_ROOT"             "active runtime verification failed"
+        return 8
+    }
+    configure_codex_access_profile "$CODEX_TARGET/config.toml" || return 8
+    report OK result codex-access         "profile applies to new Codex sessions; add-on protection unchanged"
+    return 0
+}
+
 audit_symlink() {
     label=$1
     link_path=$2
@@ -2607,6 +2802,31 @@ audit_all() {
     if ! audit_git_credential_helpers; then
         set_exit 1
     fi
+    case "${HACP_CHECK_CODEX_ACCESS:-NO}" in
+        YES)
+            if codex_access_profile_matches "$CODEX_TARGET/config.toml"; then
+                report OK codex-access "$CODEX_TARGET/config.toml" \
+                    "exact outer-container profile active"
+            else
+                report BLOCK codex-access "$CODEX_TARGET/config.toml" \
+                    "exact access profile missing or ambiguous"
+                set_exit 1
+            fi
+            ;;
+        NO|'') ;;
+        *) report BLOCK codex-access audit "HACP_CHECK_CODEX_ACCESS must be YES or NO"; set_exit 1 ;;
+    esac
+    case "${HACP_CHECK_ADDON_CONFIG:-NO}" in
+        YES)
+            if ! audit_addon_startup; then
+                set_exit 1
+            fi
+            ;;
+        NO|'') ;;
+        *) report BLOCK addon-config audit "HACP_CHECK_ADDON_CONFIG must be YES or NO"; set_exit 1 ;;
+    esac
+
+
 
     mode=$(dir_mode "$CURRENT_ROOT")
     owner=$(dir_owner "$CURRENT_ROOT")
@@ -2703,8 +2923,11 @@ usage() {
         "Automatic init_commands entry:" \
         "  HACP_RUNTIME_ROOT=/persistent/path HACP_BOOT_OK=YES $0 boot" \
         "" \
+        "Explicit container-access activation (new Codex sessions):" \
+        "  HACP_RUNTIME_ROOT=/persistent/path HACP_CODEX_CONTAINER_ACCESS=YES $0 configure-access" \
+        "" \
         "Read-only check:" \
-        "  HACP_RUNTIME_ROOT=/persistent/path $0 audit"
+        "  HACP_RUNTIME_ROOT=/persistent/path HACP_CHECK_CODEX_ACCESS=YES $0 audit"
 }
 
 case "${1:-}" in
@@ -2722,6 +2945,14 @@ case "${1:-}" in
             exit 2
         }
         boot_all
+        exit $?
+        ;;
+    configure-access)
+        [ "$#" -eq 1 ] || {
+            usage >&2
+            exit 2
+        }
+        configure_access_all
         exit $?
         ;;
     audit)

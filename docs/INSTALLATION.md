@@ -89,7 +89,47 @@ helpers, and registers the automatic startup command.
 If installation reports `BLOCK`, do not force it and do not delete the
 reported path blindly. Read the check name and inspect the conflicting state.
 
-## 5. Audit
+## 5. Enable full Codex use inside the protected add-on container
+
+Use this only when Studio Code Server provides the outer container boundary and
+Codex reports that its nested Linux sandbox cannot start. This keeps Home
+Assistant add-on protection enabled. It does not disable approvals.
+
+Activate the exact persistent profile:
+
+```sh
+HACP_CODEX_CONTAINER_ACCESS=YES \
+sh /data/codex-persistence/bootstrap/ha-codex-persistence.sh configure-access
+```
+
+For a custom runtime, use its bootstrap path and set `HACP_RUNTIME_ROOT`.
+The command requires the explicit acknowledgement above, changes only these
+top-level Codex settings, and preserves unrelated configuration:
+
+```toml
+sandbox_mode = "danger-full-access"
+approval_policy = "on-request"
+approvals_reviewer = "user"
+```
+
+The protected add-on container is then the outer isolation boundary. Eligible
+privileged operations still require a user decision in chat. Treat project
+instructions and shell commands as trusted-code inputs. The profile applies
+only to newly started Codex sessions; close and reopen the Codex chat after
+activation.
+
+Verify it without changing state:
+
+```sh
+HACP_CHECK_CODEX_ACCESS=YES \
+HACP_CHECK_ADDON_CONFIG=YES \
+sh /data/codex-persistence/bootstrap/ha-codex-persistence.sh audit
+```
+The add-on check confirms exactly one managed HACP boot command and rejects the
+retired HACP `rm -rf` command. Audit never repairs Supervisor options; rerun a
+confirmed installation to apply that narrow cleanup.
+
+## 6. Audit
 
 For the default runtime:
 

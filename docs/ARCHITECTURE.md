@@ -9,6 +9,8 @@
 4. Preserve unexpected state and fail closed.
 5. Keep projects, add-on-owned persistence, and real memory outside the runtime.
 6. Perform no network download or executable upgrade during normal startup.
+7. Restore usable Codex tooling in protected add-on containers that cannot
+   create a second Linux sandbox, without disabling user approvals.
 
 ## Storage layout
 
@@ -42,6 +44,7 @@ extensions remain under the add-on's native `/data/vscode` persistence.
 | ARC-004 | audit adapter | report runtime, integrity, helper, and optional auth state without mutation |
 | ARC-005 | workspace/memory boundary | keep projects and real memory separate from private runtime and examples |
 | ARC-006 | Supervisor/Git adapter | perform narrow package, startup-command, and helper changes |
+| ARC-007 | container-access controller | atomically set and audit the explicit outer-container Codex profile |
 
 ## Install sequence
 
@@ -53,8 +56,9 @@ extensions remain under the add-on's native `/data/vscode` persistence.
 5. Copy native state and tools into a new generation while verifying source
    stability.
 6. Create and verify manifests and neutral memory setup.
-7. Compare current Supervisor options, remove only `gh`/`github-cli`, place
-   the managed boot command first, write, and verify by read-back.
+7. Compare current Supervisor options, remove only `gh`/`github-cli` and the
+   exact retired HACP `rm -rf` command, place the managed boot command first,
+   preserve unrelated commands, write, and verify by read-back.
 8. Migrate only supported GitHub and Gist credential-helper values.
 9. Mark the generation ready, activate it atomically, and restore managed links.
 
@@ -84,6 +88,21 @@ separate, explicit operation under BL-005 and never occur in `boot`.
 `audit` performs the same ownership, integrity, link, tool, startup, and Git
 helper checks without mutation. With `HACP_CHECK_AUTH=YES`, it also invokes
 the supported Codex and GitHub status commands without printing credentials.
+
+## Container-access sequence
+
+`configure-access` requires `HACP_CODEX_CONTAINER_ACCESS=YES`, an active
+verified runtime, and the global HACP lock. It rejects linked, hard-linked,
+oversized, multiline, duplicated, nested, or concurrently changed settings.
+It then atomically publishes exactly `danger-full-access`, `on-request`, and
+`approvals_reviewer = "user"` while retaining unrelated TOML lines and file
+metadata. `HACP_CHECK_CODEX_ACCESS=YES` adds a read-only exact-profile check to
+`audit`.
+
+Home Assistant add-on protection remains enabled and supplies the outer
+`HACP_CHECK_ADDON_CONFIG=YES` also verifies exactly one managed boot command
+and the absence of the exact retired HACP `rm -rf` command without mutation.
+container boundary. The profile affects newly started Codex sessions only.
 
 ## Supervisor and Git configuration
 

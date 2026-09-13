@@ -4,6 +4,31 @@ All notable public changes are documented here. Versions follow Semantic Version
 
 ## Unreleased
 
+No changes yet.
+
+## 0.9.0-beta.3 — 2026-09-13
+
+### Added
+
+- Added an explicit `configure-access` command for protected Studio Code
+  Server containers that cannot create Codex's nested Linux sandbox.
+- Added optional read-only access-profile verification to `audit` and TC-018
+  coverage for acknowledgement, preservation, idempotence, and drift.
+
+### Fixed
+
+- Remove the exact retired HACP `rm -rf` startup command during a confirmed
+  install and detect its recurrence through optional read-only audit.
+
+### Security
+
+- Kept Home Assistant add-on protection as the outer isolation boundary.
+- Retained `approval_policy = "on-request"` and routed eligible approvals to
+  the user; the feature does not enable `--yolo`.
+- Rejects unsafe, ambiguous, duplicated, nested, oversized, multiline,
+  hard-linked, symlinked, or concurrently changed Codex configuration.
+
+
 ### Documentation
 
 - Converted all remaining public engineering documentation below `docs/` to

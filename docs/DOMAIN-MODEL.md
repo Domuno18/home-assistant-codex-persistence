@@ -17,6 +17,7 @@ memory contents remain outside this boundary.
 | active generation | Fully verified generation selected by `current` |
 | managed path | Standard container path linked to the active generation |
 | persistent workspace | Operator-owned storage for projects and manual memory |
+| container-access profile | Explicit Codex configuration for a container that provides the outer isolation boundary when nested `bwrap` is unavailable |
 | fail closed | Stop with `BLOCK` while preserving unexpected state |
 
 ## Domain objects
@@ -30,6 +31,7 @@ memory contents remain outside this boundary.
 | DOM-O-005 | Tool bundle | Holds verified Codex and GitHub CLI programs |
 | DOM-O-006 | Managed path set | Maps standard container paths to `current` |
 | DOM-O-007 | Persistent workspace | Holds projects and real manual memory outside the runtime |
+| DOM-O-008 | Container-access profile | Binds technical access to `danger-full-access` while retaining on-request, user-reviewed approvals |
 
 ## Domain rules
 
@@ -45,6 +47,9 @@ memory contents remain outside this boundary.
 | DOM-R-008 | Audit observes state without mutation or secret disclosure. | TC-009, TC-015 |
 | DOM-R-009 | Supervisor changes are compare-before-write, selective, and verified by read-back. | TC-016 |
 | DOM-R-010 | Only the two GitHub credential-helper keys may be migrated; unknown values block. | TC-017 |
+| DOM-R-011 | Container access is never implicit: only an explicit operator acknowledgement may set the three exact top-level Codex access keys. | TC-018 |
+| DOM-R-012 | The access-profile update preserves every unrelated config byte semantically, rejects ambiguous or unsafe config paths, and is reported by read-only audit. | TC-018 |
+| DOM-R-013 | HACP does not disable Home Assistant add-on protection; the add-on container remains the outer isolation boundary. | TC-018, TC-012 |
 
 ## State transitions
 
@@ -60,4 +65,5 @@ any invariant violation --> BLOCK without destructive cleanup
 - `RuntimeReady`: runtime trees and tools have passed verification.
 - `RuntimeActivated`: `current` selects the verified generation.
 - `BootstrapConfigured`: the managed startup command is installed.
+- `ContainerAccessConfigured`: the exact access profile was explicitly activated for new sessions.
 - `AuditPassed`: all selected read-only checks succeeded.

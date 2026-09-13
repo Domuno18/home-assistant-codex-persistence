@@ -18,6 +18,9 @@
       the private runtime. Source: RISK-005.
 - [ ] BL-007 — Automate TC-015 to prove that a complete audit run is
       mutation-free. Source: REQ-O-002.
+- [ ] BL-020 — Complete TC-018 on the reference system: activate the exact
+      profile, start a new Codex session, confirm Home Assistant/project/GitHub
+      tasks and user approval prompts, then run the read-only access audit.
 
 ## Done
 
@@ -49,3 +52,7 @@
 - [x] BL-016 — Real Studio Code Server update from `6.0.1` to `7.0.0`,
       container replacement, and subsequent container restart accepted under
       TC-012.
+- [x] BL-019 — Add the explicit protected-container Codex access profile,
+      user-reviewed on-request approvals, atomic config preservation, optional
+      read-only drift audit, and TC-018 automated coverage. Sources: REQ-F-006,
+      REQ-I-005, REQ-S-003, REQ-O-005, AC-013.

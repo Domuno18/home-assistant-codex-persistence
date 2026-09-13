@@ -9,15 +9,17 @@
 | REQ-F-003 | Leave projects and Studio Code add-on-owned persistence outside the project runtime and unchanged. | AC-004, AC-010 |
 | REQ-F-004 | Create and preserve the standard manual file-based memory setup unless explicitly disabled. | AC-011 |
 | REQ-F-005 | Persist verified Codex and GitHub CLI executable files with checksums and architecture compatibility. | AC-005, AC-010 |
+| REQ-F-006 | Provide an explicitly activated Codex container-access profile for Studio Code Server environments that cannot create the nested Linux sandbox. | AC-013 |
 
 ## Integration requirements
 
 | ID | Requirement | Acceptance |
 |---|---|---|
-| REQ-I-001 | Update Supervisor options atomically, remove only the one-time `gh` bootstrap package, preserve unrelated options, and install the managed boot command first. | AC-009, AC-010 |
+| REQ-I-001 | Update Supervisor options atomically, remove only the one-time `gh` package and exact retired HACP `rm -rf` command, preserve unrelated options and commands, and install the managed boot command first. | AC-009, AC-010, AC-013 |
 | REQ-I-002 | Restore standard container paths from the active persistent generation before `code-server` starts. | AC-005, AC-010 |
 | REQ-I-003 | Keep the persistent workspace and add-on-owned storage outside `HACP_RUNTIME_ROOT`. | AC-010, AC-012 |
 | REQ-I-004 | Manage only the GitHub and Gist credential-helper keys and preserve all unrelated Git configuration. | AC-007, AC-009, AC-010, AC-012 |
+| REQ-I-005 | Bind the container-access profile to the exact top-level Codex settings `danger-full-access`, `on-request`, and user-reviewed approvals while preserving unrelated settings. | AC-013 |
 
 ## Quality and security requirements
 
@@ -28,6 +30,7 @@
 | REQ-Q-003 | Unknown ownership, paths, helpers, special files, or integrity failures block without destructive mutation. | AC-007 |
 | REQ-S-001 | Repository content, history, examples, logs, and artifacts contain no credentials, native sessions, private runtime, or populated memory. | AC-008 |
 | REQ-S-002 | Publication requires explicit approval and completed security and license review. | AC-008, AC-011 |
+| REQ-S-003 | HACP must not silently disable Home Assistant add-on protection, bypass approvals, or activate container access without an explicit operator acknowledgement. | AC-013 |
 
 ## Operational requirements
 
@@ -37,6 +40,7 @@
 | REQ-O-002 | `audit` is read-only and reports runtime, integrity, helper, and optional authentication state without exposing secrets. | AC-002, AC-003, AC-007, AC-008, AC-011, AC-012 |
 | REQ-O-003 | Default and custom runtime roots are documented and constrained to persistent storage. | AC-005, AC-009 |
 | REQ-O-004 | Real lifecycle acceptance records installation, restart, update, container replacement, and host-reboot evidence separately. | AC-001 through AC-006, AC-010, AC-012 |
+| REQ-O-005 | `audit` optionally verifies the effective Codex container-access profile and managed Supervisor startup command without mutation or disclosure. | AC-013 |
 
 ## Constraints
 
@@ -44,6 +48,8 @@
 - The runtime root must be a narrow persistent path below `/data`, `/config`,
   or `/share`, outside every Git checkout.
 - All Codex processes must be closed during installation or upgrade.
+- Container-access configuration applies to new Codex sessions; an already
+  running session keeps its launch-time permissions.
 - Installation, add-on restart, add-on update, container replacement,
   subsequent container restart, and Home Assistant host cold-start evidence
   are complete for the reference environment.

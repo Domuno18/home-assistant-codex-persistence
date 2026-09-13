@@ -26,7 +26,8 @@ the Home Assistant reference system.
 | TC-015 | REQ-O-002, DOM-R-008 | compare complete runtime-tree manifests before and after audit | planned under BL-007 |
 | TC-016 | REQ-I-001, DOM-R-009 | verify Supervisor comparison, selective update, concurrency abort, read-back, and persisted `gh` after replacement | automated |
 | TC-017 | REQ-I-003, REQ-I-004, DOM-R-010 | migrate only supported helper values and preserve unrelated Git configuration | automated |
-| TC-DOM-001 | DOM-R-001–DOM-R-010 | evaluate all positive and negative invariant cases together | automated; real TC-012 evidence recorded separately |
+| TC-018 | REQ-F-006, REQ-I-005, REQ-S-003, REQ-O-005, DOM-R-011–DOM-R-013 | require explicit activation, preserve unrelated Codex config, publish the exact profile idempotently, remove only the exact retired HACP startup command, and detect both drifts read-only | automated; real new-session acceptance pending |
+| TC-DOM-001 | DOM-R-001–DOM-R-013 | evaluate all positive and negative invariant cases together | automated; real TC-012 evidence recorded separately |
 | TC-SEC-001 | REQ-S-001, REQ-S-002 | scan working tree and history and test ownership, path, link, mode, and output boundaries | automated |
 
 ## TC-012 — Real restart and container acceptance

@@ -2,8 +2,8 @@
 
 ## Current status
 
-`0.9.0-beta.2` is the current GitHub Prerelease. `0.9.0-beta.1` remains the
-first published prerelease.
+`0.9.0-beta.3` is the current beta target. `0.9.0-beta.2` remains the previous
+maintenance prerelease.
 
 Changing a version file, building an artifact, pushing Git commits, publishing
 a release, and changing repository visibility are deliberately separate
@@ -15,7 +15,7 @@ Versions follow `MAJOR.MINOR.PATCH` with optional prerelease identifiers.
 
 | Change | Example | Meaning |
 |---|---:|---|
-| beta iteration | `0.9.0-beta.2` | another prerelease with no stable compatibility promise |
+| beta iteration | `0.9.0-beta.3` | another prerelease with no stable compatibility promise |
 | compatible bug fix after a stable release | `0.9.1` | patch release |
 | backward-compatible feature | `0.10.0` | minor release |
 | breaking path, startup contract, runtime format, or migration change | next `MAJOR.0.0` | major release with migration instructions |
@@ -26,7 +26,7 @@ platform coverage and possible migration work before a later release.
 
 ## Beta release gate
 
-Before publishing any beta, including `v0.9.0-beta.2`:
+Before publishing any beta, including `v0.9.0-beta.3`:
 
 1. Finish the English public-documentation review.
 2. Run `./scripts/validate.sh` and

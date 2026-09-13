@@ -6,9 +6,9 @@
 |---|---|---|---|---|
 | AP-100 | Charter, user stories, requirements, and domain model | US-001–US-003, all REQ and AC IDs | document and traceability review | complete |
 | AP-200 | Architecture, interfaces, security model, and decisions | integration, quality, and security requirements | architecture and security review | complete |
-| AP-300 | Portable `install`, `boot`, `audit`, tools, helpers, and Supervisor integration | functional and operational requirements | TC-001–TC-010, TC-016, TC-017 | complete |
-| AP-400 | Automated, security, and real lifecycle evidence | all mandatory requirements | TC-SEC-001 and TC-012–TC-017 | complete |
-| AP-500 | User, operations, deployment, release, and handover documentation | REQ-F-003, REQ-F-004, REQ-I-003, operational requirements | documentation review | complete |
+| AP-300 | Portable `install`, `boot`, `configure-access`, `audit`, tools, helpers, and Supervisor integration | functional and operational requirements | TC-001–TC-010, TC-016–TC-018 | complete |
+| AP-400 | Automated, security, and real lifecycle evidence | all mandatory requirements | TC-SEC-001 and TC-012–TC-018 | automated complete; TC-018 real new-session check pending |
+| AP-500 | User, operations, deployment, release, and handover documentation | REQ-F-003, REQ-F-004, REQ-F-006, REQ-I-003, REQ-I-005, operational requirements | documentation review | complete |
 
 ## Deliverables
 

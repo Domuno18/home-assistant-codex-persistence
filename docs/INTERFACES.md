@@ -11,6 +11,7 @@
 | IF-005 | GitHub CLI | resolved `gh` and file-backed config | verified executable, auth status, Git credential helper | reject keyring-only, unstable, unauthenticated, or incompatible state |
 | IF-006 | workspace and memory | persistent workspace path | neutral missing files and one managed startup block | preserve existing content; reject ambiguous blocks |
 | IF-007 | add-on Git configuration | two GitHub helper keys | exact reset-plus-persistent-helper pair | preserve unknown custom values and block |
+| IF-008 | Codex container access | explicit operator acknowledgement and active config | exact outer-container profile for new sessions | preserve config and block on missing acknowledgement, ambiguity, unsafe paths, or drift |
 
 ## IF-001 — Persistent filesystem
 
@@ -25,7 +26,8 @@ block activation.
 The installer communicates through the supported Supervisor API transport. It
 reads a baseline twice, writes only if unchanged, then reads back and compares
 the semantic result. It removes only `gh`/`github-cli`, preserves all
-unrelated fields, and puts exactly one managed boot command first.
+unrelated fields and commands, removes the exact retired HACP `rm -rf`
+command, and puts exactly one managed boot command first.
 
 ## IF-003 — Add-on startup
 
@@ -75,6 +77,24 @@ helper = !<persistent-gh> auth git-credential
 ```
 
 Every unrelated key, file mode, and owner remains unchanged.
+
+## IF-008 — Codex container access
+
+The mutating interface is:
+
+```sh
+HACP_CODEX_CONTAINER_ACCESS=YES <bootstrap> configure-access
+```
+
+It sets only the top-level keys `sandbox_mode`, `approval_policy`, and
+`approvals_reviewer`. The exact result is `danger-full-access`, `on-request`,
+and `user`. Home Assistant add-on protection is not changed. An already
+running Codex session is not reconfigured. The optional read-only interface
+`HACP_CHECK_CODEX_ACCESS=YES <bootstrap> audit` reports missing, ambiguous, or
+With `HACP_CHECK_ADDON_CONFIG=YES`, audit also confirms that exactly one
+managed boot command is first and the exact retired HACP `rm -rf` command is
+absent. It reports drift but never repairs Supervisor options.
+drifted values as `BLOCK` and never repairs them.
 
 ## Diagnostic contract
 

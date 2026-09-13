@@ -44,3 +44,19 @@ copying private content into the project repository.
 - AC-011: Missing neutral memory files and one managed global startup block are
   created atomically; existing memory content is preserved byte-for-byte and
   ambiguous managed blocks are rejected.
+
+## US-004 — Use Codex fully inside the protected add-on container
+
+As a Home Assistant operator, I want Codex to work on projects, Home Assistant
+tasks, automations, voice-chat requests, and approved GitHub operations even
+when Studio Code Server cannot create a nested Linux sandbox, while retaining
+the add-on container as the outer boundary and keeping approvals with the user.
+
+### Acceptance criteria
+
+- AC-013: After explicit operator activation, the persistent Codex
+  configuration uses `sandbox_mode = "danger-full-access"`,
+  `approval_policy = "on-request"`, and `approvals_reviewer = "user"` without
+  changing add-on protection or unrelated Codex settings. A confirmed install
+  removes only the exact retired HACP `rm -rf` startup command, and read-only
+  audit detects access-profile or startup-command drift without repairing it.
