@@ -1,8 +1,9 @@
 # Project charter
 
 > Status: runtime migration, add-on restart, Studio Code Server update from
-> `6.0.1` to `7.0.0`, container replacement, subsequent container restart,
-> and Home Assistant host cold start are accepted.
+> `6.0.1` to `7.0.0` and from `7.0.0` to `7.1.0`, container replacement,
+> subsequent container restart, and Home Assistant host cold start are
+> accepted.
 
 ## Assignment
 

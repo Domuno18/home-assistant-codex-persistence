@@ -75,6 +75,13 @@ both sign-ins, both CLI programs, Git credential helpers, and the managed
 startup entry. Authenticated runtime and network cold-start audits passed
 afterward.
 
+A second real update from Studio Code Server `7.0.0` to `7.1.0`, containing
+`code-server 4.137.0`, also recreated the add-on container successfully. The
+existing Codex conversation resumed and projects, GitHub access, Codex
+sessions, and manual memory remained available. The post-update authenticated
+persistence audit passed without a blocker. See the
+[7.1.0 lifecycle evidence](docs/REFERENCE-UPDATE-7.1.0.md).
+
 `v0.9.0-beta.3` adds the container-access defaults and remains a beta.
 On the reference system, the existing remote chat's command and file tools
 worked after the operator selected Full access and sent the next message.
@@ -95,13 +102,15 @@ start.
 | Memory | 16 GB RAM |
 | Storage | 128 GB SSD |
 | Platform | Home Assistant OS |
-| Editor | Studio Code Server community add-on |
+| Editor | Studio Code Server community add-on `7.1.0` |
+| Editor runtime | `code-server 4.137.0` |
 | Agent | OpenAI Codex IDE extension and CLI |
 | Git integration | GitHub CLI |
 
-✅ Successfully tested for installation, an add-on update from `6.0.1` to
-`7.0.0`, container replacement, a subsequent container restart, and a
-complete Home Assistant host cold start on this environment.
+✅ Successfully tested for installation, add-on updates from `6.0.1` to
+`7.0.0` and from `7.0.0` to `7.1.0`, container replacement, a subsequent
+container restart, and a complete Home Assistant host cold start on this
+environment.
 
 Other architectures and hardware combinations are welcome as community test
 reports.

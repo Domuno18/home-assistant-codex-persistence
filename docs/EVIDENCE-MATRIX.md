@@ -61,9 +61,18 @@ HACP's stored defaults remained `danger-full-access`, `on-request`, and
 user-reviewed approvals. This evidence verifies usable tooling under that
 explicit client selection; it does not attest that HACP changed a running turn
 or that interactive on-request approvals were exercised in this check.
-The authenticated Home Assistant states API was also reachable. No successful
-direct MariaDB login is claimed from that API result. No real sensor values,
-credentials, or chat identifiers are included here.
+No real sensor values, credentials, or chat identifiers are included here.
+
+## Reference Studio Code Server 7.1.0 update — 2026-09-13
+
+The reference operator updated the Studio Code Server add-on from `7.0.0` to
+`7.1.0`, which contains `code-server 4.137.0`. The update recreated the add-on
+container. The existing Codex conversation resumed, the project workspace was
+available, GitHub authentication remained valid, and Codex sessions and manual
+memory remained persistent. The authenticated HACP audit reported all core
+persistence checks as `OK` and ended with `OK result active`. Detailed,
+non-sensitive evidence is recorded in
+[REFERENCE-UPDATE-7.1.0.md](REFERENCE-UPDATE-7.1.0.md).
 
 ## Rules
 

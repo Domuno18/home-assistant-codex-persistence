@@ -56,3 +56,7 @@
       user-reviewed on-request approvals, atomic config preservation, optional
       read-only drift audit, and TC-018 automated coverage. Sources: REQ-F-006,
       REQ-I-005, REQ-S-003, REQ-O-005, AC-013.
+- [x] BL-021 — Real Studio Code Server update from `7.0.0` to `7.1.0`,
+      containing `code-server 4.137.0`, recreated the add-on container while
+      preserving Codex sessions, projects, GitHub access, and manual memory.
+      The authenticated post-update persistence audit passed under TC-012.

@@ -127,8 +127,8 @@ absence of the retired HACP command without changing Supervisor options.
 It cannot attest the permissions or successful tool execution of an active
 local or remote chat. Follow the command and file-tool checks in
 [the installation guide](INSTALLATION.md#verify-the-running-chat-not-only-the-configuration-file).
-Home Assistant API access, direct database authentication, and GitHub repository
-permissions are separate evidence.
+Home Assistant API access and GitHub repository permissions are separate
+evidence.
 
 Diagnostics include only a level, check name, path or logical target, and a
 short result. They must never include file contents, credentials, chat text,

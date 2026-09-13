@@ -184,18 +184,9 @@ must not be described as end-to-end chat access acceptance.
 ### Service access is checked separately
 
 Full access permits tools to use the container's available files and network.
-Each service still validates its own credentials and permissions:
-
-- Current sensor values use the authenticated Home Assistant states API.
-  A successful state read proves API access, not a direct SQL login.
-- Home Assistant's Recorder may store history in MariaDB. The agent does not
-  need a MariaDB login to read current states through Home Assistant.
-- Direct SQL work requires a successful MariaDB connection. A password in
-  `secrets.yaml` can be readable while the database rejects that account,
-  source host, or credential; diagnose the actual rejection before claiming
-  SQL access. Never print the password or a credential-bearing database URL.
-- GitHub sign-in and repository permissions are checked independently.
-  File access under the workspace is verified through the tool checks above.
+Each service still validates its own credentials and permissions. GitHub
+sign-in and repository permissions are checked independently. File access
+under the workspace is verified through the tool checks above.
 
 ## 6. Audit
 
@@ -266,6 +257,8 @@ The reference system has passed:
 - initial installation and add-on restart;
 - Studio Code Server update from `6.0.1` to `7.0.0`, including container
   replacement;
+- Studio Code Server update from `7.0.0` to `7.1.0`, containing
+  `code-server 4.137.0` and including container recreation;
 - a subsequent container restart;
 - a complete Home Assistant host cold start.
 
@@ -273,6 +266,11 @@ Codex sessions, manual memory, both sign-ins, persisted CLI programs, Git
 credential helpers, projects, and the managed startup entry remained
 available. Authenticated runtime and network cold-start audits passed after the
 host returned.
+
+During the `7.1.0` update, the existing Codex conversation resumed and
+projects, GitHub access, sessions, and manual memory remained available. The
+authenticated persistence audit passed afterward. See
+[the recorded update evidence](REFERENCE-UPDATE-7.1.0.md).
 
 ## Troubleshooting
 

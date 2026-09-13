@@ -12,8 +12,9 @@ All notable public changes are documented here. Versions follow Semantic Version
   same chat, without requiring a new conversation or container restart.
 - Distinguish configuration audit from real command/file-tool acceptance,
   and HACP's on-request policy from client-selected approval behavior.
-- Separate Home Assistant current-state API access, direct MariaDB login,
-  and GitHub repository permissions.
+- Record the successful Studio Code Server update from `7.0.0` to `7.1.0`,
+  including `code-server 4.137.0`, container recreation, resumed Codex
+  conversation, and preserved projects, GitHub access, sessions, and memory.
 - Correct overbroad access claims; runtime code and existing release archives
   are unchanged. The current guide and release-page clarification supersede
   the access guidance bundled in the original beta.3 archives.

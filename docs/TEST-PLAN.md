@@ -46,7 +46,11 @@ the Home Assistant reference system.
   helper setup, or manual link repair.
 - **Status:** installation and add-on restart passed; update `6.0.1` to
   `7.0.0`, container replacement, subsequent container restart, and complete
-  Home Assistant host cold start passed.
+  Home Assistant host cold start passed. A second update from `7.0.0` to
+  `7.1.0`, containing `code-server 4.137.0`, recreated the container and
+  preserved the existing Codex conversation, projects, GitHub access,
+  sessions, and manual memory. The authenticated post-update persistence
+  audit completed without a blocker.
 
 ## Execution
 
