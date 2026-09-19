@@ -51,6 +51,10 @@ the Home Assistant reference system.
   preserved the existing Codex conversation, projects, GitHub access,
   sessions, and manual memory. The authenticated post-update persistence
   audit completed without a blocker.
+- **Current follow-up:** Studio Code Server `7.1.1` is running and its
+  post-repair add-on restart passed. Native Codex Memories were then enabled
+  by explicit operator choice and are reported active by a fresh CLI process.
+  This verifies configuration activation, not memory generation or retrieval.
 
 ## Execution
 

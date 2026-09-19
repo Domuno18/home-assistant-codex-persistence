@@ -96,3 +96,12 @@ The dated [BETA-4-ACCEPTANCE.md](BETA-4-ACCEPTANCE.md) is authoritative for new
 smoke outcomes, validation totals, release status and remaining evidence limits.
 The [7.1.1 investigation](REFERENCE-UPDATE-7.1.1.md) records recent HA component
 versions without inventing previous versions or upgrade dates.
+
+## Studio Code Server 7.1.1 and native-memory activation — 2026-09-19
+
+Read-only Supervisor evidence confirms Studio Code Server `7.1.1` is running;
+the accepted post-repair restart preserved HACP state and native remote access.
+After explicit operator authorization, the persistent Codex configuration and
+a fresh CLI feature listing reported native Memories enabled. The Core Knowledge
+store remained separate. No generated memory content was inspected, and no
+generation/retrieval claim is derived from this activation evidence.

@@ -73,3 +73,8 @@ no upstream executable is included in the source archive. The matching
 checks, live smoke checks and open behavioral/platform boundaries. Verify each
 archive with `scripts/verify_release.py` using its actual version and commit,
 then validate a clean extraction before publication.
+
+The 2026-09-19 post-release documentation addendum records the current Studio
+Code Server `7.1.1` running state and explicit native-memory activation. It does
+not rebuild or replace the published beta.4 archives. Release-page text may link
+to the corrected main-branch documentation but must preserve that distinction.

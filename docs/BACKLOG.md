@@ -69,3 +69,7 @@
       workspace-tool rules, and test both installation orders. REQ-F-008.
 - [x] BL-024 — Complete the dated beta.4 live lifecycle and dual-repository
       publication record. See BETA-4-ACCEPTANCE.md. REQ-O-004, REQ-Q-004.
+- [x] BL-025 — Synchronize current Studio Code Server `7.1.1` evidence and the
+      explicitly authorized native-memory activation across private/public
+      documentation, validate both repositories, and clarify the existing
+      beta.4 release pages without rebuilding released artifacts.

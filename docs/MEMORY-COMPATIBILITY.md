@@ -39,6 +39,21 @@ that already contains TOML tables, set the required top-level
 in the installation guide. HACP rejects ambiguous storage configuration rather
 than rewriting unrelated settings.
 
+The supported combinations are deliberately independent:
+
+| Core Knowledge | Codex Memories | Supported result |
+|---|---|---|
+| disabled | disabled | persistent Codex workspace without either memory layer |
+| enabled | disabled | deliberately maintained Core Knowledge only |
+| disabled | enabled | native OpenAI-managed local Memories only |
+| enabled | enabled | both stores persist separately without synchronization |
+
+On 2026-09-19 the reference operator explicitly enabled native Codex Memories
+in the persistent Codex configuration. The original CLI reported the stable
+`memories` feature as enabled, while the existing Core Knowledge path remained
+unchanged. This is live activation evidence only. It does not claim that a
+memory was generated, recalled, deduplicated or reconciled across the stores.
+
 ## Compatibility verdict
 
 Automated synthetic tests cover all four enable/disable combinations, fresh and
@@ -50,5 +65,6 @@ recall or generation.
 
 Live native generation/retrieval, actual case-insensitive platform execution and
 interactive on-request client approval remain separately reported evidence
-boundaries. The live feature was not enabled merely to run the storage tests.
-The beta must not claim a full behavioral pass from file-preservation tests.
+boundaries. The live feature was enabled only after explicit operator approval,
+not merely to make storage tests pass. The beta must not claim a full behavioral
+pass from activation or file-preservation tests.

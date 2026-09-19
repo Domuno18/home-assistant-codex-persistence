@@ -157,7 +157,13 @@ when the operator explicitly uses `HACP_MEMORY_SETUP=NO`.
 
 One managed global instruction block instructs Codex to read the persistent manual rules and memory file. Codex discovers the global guidance at session start; the bootstrap does not read either manual file and no technical include mechanism is implemented. Existing unrelated instructions are preserved. There is no copy-back path from the real workspace memory into this repository.
 
-Codex-managed local Memories are a separate optional feature. The installer does not enable them. If the operator enables them separately, their state remains inside the persistent Codex home. There is no synchronization, deduplication, conflict resolution, import, or merge with the manual `MEMORY.md`.
+Codex-managed local Memories are a separate optional feature. The installer does
+not enable them. If the operator explicitly enables them, their state remains
+inside the persistent Codex home. Generated native memory is private runtime
+state and must not enter Git, release artifacts or public diagnostics. There is
+no synchronization, deduplication, conflict resolution, import, or merge with
+Core Knowledge. Feature activation is not evidence of generation or correct
+recall, and neither store authorizes an action.
 
 ## Credential incident response
 

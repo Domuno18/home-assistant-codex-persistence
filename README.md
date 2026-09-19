@@ -82,6 +82,15 @@ sessions, and manual memory remained available. The post-update authenticated
 persistence audit passed without a blocker. See the
 [7.1.0 lifecycle evidence](docs/REFERENCE-UPDATE-7.1.0.md).
 
+The reference system now runs Studio Code Server `7.1.1`. A read-only
+Supervisor check confirmed the add-on is started, and the documented
+post-repair restart preserved the persistent workspace and native remote
+connection. The exact intermediate update path is not inferred. After explicit
+operator approval, native Codex Memories were enabled through the supported
+Codex feature flag while Core Knowledge remained separate. This proves
+activation and persistent configuration, not deterministic memory generation
+or retrieval. See the [7.1.1 evidence](docs/REFERENCE-UPDATE-7.1.1.md).
+
 `v0.9.0-beta.4` adds opt-in native remote startup and Core Knowledge / Codex Memories compatibility. It remains a beta; see [acceptance and limits](docs/BETA-4-ACCEPTANCE.md).
 On the reference system, the existing remote chat's command and file tools
 worked after the operator selected Full access and sent the next message.
@@ -102,15 +111,16 @@ start.
 | Memory | 16 GB RAM |
 | Storage | 128 GB SSD |
 | Platform | Home Assistant OS |
-| Editor | Studio Code Server community add-on `7.1.0` |
+| Editor | Studio Code Server community add-on `7.1.1` |
 | Editor runtime | `code-server 4.137.0` |
 | Agent | OpenAI Codex IDE extension and CLI |
 | Git integration | GitHub CLI |
 
 ✅ Successfully tested for installation, add-on updates from `6.0.1` to
 `7.0.0` and from `7.0.0` to `7.1.0`, container replacement, a subsequent
-container restart, and a complete Home Assistant host cold start on this
-environment.
+container restart, a complete Home Assistant host cold start, and the current
+`7.1.1` post-repair restart on this environment. The exact update path to
+`7.1.1` remains unknown.
 
 Other architectures and hardware combinations are welcome as community test
 reports.

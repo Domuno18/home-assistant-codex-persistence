@@ -226,7 +226,9 @@ Only operators who explicitly do not want this standard setup should add
 
 ## Optional Codex-managed local Memories
 
-The included manual file-based memory works without enabling the Codex Memories feature. The installer does not add `[features] memories = true`.
+The included Core Knowledge works without enabling the Codex Memories feature.
+The installer does not add `[features] memories = true`. `HACP_MEMORY_SETUP`
+controls only Core Knowledge; it never enables or disables native Memories.
 
 An operator may enable that separate Codex feature after installation in the persistent `/root/.codex/config.toml`:
 
@@ -235,7 +237,18 @@ An operator may enable that separate Codex feature after installation in the per
 memories = true
 ```
 
-If a `[features]` table already exists, add the key to that table instead of creating a duplicate table. The complete Codex home is persistent, so Codex-managed memory state remains available across container restarts. It is not synchronized or merged with the manual `Memories/MEMORY.md`.
+If a `[features]` table already exists, add the key to that table instead of
+creating a duplicate table. The complete Codex home is persistent, so
+Codex-managed memory state remains available across container restarts. It is
+not synchronized or merged with Core Knowledge.
+
+The four supported combinations are Core Knowledge on/off crossed with native
+Codex Memories on/off. Choose them independently. After changing the native
+feature flag, a new Codex process can verify the effective setting with
+`codex features list`; the `memories` row must show `true`. Per-chat use and
+generation controls remain native Codex settings. Enabling the feature does
+not prove that generation or retrieval has already occurred, and neither
+memory layer grants permissions.
 
 ## Beta feedback
 
@@ -259,6 +272,8 @@ The reference system has passed:
   replacement;
 - Studio Code Server update from `7.0.0` to `7.1.0`, containing
   `code-server 4.137.0` and including container recreation;
+- current Studio Code Server `7.1.1` running state and the documented
+  post-repair add-on restart; the exact update path to `7.1.1` is unknown;
 - a subsequent container restart;
 - a complete Home Assistant host cold start.
 

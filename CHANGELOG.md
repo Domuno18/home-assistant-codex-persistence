@@ -4,6 +4,14 @@ All notable public changes are documented here. Versions follow Semantic Version
 
 ## 0.9.0-beta.4 — 2026-09-19
 
+### Post-release documentation addendum
+
+- Record the current Studio Code Server `7.1.1` running state and post-repair
+  restart without inventing its intermediate update path.
+- Document the operator-authorized native Codex Memories activation, all four
+  independent memory combinations, and the continuing generation/recall limit.
+- Clarify that this documentation follow-up does not change released archives.
+
 - Add explicitly enabled remote startup using the original OpenAI managed CLI;
   preserve native updates and model selection, including Astra where available.
 - Add bounded, sanitized remote status and startup failure handling, selective

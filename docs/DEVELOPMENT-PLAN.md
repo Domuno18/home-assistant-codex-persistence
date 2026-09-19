@@ -3,6 +3,20 @@
 Date: 2026-09-19. Status: both delivery sprints complete, with the documented beta coverage limits.
 Repository language: English. This document is suitable for public distribution.
 
+## Follow-up sprint 3 — 7.1.1 and memory activation closure
+
+Status: complete on 2026-09-19; full validation passed with 84 tests in each
+repository before the synchronized push.
+
+This bounded follow-up synchronizes both repositories with the current Studio
+Code Server `7.1.1` running state, documents all four Core Knowledge/native
+Memories combinations, records the operator's explicit native-memory opt-in,
+and keeps generation/recall outside the proven boundary. Quality review requires
+full validation in both repositories and CI after push. Security review requires
+no real memory content, credentials, private product names or host identifiers
+in the public repository. It does not rebuild beta.4 artifacts or invent the
+unknown update path.
+
 ## Objective and scope
 
 Deliver update-resilient, explicitly enabled Codex remote startup, extend the

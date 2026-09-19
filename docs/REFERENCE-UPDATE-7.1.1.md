@@ -17,6 +17,11 @@ previous verified Studio Code Server update was 7.0.0 to 7.1.0 on 2026-09-13;
 see [that record](REFERENCE-UPDATE-7.1.0.md). Do not infer the precise subsequent
 upgrade path from current version numbers.
 
+A later read-only Supervisor query on 2026-09-19 again reported Studio Code
+Server `7.1.1` in the `started` state. The post-repair restart evidence therefore
+applies to the current installed version, without turning the unknown update
+path into an invented migration record.
+
 The operator reported remote access offline after an add-on update. Persistence,
 Codex sessions and both sign-ins remained intact. No native remote daemon was
 running; its start failed because `ps` was unavailable. Installing `procps` and
@@ -30,3 +35,9 @@ behavior. Core Knowledge and Codex Memories remain separate. Current lifecycle
 and beta acceptance results are tracked in [DEVELOPMENT-PLAN.md](DEVELOPMENT-PLAN.md)
 and [BETA-4-ACCEPTANCE.md](BETA-4-ACCEPTANCE.md); historical beta evidence is not
 relabelled as a new post-repair restart pass.
+
+After explicit operator approval, the persistent Codex configuration was set to
+`[features] memories = true`. The original CLI reported `memories` as a stable,
+enabled feature and the existing Core Knowledge path remained unchanged. No
+memory contents were inspected or published. Native generation and retrieval
+remain a separate, unverified behavioral boundary.
