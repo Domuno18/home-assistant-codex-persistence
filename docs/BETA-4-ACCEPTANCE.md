@@ -13,7 +13,7 @@ remain explicit below.
 | SM-04 repeated start/status | Synthetic idempotence and read-only native socket tests pass; two installed live starts returned connected / already-running |
 | SM-05 post-repair add-on restart | Passed after an actual Studio Code Server restart: HACP restored first, native remote reconnected, authenticated audit passed, existing session files and curated/configuration hashes were preserved |
 | SM-06 handover | Operator confirmed remote continuation after the initial repair; no chat lock deletion is part of this product |
-| SM-07 effective approvals | Current client uses unrestricted access with approval policy never; HACP configuration is unchanged. Interactive on-request approval remains a documented beta limitation under BL-020 |
+| SM-07 effective approvals | The acceptance smoke used unrestricted access with approval policy never. A later stored-profile drift to `never` was restored to HACP's exact `on-request` / user-reviewed default; interactive on-request approval remains a documented beta limitation under BL-020 |
 | SM-08 publication/artifacts | Candidate source and artifacts are validated by the release procedure; publication read-back is recorded after upload |
 | SM-09 memory | All four synthetic modes pass. Actual independent workspace/persistence installers pass in both orders and on repeat. The operator later enabled native Memories explicitly and the original CLI reports the stable feature as active. Live generation/retrieval remains unverified |
 
@@ -50,3 +50,16 @@ The persistent configuration and a fresh `codex features list` process confirm
 the feature flag is active. Core Knowledge remains separate and unchanged.
 This addendum changes documentation and local operator configuration only; it
 does not alter the beta.4 archives or claim native generation/retrieval.
+
+## Post-release access-profile recovery
+
+A later access audit detected persistent policy drift: the outer-container
+sandbox setting remained correct, but the stored approval policy was `never`
+instead of HACP's `on-request` default. The operator used the released,
+acknowledgement-gated `configure-access` interface to restore the exact profile,
+and the authenticated follow-up audit passed without a blocker. The container
+has no `bwrap` executable; none was installed because HACP's documented design
+uses Home Assistant add-on protection as the outer boundary. No source change,
+reinstallation, restart or replacement beta artifact was needed. Existing chat
+overrides and the still-open interactive approval evidence BL-020 remain
+separate from this stored-profile recovery.

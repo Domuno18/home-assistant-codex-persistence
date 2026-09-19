@@ -105,3 +105,18 @@ After explicit operator authorization, the persistent Codex configuration and
 a fresh CLI feature listing reported native Memories enabled. The Core Knowledge
 store remained separate. No generated memory content was inspected, and no
 generation/retrieval claim is derived from this activation evidence.
+
+## Persistent access-profile recovery — 2026-09-19
+
+The optional access audit detected an exact-profile mismatch without modifying
+the runtime. The sandbox mode was already `danger-full-access`; the stored
+approval policy had drifted to `never`. After explicit operator authorization,
+the released `configure-access` interface restored `danger-full-access`,
+`on-request`, and user-reviewed approvals. The subsequent authenticated audit
+reported the access profile and all other checked runtime items as `OK`.
+
+The add-on container did not provide `bwrap`, and no package was installed.
+This matches DOM-O-008, REQ-F-006 and REQ-I-005: add-on protection is the outer
+boundary and HACP manages only the guarded Codex defaults. Current-session
+client overrides, interactive approval behavior and BL-020 are not proven by
+the stored-profile audit. No reinstall, restart or release rebuild occurred.

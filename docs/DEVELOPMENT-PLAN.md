@@ -3,6 +3,18 @@
 Date: 2026-09-19. Status: both delivery sprints complete, with the documented beta coverage limits.
 Repository language: English. This document is suitable for public distribution.
 
+## Follow-up sprint 4 — access-profile drift recovery evidence
+
+Status: complete on 2026-09-19. A read-only audit detected that the persistent
+approval policy had drifted to `never` while `danger-full-access` remained in
+place. The released acknowledgement-gated `configure-access` operation restored
+the exact HACP profile, and an authenticated follow-up audit passed. The
+container's absent `bwrap` executable was treated according to the existing
+outer-container design; no package installation, add-on restart, source-code
+change or release rebuild was required. Sanitized evidence was synchronized to
+both repositories and validated before push. Effective per-chat permissions and
+BL-020 remain separate boundaries.
+
 ## Follow-up sprint 3 — 7.1.1 and memory activation closure
 
 Status: complete on 2026-09-19; full validation passed with 84 tests in each

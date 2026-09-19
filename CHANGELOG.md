@@ -11,6 +11,10 @@ All notable public changes are documented here. Versions follow Semantic Version
 - Document the operator-authorized native Codex Memories activation, all four
   independent memory combinations, and the continuing generation/recall limit.
 - Clarify that this documentation follow-up does not change released archives.
+- Record a detected persistent approval-policy drift, its bounded recovery
+  through `configure-access`, and the successful authenticated follow-up audit.
+- Confirm that no `bwrap` package, add-on restart or release rebuild was needed;
+  the existing outer-container security contract remains unchanged.
 
 - Add explicitly enabled remote startup using the original OpenAI managed CLI;
   preserve native updates and model selection, including Astra where available.

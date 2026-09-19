@@ -41,3 +41,27 @@ After explicit operator approval, the persistent Codex configuration was set to
 enabled feature and the existing Core Knowledge path remained unchanged. No
 memory contents were inspected or published. Native generation and retrieval
 remain a separate, unverified behavioral boundary.
+
+## Container-access profile maintenance
+
+A later read-only check found no `bwrap` executable in the add-on container.
+This is the already documented protected-container case: HACP does not install
+a second sandbox and Home Assistant add-on protection remains the outer
+isolation boundary. Command execution in the active explicitly unrestricted
+chat remained available.
+
+The same audit found that the persistent sandbox setting was still
+`danger-full-access`, but the persistent approval policy had drifted from the
+HACP default `on-request` to `never`. The cause of that persisted change was not
+inferred. The operator authorized the existing guarded recovery interface:
+
+```sh
+HACP_CODEX_CONTAINER_ACCESS=YES <bootstrap> configure-access
+```
+
+It restored exactly `sandbox_mode = "danger-full-access"`, `approval_policy =
+"on-request"`, and `approvals_reviewer = "user"`. An authenticated follow-up
+audit reported every checked runtime, access, permission, session, memory and
+sign-in item as `OK`. No add-on restart, HACP reinstall, repository-code change
+or release rebuild was required. The correction applies to new Codex sessions;
+an existing chat can retain its client-selected effective policy.

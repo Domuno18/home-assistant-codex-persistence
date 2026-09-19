@@ -73,3 +73,7 @@
       explicitly authorized native-memory activation across private/public
       documentation, validate both repositories, and clarify the existing
       beta.4 release pages without rebuilding released artifacts.
+- [x] BL-026 — Detect persistent access-profile drift read-only, restore the
+      exact HACP defaults through the guarded `configure-access` interface,
+      pass the authenticated follow-up audit, and document the absent `bwrap`
+      boundary without installing packages or rebuilding beta.4.

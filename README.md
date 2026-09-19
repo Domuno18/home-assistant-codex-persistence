@@ -195,3 +195,13 @@ CLI is introduced. [Core Knowledge and Codex Memories](docs/MEMORY-COMPATIBILITY
 use separate stores; existing safe memory content remains in place. The current
 [update investigation](docs/REFERENCE-UPDATE-7.1.1.md) distinguishes persistence
 from remote connectivity.
+
+## Post-release container-access verification
+
+A later operational audit found that the persistent approval default had
+drifted to `never` while the sandbox mode remained correct. The documented
+`configure-access` operation restored the exact persistent profile
+`danger-full-access` / `on-request` / `user`, and the authenticated follow-up
+audit passed. The add-on does not install `bwrap`; Home Assistant add-on
+protection remains the outer isolation boundary. Existing chats can retain a
+client-selected effective policy until a new session starts.
