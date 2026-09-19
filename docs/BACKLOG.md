@@ -67,5 +67,5 @@
       and models, and add failure/concurrency/status regressions. REQ-F-007.
 - [x] BL-023 — Separate Core Knowledge and Codex Memories, preserve legacy and
       workspace-tool rules, and test both installation orders. REQ-F-008.
-- [ ] BL-024 — Complete the dated beta.4 live lifecycle and dual-repository
+- [x] BL-024 — Complete the dated beta.4 live lifecycle and dual-repository
       publication record. See BETA-4-ACCEPTANCE.md. REQ-O-004, REQ-Q-004.

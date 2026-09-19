@@ -1,8 +1,8 @@
 # Beta.4 acceptance — 2026-09-19
 
-Status: automated, running-system and real post-repair restart checks passed.
-This source candidate precedes release publication; published tag/assets are
-authoritative for the release outcome.
+Status: both delivery sprints completed. Automated checks, real restart,
+release publication and downloaded assets were verified; beta coverage limits
+remain explicit below.
 
 | Area | Current evidence |
 |---|---|
@@ -34,3 +34,10 @@ complete. The beta.4 delivery gate covers preservation and correct reporting of
 that boundary, which TC-018/025 and the live smoke establish. Native generation
 and retrieval likewise remain outside the proven storage compatibility verdict.
 No independent review or broad platform acceptance is claimed.
+
+## Publication verified
+
+The beta prerelease and both assets were published and downloaded again; asset
+bytes matched the verified local build. Release commit: `874429cfbaadef79ee9d66b5fa008e173e08596f`.
+Archive SHA-256: `407c8d98d7fee70b1cdf727fa679d4a9a95a3aebee4d2ac0229846b7a9b36420`.
+Release: [v0.9.0-beta.4](https://github.com/Domuno18/home-assistant-codex-persistence/releases/tag/v0.9.0-beta.4).

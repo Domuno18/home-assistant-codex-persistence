@@ -1,6 +1,6 @@
 # Development plan: remote recovery and the next beta
 
-Date: 2026-09-19. Status: Sprint 1 complete; Sprint 2 candidate accepted for release processing.
+Date: 2026-09-19. Status: both delivery sprints complete, with the documented beta coverage limits.
 Repository language: English. This document is suitable for public distribution.
 
 ## Objective and scope
@@ -177,7 +177,7 @@ as that evidence. Do not disrupt the live host merely to populate a test table.
 
 ## Sprint 2 — public transfer and documented beta releases
 
-Status: candidate accepted; build and publication verification are in progress.
+Status: complete. Prerelease and assets published, downloaded and verified; see BETA-4-ACCEPTANCE.md.
 
 1. Transfer only reviewed product changes to the public repository. Keep this
    development plan and its test/release gates available in both repositories.
