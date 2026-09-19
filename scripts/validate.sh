@@ -18,9 +18,13 @@ done < <(find .githooks -type f -print0)
 bash -n release.sh
 
 echo "Checking Python syntax…"
-PYTHON_DATEIEN=(scripts/validate_project.py)
-[ ! -f scripts/create_project.py ] || PYTHON_DATEIEN+=(scripts/create_project.py)
-python3 -c 'import ast, pathlib, sys; [ast.parse(pathlib.Path(p).read_text(encoding="utf-8"), filename=p) for p in sys.argv[1:]]' "${PYTHON_DATEIEN[@]}"
+python3 - <<'PYTHON'
+import ast
+from pathlib import Path
+for root in (Path("scripts"), Path("tests")):
+    for path in root.rglob("*.py"):
+        ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+PYTHON
 
 echo "Checking structure and traceability…"
 if [ "$MODE" = "--release" ]; then

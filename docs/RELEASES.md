@@ -2,7 +2,7 @@
 
 ## Current status
 
-`0.9.0-beta.3` is the current beta target. `0.9.0-beta.2` remains the previous
+`0.9.0-beta.4` is the current beta target. `0.9.0-beta.3` remains the previous
 maintenance prerelease.
 
 Changing a version file, building an artifact, pushing Git commits, publishing
@@ -63,3 +63,13 @@ never part of a release.
 6. Push the reviewed tag to the public repository only after explicit release approval.
 7. Create the GitHub prerelease from the matching `CHANGELOG.md` section and
    inspect it as a separately approved action.
+
+## Beta.4 acceptance
+
+The owner authorized both repository pushes and documented beta prereleases.
+Repository visibility is unchanged. Product code uses the original Codex CLI;
+no upstream executable is included in the source archive. The matching
+[BETA-4-ACCEPTANCE.md](BETA-4-ACCEPTANCE.md) distinguishes completed automated
+checks, live smoke checks and open behavioral/platform boundaries. Verify each
+archive with `scripts/verify_release.py` using its actual version and commit,
+then validate a clean extraction before publication.

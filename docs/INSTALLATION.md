@@ -217,8 +217,8 @@ to the private persistent runtime.
 
 ## Standard manual file-based memory
 
-A normal installation creates missing `Memories/AGENTS.md` and
-`Memories/MEMORY.md` files and adds the managed startup instruction to the
+A normal installation creates missing `core-knowledge/AGENTS.md` and
+`core-knowledge/MEMORY.md` files and adds the managed startup instruction to the
 effective global Codex `AGENTS` file. Existing memory files are preserved.
 
 Only operators who explicitly do not want this standard setup should add
@@ -315,3 +315,12 @@ matches the intended narrow update.
 The private runtime contains credentials and native sessions. Never place it in
 Git or an unencrypted mirror. Backup and restore require a separately reviewed
 encrypted workflow, followed by a successful authenticated audit.
+
+## Beta.4 remote startup and memory paths
+
+New installations use Core Knowledge in `<workspace>/core-knowledge`. Existing
+safe `<workspace>/Memories` stores remain unchanged. Native Codex Memories are
+separate; see [MEMORY-COMPATIBILITY.md](MEMORY-COMPATIBILITY.md) before combining
+workspace tools. Enable native remote startup explicitly using
+[REMOTE-STARTUP.md](REMOTE-STARTUP.md). HACP restores persistence first, then the
+separate native remote phase runs. No custom CLI or model override is installed.

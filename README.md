@@ -2,9 +2,9 @@
 
 > A persistent, restart-safe AI engineering workspace for Home Assistant.
 
-**Community beta candidate · Self-hosted · GitHub-ready · Manual-memory included**
+**Community beta candidate · Self-hosted · GitHub-ready · Core Knowledge included**
 
-Home Assistant Codex Persistence keeps a complete local Codex engineering workspace alive when the Studio Code Server container restarts or is recreated. Sessions, sign-ins, configuration, tools, GitHub access, projects, and the standard manual file-based memory remain available from persistent storage. Codex-managed local Memories also remain persistent when the operator enables that separate Codex feature.
+Home Assistant Codex Persistence keeps a complete local Codex engineering workspace alive when the Studio Code Server container restarts or is recreated. Sessions, sign-ins, configuration, tools, GitHub access, projects, and the Core Knowledge remain available from persistent storage. Codex-managed local Memories also remain persistent when the operator enables that separate Codex feature.
 
 > [!WARNING]
 > This is an independent community beta. Back up your Home Assistant system,
@@ -18,7 +18,7 @@ A useful engineering agent is more than a login or a command. It has ongoing ses
 
 **Persistent workspace. Persistent context. Persistent engineering.**
 
-The goal is not to modify Codex or Home Assistant. The goal is to create a durable local coding agent that does not start from zero after a container restart. This project adds a reproducible persistence layer between Home Assistant storage and the complete Codex workspace used inside Studio Code Server. The included manual file-based memory is one part of that workspace, not the product by itself.
+The goal is not to modify Codex or Home Assistant. The goal is to create a durable local coding agent that does not start from zero after a container restart. This project adds a reproducible persistence layer between Home Assistant storage and the complete Codex workspace used inside Studio Code Server. The included Core Knowledge is one part of that workspace, not the product by itself.
 
 ## How
 
@@ -32,7 +32,7 @@ The project provides:
 - persistent Codex sessions, sign-in, configuration, and local state;
 - persistent GitHub CLI sign-in and HTTPS Git credentials;
 - persistent, verified Codex and GitHub CLI executables;
-- a separate workspace for projects and manual file-based memory, configured
+- a separate workspace for projects and Core Knowledge, configured
   by default unless installation explicitly uses `HACP_MEMORY_SETUP=NO`;
 - persistence of Codex-managed local Memories when the operator enables them separately;
 - automatic bootstrap on every add-on start;
@@ -82,7 +82,7 @@ sessions, and manual memory remained available. The post-update authenticated
 persistence audit passed without a blocker. See the
 [7.1.0 lifecycle evidence](docs/REFERENCE-UPDATE-7.1.0.md).
 
-`v0.9.0-beta.3` adds the container-access defaults and remains a beta.
+`v0.9.0-beta.4` adds opt-in native remote startup and Core Knowledge / Codex Memories compatibility. It remains a beta; see [acceptance and limits](docs/BETA-4-ACCEPTANCE.md).
 On the reference system, the existing remote chat's command and file tools
 worked after the operator selected Full access and sent the next message.
 No new conversation or container restart was needed. A successful stored-config
@@ -172,3 +172,16 @@ host lifecycle evidence remains a separate acceptance step.
 - [Codex local Memories](https://learn.chatgpt.com/docs/customization/memories#configure-local-memories)
 - [GitHub CLI authentication](https://cli.github.com/manual/gh_auth_login)
 - [GitHub CLI authentication status](https://cli.github.com/manual/gh_auth_status)
+
+## Next beta development plan
+
+See the [two-sprint development plan](docs/DEVELOPMENT-PLAN.md) for remote recovery, recent platform-update evidence, regression and smoke coverage, and the next documented beta release.
+
+## Native remote startup and memory compatibility
+
+[Remote startup](docs/REMOTE-STARTUP.md) uses the original OpenAI CLI and preserves
+its native update and model behavior, including Astra where available. No custom
+CLI is introduced. [Core Knowledge and Codex Memories](docs/MEMORY-COMPATIBILITY.md)
+use separate stores; existing safe memory content remains in place. The current
+[update investigation](docs/REFERENCE-UPDATE-7.1.1.md) distinguishes persistence
+from remote connectivity.

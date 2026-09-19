@@ -82,3 +82,17 @@ non-sensitive evidence is recorded in
 - Automated container simulation and real lifecycle acceptance are reported
   separately.
 - A `BLOCK` is successful security evidence when the test expects rejection.
+
+## Beta.4 evidence additions
+
+| Requirement/rule | Work package | Test evidence |
+|---|---|---|
+| REQ-F-007, REQ-O-006, DOM-R-014/015 | AP-300/AP-400 | TC-019–TC-024; `test_hacp_remote.py` |
+| REQ-F-008, DOM-R-016 | AP-300/AP-400 | TC-028; `test_memory_compatibility.py` |
+| REQ-O-002, DOM-R-017 | AP-400 | TC-015 full manifests and read-only socket client |
+| REQ-Q-004, DOM-R-018 | AP-400/AP-500 | TC-026/027; `test_release_contract.py`, release archive verifier |
+
+The dated [BETA-4-ACCEPTANCE.md](BETA-4-ACCEPTANCE.md) is authoritative for new
+smoke outcomes, validation totals, release status and remaining evidence limits.
+The [7.1.1 investigation](REFERENCE-UPDATE-7.1.1.md) records recent HA component
+versions without inventing previous versions or upgrade dates.

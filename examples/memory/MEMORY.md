@@ -1,4 +1,4 @@
-# Persistent manual memory
+# Persistent Core Knowledge
 
 > This is a neutral template. The installer copies it only when the operator
 > does not already have a `MEMORY.md`. Never place a populated copy in the

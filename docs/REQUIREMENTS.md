@@ -7,7 +7,7 @@
 | REQ-F-001 | Persist the complete Codex home, including native sessions, configuration, and file-backed sign-in, outside the disposable container. | AC-001, AC-002, AC-005, AC-009 |
 | REQ-F-002 | Persist GitHub CLI configuration and provide authenticated HTTPS Git access through the persistent sign-in. | AC-003, AC-005, AC-009, AC-012 |
 | REQ-F-003 | Leave projects and Studio Code add-on-owned persistence outside the project runtime and unchanged. | AC-004, AC-010 |
-| REQ-F-004 | Create and preserve the standard manual file-based memory setup unless explicitly disabled. | AC-011 |
+| REQ-F-004 | Create and preserve the Core Knowledge setup unless explicitly disabled. | AC-011 |
 | REQ-F-005 | Persist verified Codex and GitHub CLI executable files with checksums and architecture compatibility. | AC-005, AC-010 |
 | REQ-F-006 | Provide an explicitly activated Codex container-access profile for Studio Code Server environments that cannot create the nested Linux sandbox. | AC-013 |
 
@@ -55,3 +55,20 @@
 - Installation, add-on restart, add-on update, container replacement,
   subsequent container restart, and Home Assistant host cold-start evidence
   are complete for the reference environment.
+
+## Beta.4 additions
+
+| ID | Requirement | Acceptance |
+|---|---|---|
+| REQ-F-007 | Explicit remote opt-in delegates to the original managed Codex CLI, preserving native updates and model selection. | AC-014, TC-019–TC-024 |
+| REQ-F-008 | Core Knowledge and native Codex Memories coexist without merging, enabling or overwriting one another. | AC-015, TC-028 |
+| REQ-O-006 | Remote status is read-only, bounded and free of machine identity; remote boot failure leaves the editor available. | AC-014, TC-015, TC-022 |
+| REQ-Q-004 | Candidate version, source archives and checksum manifests are verified in both repository lines. | AC-016, TC-026, TC-027 |
+
+AC-014 requires isolated normal/failure tests and separately identified live
+remote evidence. AC-015 requires fresh/legacy and all memory-mode combinations,
+including both independent workspace setup orders and case-insensitive overlap
+rejection. AC-016 requires complete validation, public-content review and
+verified release artifacts. Current evidence is in
+[BETA-4-ACCEPTANCE.md](BETA-4-ACCEPTANCE.md); earlier lifecycle passes do not
+establish a post-repair restart or native memory recall.

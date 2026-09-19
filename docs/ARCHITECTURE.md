@@ -130,3 +130,18 @@ The reference installation passed initial installation, add-on restart, a real
 Studio Code Server update from `6.0.1` to `7.0.0` with container
 replacement, a subsequent container restart, and a complete Home Assistant
 host cold start.
+
+## Native remote adapter and memory ownership
+
+The optional Python-standard-library launcher `scripts/hacp_remote.py` runs
+after persistence boot. Its configuration adapter validates runtime ownership,
+retains unrelated Supervisor options and uses comparison plus read-back. Its
+status adapter performs a bounded read-only native WebSocket request and emits
+only connection state. Its startup adapter invokes the original managed
+`codex remote-control start`; OpenAI continues to own CLI versions, updates,
+models and service lifecycle. The launcher is not a replacement Codex CLI.
+
+Core Knowledge remains outside native Codex home. Existing safe legacy stores
+and supported workspace startup rules are preserved. Native state is persisted
+without interpretation or synchronization. See [REMOTE-STARTUP.md](REMOTE-STARTUP.md)
+and [MEMORY-COMPATIBILITY.md](MEMORY-COMPATIBILITY.md).

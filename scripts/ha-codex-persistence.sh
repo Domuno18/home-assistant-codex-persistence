@@ -10,7 +10,7 @@
 
 set -u
 
-PROGRAM_VERSION=0.9.0-beta.3
+PROGRAM_VERSION=0.9.0-beta.4
 RUNTIME_ROOT=${HACP_RUNTIME_ROOT:-/data/codex-persistence}
 CODEX_SOURCE=${HACP_CODEX_SOURCE:-/root/.codex}
 GH_SOURCE=${HACP_GH_SOURCE:-/root/.config/gh}
@@ -48,7 +48,7 @@ SCRIPT_PATH=$SCRIPT_DIR/$(basename "$0")
 PROJECT_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd -P)
 MEMORY_SETUP=${HACP_MEMORY_SETUP:-YES}
 WORKSPACE_ROOT=${HACP_WORKSPACE_ROOT:-/config/Codex}
-MEMORY_ROOT=$WORKSPACE_ROOT/Memories
+MEMORY_ROOT=$WORKSPACE_ROOT/core-knowledge
 MEMORY_BLOCK_BEGIN='<!-- BEGIN HACP MEMORY -->'
 MEMORY_BLOCK_END='<!-- END HACP MEMORY -->'
 EFFECTIVE_GLOBAL_AGENTS=
@@ -198,7 +198,33 @@ resolve_runtime_root_path() {
     RUNTIME_CANONICAL=$runtime_candidate
 }
 
+resolve_memory_root() {
+    [ "$MEMORY_SETUP" = NO ] && return 0
+    validate_safe_path workspace-root "$WORKSPACE_ROOT" || return 1
+    if path_exists "$WORKSPACE_ROOT/Memories"; then
+        if path_exists "$WORKSPACE_ROOT/core-knowledge"; then
+            report BLOCK memory-root "$WORKSPACE_ROOT" "both Core Knowledge and legacy store exist; reconcile explicitly"
+            return 1
+        fi
+        MEMORY_ROOT=$WORKSPACE_ROOT/Memories
+    fi
+    curated=$(readlink -m -- "$MEMORY_ROOT" | tr '[:upper:]' '[:lower:]') || return 1
+    for home_path in "$CODEX_SOURCE" "$CODEX_TARGET"
+    do
+        native=$(readlink -m -- "$home_path/memories" | tr '[:upper:]' '[:lower:]') || return 1
+        case "$curated/" in "$native/"*)
+            report BLOCK memory-root "$MEMORY_ROOT" "Core Knowledge overlaps native Codex Memories"
+            return 1 ;;
+        esac
+        case "$native/" in "$curated/"*)
+            report BLOCK memory-root "$MEMORY_ROOT" "Core Knowledge contains native Codex Memories"
+            return 1 ;;
+        esac
+    done
+}
+
 validate_configuration() {
+    resolve_memory_root || return 1
     if ! is_test_mode &&
         { [ "${HACP_SKIP_PROCESS_CHECK:-}" = YES ] ||
             [ "${HACP_SKIP_ADDON_CONFIG:-}" = YES ]; }; then
@@ -1857,11 +1883,15 @@ configure_addon_startup() {
 memory_start_block() {
     printf '%s\n' \
         "$MEMORY_BLOCK_BEGIN" \
-        "## Persistent manually maintained Codex long-term memory" \
+        "## Core Knowledge – deliberately maintained durable knowledge" \
         "1. At the start of every session, read \`$MEMORY_ROOT/AGENTS.md\` completely." \
         "2. Then read \`$MEMORY_ROOT/MEMORY.md\` completely." \
         "3. Apply the maintenance rules after confirmed durable decisions." \
         "$MEMORY_BLOCK_END"
+}
+
+old_english_memory_start_block() {
+    memory_start_block | sed 's/## Core Knowledge – deliberately maintained durable knowledge/## Persistent manually maintained Codex long-term memory/'
 }
 
 legacy_memory_start_block() {
@@ -1902,9 +1932,31 @@ legacy_memory_start_block_matches() {
     memory_start_block_matches_expected "$1" legacy_memory_start_block
 }
 
+shared_core_knowledge_block_matches() (
+    agents_file=$1
+    [ -f "$agents_file" ] && [ ! -L "$agents_file" ] || return 1
+    [ "$(stat -c '%h' "$agents_file" 2>/dev/null)" = 1 ] || return 1
+    [ "$(grep -Fxc "$MEMORY_BLOCK_BEGIN" "$agents_file")" = 1 ] || return 1
+    [ "$(grep -Fxc "$MEMORY_BLOCK_END" "$agents_file")" = 1 ] || return 1
+    # Preserve another workspace tool's extended rules. Only a known Core
+    # Knowledge header and the two exact startup references are interoperable.
+    awk -v begin="$MEMORY_BLOCK_BEGIN" -v end="$MEMORY_BLOCK_END" -v root="$MEMORY_ROOT" '
+        $0 == begin { inside=1; next }
+        $0 == end { if (inside) closed=1; inside=0 }
+        inside && /^## Core Knowledge – / { title=1 }
+        inside && ($0 == "1. At each session start, read `" root "/AGENTS.md` completely." ||
+                   $0 == "1. Bei jedem Sitzungsstart `" root "/AGENTS.md` vollständig lesen.") { first=1 }
+        inside && first && (index($0, "2. Then read `" root "/MEMORY.md` completely.") == 1 ||
+                            index($0, "2. Danach `" root "/MEMORY.md` vollständig lesen.") == 1) { second=1 }
+        END { exit !(title && first && second && closed && !inside) }
+    ' "$agents_file"
+)
+
 supported_memory_start_block_matches() {
     memory_start_block_matches "$1" ||
-        legacy_memory_start_block_matches "$1"
+        legacy_memory_start_block_matches "$1" ||
+        memory_start_block_matches_expected "$1" old_english_memory_start_block ||
+        shared_core_knowledge_block_matches "$1"
 }
 
 effective_global_agents_path() {
@@ -1973,7 +2025,7 @@ verify_memory_setup_read_only() (
         [ ! -f "$MEMORY_ROOT/MEMORY.md" ] ||
         [ -L "$MEMORY_ROOT/MEMORY.md" ]; then
         report BLOCK "$label" "$MEMORY_ROOT" \
-            "regular manual memory files required"
+            "regular Core Knowledge files required"
         return 1
     fi
     verify_effective_memory_start_rules "$codex_root" "$label" || return 1
@@ -2039,7 +2091,7 @@ ensure_memory_start_rules() (
     root_agents=$EFFECTIVE_GLOBAL_AGENTS
 
     if [ -f "$root_agents" ]; then
-        if memory_start_block_matches "$root_agents"; then
+        if supported_memory_start_block_matches "$root_agents"; then
             report OK memory-start "$root_agents" \
                 "exact global memory startup block already active"
             return 0
@@ -2157,7 +2209,7 @@ ensure_memory_start_rules() (
 
     rm -f -- "$temporary" || return 1
     trap - 0 1 2 3 15
-    if memory_start_block_matches "$root_agents"; then
+    if supported_memory_start_block_matches "$root_agents"; then
         report OK memory-start "$root_agents" \
             "exact global block appeared concurrently"
         return 0
@@ -2283,7 +2335,7 @@ setup_memory() (
         return 1
     ensure_memory_start_rules "$codex_root" || return 1
     report OK memory "$MEMORY_ROOT" \
-        "persistent manual memory active; existing content was not copied"
+        "persistent Core Knowledge active; existing content was not copied"
 )
 
 runtime_links_active() {
@@ -2876,10 +2928,10 @@ audit_all() {
         fi
         if [ "$memory_valid" = yes ]; then
             report OK memory "$MEMORY_ROOT" \
-                "exact global startup and manual maintenance logic available"
+                "exact global startup and Core Knowledge maintenance rules available"
         else
             report BLOCK memory "$MEMORY_ROOT" \
-                "manual files or exact effective global startup block missing"
+                "Core Knowledge files or exact effective global startup block missing"
             set_exit 1
         fi
     else

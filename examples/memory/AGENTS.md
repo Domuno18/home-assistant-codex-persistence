@@ -1,4 +1,4 @@
-# Persistent manual Codex memory rules
+# Core Knowledge maintenance rules
 
 ## Purpose
 

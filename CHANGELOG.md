@@ -2,7 +2,21 @@
 
 All notable public changes are documented here. Versions follow Semantic Versioning.
 
-## Unreleased
+## 0.9.0-beta.4 — 2026-09-19
+
+- Add explicitly enabled remote startup using the original OpenAI managed CLI;
+  preserve native updates and model selection, including Astra where available.
+- Add bounded, sanitized remote status and startup failure handling, selective
+  Supervisor configuration, concurrency detection and configuration rollback.
+- Introduce Core Knowledge for new curated stores, preserve safe legacy stores,
+  reject native memory path collisions and preserve shared workspace rules.
+- Extend full audit non-mutation, memory-mode, native remote and release archive
+  regression coverage through `scripts/validate.sh`.
+- Document current HA/Core/Supervisor/OS and Studio Code Server 7.1.1 observations,
+  the development sprints, upgrade/disable procedures and remaining evidence
+  boundaries in `docs/BETA-4-ACCEPTANCE.md`.
+
+### Included documentation corrections
 
 ### Documentation correction for 0.9.0-beta.3
 

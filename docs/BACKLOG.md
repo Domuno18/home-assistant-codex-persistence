@@ -16,8 +16,8 @@
       Source: RISK-007.
 - [ ] BL-006 — Investigate optional encrypted backup and restore evidence for
       the private runtime. Source: RISK-005.
-- [ ] BL-007 — Automate TC-015 to prove that a complete audit run is
-      mutation-free. Source: REQ-O-002.
+- [x] BL-007 — TC-015 now compares complete synthetic runtime manifests
+      before/after audit in all memory modes. Source: REQ-O-002.
 - [ ] BL-020 — Complete TC-018 on the reference system: activate the exact
       profile, start a new Codex session, confirm Home Assistant/project/GitHub
       tasks and user approval prompts, then run the read-only access audit.
@@ -60,3 +60,12 @@
       containing `code-server 4.137.0`, recreated the add-on container while
       preserving Codex sessions, projects, GitHub access, and manual memory.
       The authenticated post-update persistence audit passed under TC-012.
+
+## Beta.4 delivery
+
+- [x] BL-022 — Implement opt-in native remote startup, preserve the original CLI
+      and models, and add failure/concurrency/status regressions. REQ-F-007.
+- [x] BL-023 — Separate Core Knowledge and Codex Memories, preserve legacy and
+      workspace-tool rules, and test both installation orders. REQ-F-008.
+- [ ] BL-024 — Complete the dated beta.4 live lifecycle and dual-repository
+      publication record. See BETA-4-ACCEPTANCE.md. REQ-O-004, REQ-Q-004.

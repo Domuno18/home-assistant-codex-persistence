@@ -1,4 +1,4 @@
-# Manual long-term memory template
+# Core Knowledge template
 
 The standard installation uses this template to add a small, transparent
 memory layer beside Codex's native sessions and Codex-managed memories.
@@ -9,10 +9,10 @@ memory layer beside Codex's native sessions and Codex-managed memories.
    home.
 2. **Codex-managed memories** are local state created by Codex when that
    product feature is enabled.
-3. **Manual memory** is the operator-maintained `Memories/MEMORY.md` described
+3. **Core Knowledge** is the deliberately maintained `core-knowledge/MEMORY.md` described
    here.
 
-Persisting the complete Codex home protects native sessions and also preserves Codex-managed local Memories if the operator enables that separate Codex feature. This template adds the manual mechanism without copying private content into Git. The two memory mechanisms are not synchronized or merged.
+Persisting the complete Codex home protects native sessions and also preserves Codex-managed local Memories if the operator enables that separate Codex feature. This template adds the Core Knowledge mechanism without copying private content into Git. The two memory mechanisms are not synchronized or merged.
 
 ## Automatic setup
 
@@ -24,7 +24,7 @@ ${HACP_WORKSPACE_ROOT:-/config/Codex}/Memories/
 └── MEMORY.md
 ```
 
-Existing files are preserved byte-for-byte. The installer adds one managed block to the effective global Codex instruction file. Codex discovers that global guidance at session start, and the block instructs Codex to read the manual rules and memory, including when work begins in a nested Git repository. The bootstrap does not read these files itself, and this is an instruction rather than a technical include mechanism.
+Existing files are preserved byte-for-byte. The installer adds one managed block to the effective global Codex instruction file. Codex discovers that global guidance at session start, and the block instructs Codex to read the Core Knowledge rules and facts, including when work begins in a nested Git repository. The bootstrap does not read these files itself, and this is an instruction rather than a technical include mechanism.
 
 The workspace must not be this installation repository or a directory inside
 its checkout. There is no automatic copy-back from the real memory file to the
@@ -38,7 +38,7 @@ HACP_INSTALL_OK=YES \
 sh ./scripts/ha-codex-persistence.sh install
 ```
 
-Operators can explicitly disable only this manual memory setup during the
+Operators can explicitly disable only Core Knowledge setup during the
 one-time installation with `HACP_MEMORY_SETUP=NO`. Native sessions and
 Codex-managed memories remain part of the persistent Codex home.
 
@@ -53,3 +53,5 @@ Codex-managed memories remain part of the persistent Codex home.
 
 This repository contains only the empty neutral template. A real populated
 `MEMORY.md` belongs exclusively in the operator's private persistent workspace.
+
+Safe existing workspace `Memories` stores remain supported without migration. See [memory compatibility](../../docs/MEMORY-COMPATIBILITY.md).

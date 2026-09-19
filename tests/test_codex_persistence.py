@@ -495,18 +495,18 @@ class CodexPersistenceTests(unittest.TestCase):
         )
         self.assertEqual(owner_marker.stat().st_mode & 0o777, 0o600)
         self.assertEqual(self.harness.runtime.stat().st_mode & 0o777, 0o700)
-        self.assertTrue((self.harness.workspace / "Memories" / "AGENTS.md").is_file())
-        self.assertTrue((self.harness.workspace / "Memories" / "MEMORY.md").is_file())
+        self.assertTrue((self.harness.workspace / "core-knowledge" / "AGENTS.md").is_file())
+        self.assertTrue((self.harness.workspace / "core-knowledge" / "MEMORY.md").is_file())
         global_agents = (
             self.harness.runtime / "current" / "codex-home" / "AGENTS.md"
         )
         global_text = global_agents.read_text(encoding="utf-8")
         self.assertIn(
-            str(self.harness.workspace / "Memories" / "AGENTS.md"),
+            str(self.harness.workspace / "core-knowledge" / "AGENTS.md"),
             global_text,
         )
         self.assertIn(
-            str(self.harness.workspace / "Memories" / "MEMORY.md"),
+            str(self.harness.workspace / "core-knowledge" / "MEMORY.md"),
             global_text,
         )
         self.assertFalse((self.harness.workspace / "AGENTS.md").exists())
@@ -1231,7 +1231,7 @@ exec {real_flock} "$@"
 
     def test_existing_memory_content_is_never_replaced(self) -> None:
         self.harness.seed_logged_in_state()
-        memory = self.harness.workspace / "Memories"
+        memory = self.harness.workspace / "core-knowledge"
         memory.mkdir(parents=True)
         custom_rules = b"# Custom private rules stay untouched\n"
         custom_facts = b"# Private memory sentinel stays untouched\n"
@@ -1264,7 +1264,7 @@ exec {real_flock} "$@"
         self.assertTrue(installed_override.startswith(override_content))
         self.assertEqual(installed_override.count(b"<!-- BEGIN HACP MEMORY -->"), 1)
         self.assertIn(
-            str(self.harness.workspace / "Memories" / "MEMORY.md").encode(),
+            str(self.harness.workspace / "core-knowledge" / "MEMORY.md").encode(),
             installed_override,
         )
 
@@ -1284,7 +1284,7 @@ exec {real_flock} "$@"
 
     def test_only_missing_manual_memory_file_is_created(self) -> None:
         self.harness.seed_logged_in_state()
-        memory = self.harness.workspace / "Memories"
+        memory = self.harness.workspace / "core-knowledge"
         memory.mkdir(parents=True)
         existing_memory = b"# Existing private facts remain byte exact\n"
         (memory / "MEMORY.md").write_bytes(existing_memory)
@@ -1299,7 +1299,7 @@ exec {real_flock} "$@"
         self.harness.seed_logged_in_state()
         first = self.harness.install()
         self.assertEqual(first.returncode, 0, first.stdout + first.stderr)
-        memory = self.harness.workspace / "Memories"
+        memory = self.harness.workspace / "core-knowledge"
         global_agents = self.harness.runtime / "current" / "codex-home" / "AGENTS.md"
         rules_before = (memory / "AGENTS.md").read_bytes()
         facts_before = (memory / "MEMORY.md").read_bytes()
@@ -1323,8 +1323,8 @@ exec {real_flock} "$@"
         legacy_block = (
             "<!-- BEGIN HACP MEMORY -->\n"
             "## Persistentes manuell gepflegtes Codex-Langzeitgedaechtnis\n"
-            f"1. Bei jedem Sitzungsstart `{self.harness.workspace}/Memories/AGENTS.md` vollstaendig lesen.\n"
-            f"2. Danach `{self.harness.workspace}/Memories/MEMORY.md` vollstaendig lesen.\n"
+            f"1. Bei jedem Sitzungsstart `{self.harness.workspace}/core-knowledge/AGENTS.md` vollstaendig lesen.\n"
+            f"2. Danach `{self.harness.workspace}/core-knowledge/MEMORY.md` vollstaendig lesen.\n"
             "3. Nach bestaetigten dauerhaften Entscheidungen die Pflegeregeln anwenden.\n"
             "<!-- END HACP MEMORY -->\n"
         )
@@ -1374,7 +1374,7 @@ exec {real_flock} "$@"
         self.harness.seed_logged_in_state()
         first = self.harness.install(HACP_MEMORY_SETUP="NO")
         self.assertEqual(first.returncode, 0, first.stdout + first.stderr)
-        memory = self.harness.workspace / "Memories"
+        memory = self.harness.workspace / "core-knowledge"
         manifest = self.harness.runtime / "current" / "meta" / "codex.tree"
         active = self.harness.runtime / "state" / "active-generation"
         manifest_before = manifest.read_bytes()
@@ -1384,7 +1384,7 @@ exec {real_flock} "$@"
         second = self.harness.install()
 
         self.assertNotEqual(second.returncode, 0)
-        self.assertIn("regular manual memory files required", second.stdout)
+        self.assertIn("regular Core Knowledge files required", second.stdout)
         self.assertFalse(memory.exists())
         self.assertFalse(
             (self.harness.runtime / "current" / "codex-home" / "AGENTS.md").exists()
@@ -1396,13 +1396,13 @@ exec {real_flock} "$@"
         self.harness.seed_logged_in_state()
         first = self.harness.install()
         self.assertEqual(first.returncode, 0, first.stdout + first.stderr)
-        missing_memory = self.harness.workspace / "Memories" / "MEMORY.md"
+        missing_memory = self.harness.workspace / "core-knowledge" / "MEMORY.md"
         missing_memory.unlink()
 
         second = self.harness.install()
 
         self.assertNotEqual(second.returncode, 0)
-        self.assertIn("regular manual memory files required", second.stdout)
+        self.assertIn("regular Core Knowledge files required", second.stdout)
         self.assertFalse(missing_memory.exists())
         self.assertTrue((self.harness.runtime / "current").is_dir())
 
@@ -1419,7 +1419,7 @@ exec {real_flock} "$@"
         global_agents = (
             self.harness.runtime / "current" / "codex-home" / "AGENTS.md"
         ).read_text(encoding="utf-8")
-        self.assertIn(str(self.harness.workspace / "Memories" / "AGENTS.md"), global_agents)
+        self.assertIn(str(self.harness.workspace / "core-knowledge" / "AGENTS.md"), global_agents)
         self.assertFalse((self.harness.workspace / "AGENTS.md").exists())
 
     def test_workspace_inside_installer_checkout_is_blocked(self) -> None:
@@ -1570,7 +1570,7 @@ exec {real_flock} "$@"
 
     def test_concurrent_manual_memory_creation_is_never_overwritten(self) -> None:
         self.harness.seed_logged_in_state()
-        memory = self.harness.workspace / "Memories"
+        memory = self.harness.workspace / "core-knowledge"
         memory.mkdir(parents=True)
         race_destination = memory / "MEMORY.md"
         race_content = b"# Concurrent private memory remains untouched\n"

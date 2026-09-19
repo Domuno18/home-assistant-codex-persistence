@@ -30,3 +30,7 @@
 - [x] Installation, add-on restart, real update, container replacement, and
       subsequent container restart are accepted.
 - [x] Home Assistant host cold start is accepted under BL-001 and TC-012.
+
+## Next beta development
+
+The next two sprints, regression coverage, live smoke checks, update-evidence requirements and dual-repository beta release gates are defined in [DEVELOPMENT-PLAN.md](DEVELOPMENT-PLAN.md). Implementation is complete; lifecycle and publication acceptance remain in progress. See [BETA-4-ACCEPTANCE.md](BETA-4-ACCEPTANCE.md).

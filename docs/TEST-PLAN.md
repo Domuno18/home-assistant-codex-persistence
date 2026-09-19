@@ -23,7 +23,7 @@ the Home Assistant reference system.
 | TC-011 | REQ-F-004, DOM-R-006, AC-011 | create missing neutral memory files, preserve existing files and approved legacy block, reject ambiguous blocks | automated and reviewed |
 | TC-013 | REQ-I-002, DOM-R-002 | activate a fully verified ready generation after container replacement | automated |
 | TC-014 | REQ-O-001, REQ-Q-003 | configure unsupported external credential stores; block before `current` | automated |
-| TC-015 | REQ-O-002, DOM-R-008 | compare complete runtime-tree manifests before and after audit | planned under BL-007 |
+| TC-015 | REQ-O-002, DOM-R-008 | compare complete runtime-tree manifests before and after audit | automated in beta.4 |
 | TC-016 | REQ-I-001, DOM-R-009 | verify Supervisor comparison, selective update, concurrency abort, read-back, and persisted `gh` after replacement | automated |
 | TC-017 | REQ-I-003, REQ-I-004, DOM-R-010 | migrate only supported helper values and preserve unrelated Git configuration | automated |
 | TC-018 | REQ-F-006, REQ-I-005, REQ-S-003, REQ-O-005, DOM-R-011–DOM-R-013 | require explicit activation, preserve unrelated Codex config, publish the exact profile idempotently, remove only the exact retired HACP startup command, and detect both drifts read-only | automated; real new-session acceptance pending |
@@ -57,3 +57,23 @@ the Home Assistant reference system.
 ```sh
 ./scripts/validate.sh
 ```
+
+## Planned next-beta coverage
+
+[DEVELOPMENT-PLAN.md](DEVELOPMENT-PLAN.md) reserves TC-019 through TC-028, includes TC-015, and defines SM-01 through SM-09. These checks are planned, not yet implemented or passed. Extend `scripts/validate.sh` without dropping existing checks; keep real lifecycle acceptance separate.
+
+## Beta.4 regression execution
+
+`validate.sh` parses every Python script/test and retains the existing lifecycle,
+structure and security gates. `test_hacp_remote.py` covers TC-019–TC-024 with
+synthetic Supervisor, process and native socket boundaries, including opt-in,
+concurrency, failed read-back, timeout, stale socket, original CLI selection and
+no model overrides. `test_memory_compatibility.py` covers TC-015/028 with all
+four memory modes, container replacement, native configuration preservation,
+legacy roots, path collisions and both workspace startup orders.
+`test_release_contract.py` covers candidate consistency and positive/negative
+archive checks under TC-026/027. TC-025 retains TC-018 without widening access.
+
+Connection failure states use test doubles; actual transport reconnect, native
+memory recall and interactive client approvals require separate live evidence.
+The exact smoke results are in [BETA-4-ACCEPTANCE.md](BETA-4-ACCEPTANCE.md).

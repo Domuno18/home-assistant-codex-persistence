@@ -67,3 +67,13 @@ any invariant violation --> BLOCK without destructive cleanup
 - `BootstrapConfigured`: the managed startup command is installed.
 - `ContainerAccessConfigured`: persistent access defaults were explicitly set; this does not attest an active chat's effective permissions.
 - `AuditPassed`: all selected read-only checks succeeded.
+
+## Beta.4 invariants
+
+| ID | Invariant | Evidence |
+|---|---|---|
+| DOM-R-014 | Remote is opt-in; persistence restores first; unrelated options and running native services are preserved. | TC-019–TC-024 |
+| DOM-R-015 | The official CLI owns remote transport, package updates and models; HACP creates no custom CLI or model override. | TC-024 |
+| DOM-R-016 | Core Knowledge never overlaps native memory by path or case, merges stores or redirects legacy guidance silently. | TC-028 |
+| DOM-R-017 | Status and audit have no HACP filesystem mutations; native service logging is outside that assertion. | TC-015 |
+| DOM-R-018 | Release archives match their commit/version manifest and contain only regular safe source members. | TC-027 |
