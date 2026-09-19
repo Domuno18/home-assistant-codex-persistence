@@ -1,6 +1,6 @@
 # Development plan: remote recovery and the next beta
 
-Date: 2026-09-19. Status: implementation complete; lifecycle and release acceptance in progress.
+Date: 2026-09-19. Status: Sprint 1 complete; Sprint 2 candidate accepted for release processing.
 Repository language: English. This document is suitable for public distribution.
 
 ## Objective and scope
@@ -48,7 +48,7 @@ complete this record. Refresh versions before lifecycle testing and publication.
 
 ## Sprint 1 — implementation and lifecycle acceptance
 
-Status: implementation complete; acceptance in progress. Primary development takes place in the private repository.
+Status: complete with documented beta evidence limits. Primary development takes place in the private repository.
 
 1. Define the remote lifecycle requirements and domain rules before coding;
    link acceptance criteria to the test IDs below and the evidence matrix.
@@ -177,7 +177,7 @@ as that evidence. Do not disrupt the live host merely to populate a test table.
 
 ## Sprint 2 — public transfer and documented beta releases
 
-Status: planned; depends on Sprint 1 acceptance.
+Status: candidate accepted; build and publication verification are in progress.
 
 1. Transfer only reviewed product changes to the public repository. Keep this
    development plan and its test/release gates available in both repositories.

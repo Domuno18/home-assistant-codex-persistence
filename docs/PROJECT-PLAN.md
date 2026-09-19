@@ -33,4 +33,4 @@
 
 ## Next beta development
 
-The next two sprints, regression coverage, live smoke checks, update-evidence requirements and dual-repository beta release gates are defined in [DEVELOPMENT-PLAN.md](DEVELOPMENT-PLAN.md). Implementation is complete; lifecycle and publication acceptance remain in progress. See [BETA-4-ACCEPTANCE.md](BETA-4-ACCEPTANCE.md).
+The next two sprints, regression coverage, live smoke checks, update-evidence requirements and dual-repository beta release gates are defined in [DEVELOPMENT-PLAN.md](DEVELOPMENT-PLAN.md). Sprint 1 implementation and lifecycle acceptance are complete with documented beta limits; Sprint 2 publication verification is in progress. See [BETA-4-ACCEPTANCE.md](BETA-4-ACCEPTANCE.md).

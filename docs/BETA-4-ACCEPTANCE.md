@@ -1,7 +1,8 @@
 # Beta.4 acceptance — 2026-09-19
 
-Status: automated and running-system checks passed. Post-repair restart and
-release publication remain pending.
+Status: automated, running-system and real post-repair restart checks passed.
+This source candidate precedes release publication; published tag/assets are
+authoritative for the release outcome.
 
 | Area | Current evidence |
 |---|---|
@@ -10,10 +11,10 @@ release publication remain pending.
 | SM-02 native remote | Original managed Codex daemon reports connected; operator confirmed remote usability |
 | SM-03 command/file smoke | Same-conversation temporary file create/read/edit/delete passed under the actual unrestricted client profile |
 | SM-04 repeated start/status | Synthetic idempotence and read-only native socket tests pass; two installed live starts returned connected / already-running |
-| SM-05 post-repair add-on restart | Pending; historical beta.3 restart evidence is not reused |
+| SM-05 post-repair add-on restart | Passed after an actual Studio Code Server restart: HACP restored first, native remote reconnected, authenticated audit passed, existing session files and curated/configuration hashes were preserved |
 | SM-06 handover | Operator confirmed remote continuation after the initial repair; no chat lock deletion is part of this product |
 | SM-07 effective approvals | Current client uses unrestricted access with approval policy never; HACP configuration is unchanged. Interactive on-request approval remains a documented beta limitation under BL-020 |
-| SM-08 publication/artifacts | Pending candidate validation and publication |
+| SM-08 publication/artifacts | Candidate source and artifacts are validated by the release procedure; publication read-back is recorded after upload |
 | SM-09 memory | All four synthetic modes pass. Actual independent workspace/persistence installers pass in both orders and on repeat. Live native generation/retrieval remains unverified; the live feature was not enabled for testing |
 
 A native CLI process restart with a synthetic unauthenticated home confirmed that
