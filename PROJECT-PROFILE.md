@@ -55,7 +55,7 @@ empty placeholder documents are intentionally not retained.
 The beta.5 scope is native CLI `0.157.1` control-socket and startup-environment
 compatibility, with a documented smartphone explicit-folder procedure.
 Requirements REQ-I-006/007 and REQ-O-007, rules DOM-R-019–021, and TC-029–031
-provide traceability. Fresh release verification is pending until recorded in
+provide traceability. Fresh release, artifact and installation verification passed; see
 [the beta.5 acceptance record](docs/BETA-5-ACCEPTANCE.md).
 
 The operator confirmed the complete new-chat-in-explicit-folder-to-voice

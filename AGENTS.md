@@ -54,8 +54,9 @@
 ## Language and quality
 
 - Public project documentation is written in English.
-- Keep HACP product documentation and release text neutral in both lines;
-  do not name internal project templates or private review frameworks.
+- Keep shared HACP product documentation neutral. Public content, reachable
+  history, release text and assets must not name internal project templates or
+  private review frameworks. Private origin/history may retain its provenance.
 - Keep code identifiers and user-facing messages consistently English.
 - State units, time bases, time zones, signs, and tolerances explicitly.
 - Tests cover normal behavior, boundaries, and relevant failure behavior.

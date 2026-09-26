@@ -80,7 +80,7 @@
 
 ## Beta.5 and client follow-up
 
-- [ ] BL-027 — Complete fresh beta.5 compatibility, security, and release
+- [x] BL-027 — Complete fresh beta.5 compatibility, security, and release
       verification for REQ-I-006/007 and TC-029/030; record candidate-specific
       results in BETA-5-ACCEPTANCE.md.
 - [ ] BL-028 / OPEN-REMOTE-001 — Investigate automatic remote-home selection

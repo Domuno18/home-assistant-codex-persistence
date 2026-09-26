@@ -2,8 +2,9 @@
 
 ## Current status
 
-`0.9.0-beta.5` is the current beta target. `0.9.0-beta.4` remains the previous
-published prerelease. Candidate checks and publication results are recorded in
+`0.9.0-beta.5` is published in both repository lines and installed on the
+reference system. `0.9.0-beta.4` is the previous prerelease. Verification and
+publication results are recorded in
 [BETA-5-ACCEPTANCE.md](BETA-5-ACCEPTANCE.md); a target version is not proof of
 publication or operational acceptance.
 

@@ -12,10 +12,10 @@ Repository visibility and the original OpenAI CLI remain unchanged.
 | Automated regression | 108 tests passed in each repository line, including TC-029/030 socket/home cases and TC-032 parity failure cases; 37 remote tests also passed as an unprivileged user |
 | Independent review | Independent code/documentation review passed; seven separate synthetic socket/home experiments passed, including real Unix-socket protocol and file-preservation checks |
 | Product parity | All 71 source files passed the product comparison; only documented historical provenance and publication metadata differ. The release gate repeats this against clean committed trees |
-| Local installation | Pending installation from the verified beta.5 archive and byte comparison of both installed HACP scripts |
-| Native runtime | Earlier compatibility deployment observed original CLI/app server 0.157.1 connected on Studio Code Server 7.1.1; final beta.5 audit/status read-back pending |
-| Smartphone voice | Operator-confirmed existing-chat voice and startup with an explicitly selected existing remote folder; automatic home detection still fails |
-| Artifacts/publication | Source archives and manifests must pass identity/checksum verification, clean extraction validation, CI and downloaded-asset comparison; release pages record final outcomes |
+| Local installation | Verified public source archive installed on the reference system; both installed HACP scripts byte-match both release archives; native tools, configuration and Supervisor options preserved |
+| Native runtime | Original CLI 0.157.1; authenticated persistence and add-on audits passed without warnings; beta.5 status reports running/connected on Studio Code Server 7.1.1 |
+| Smartphone voice | Operator-confirmed existing-chat voice and complete new-chat-in-explicit-folder-to-voice route; automatic home detection still fails |
+| Artifacts/publication | Both archives passed commit/version/checksum verification and 108 tests per clean extraction; both release-commit CI runs passed; both prereleases and downloaded assets verified |
 
 ## Quality review scope
 
@@ -77,3 +77,20 @@ The release pages and their checksum manifests are authoritative for published
 commit IDs and artifact hashes. Different provenance produces different archive
 hashes; the [parity policy](REPOSITORY-PARITY.md) defines the identical product
 content required in both lines.
+
+## Publication and local installation completed
+
+Both repository lines published `v0.9.0-beta.5` on 2026-09-26. Their source
+archives and checksum manifests were downloaded again and matched the verified
+local builds. The public source archive was installed and audited successfully.
+The original CLI and native service were not restarted by that installation.
+A separate fresh public clone passed the naming/privacy review of all 412
+reachable Git objects at the release tag, 71 current source files, all archive
+files and release text. The internal template name is absent from public content.
+
+This is a post-publication documentation addendum. The tagged source snapshot
+necessarily precedes artifact installation/publication and records those gates
+as pending; this addendum and the
+[published release record](https://github.com/Domuno18/home-assistant-codex-persistence/releases/tag/v0.9.0-beta.5)
+record the completed checks. Published archives and tags are not rebuilt or
+replaced by this documentation update. OPEN-REMOTE-001 remains open.
