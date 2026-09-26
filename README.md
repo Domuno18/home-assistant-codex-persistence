@@ -91,7 +91,21 @@ Codex feature flag while Core Knowledge remained separate. This proves
 activation and persistent configuration, not deterministic memory generation
 or retrieval. See the [7.1.1 evidence](docs/REFERENCE-UPDATE-7.1.1.md).
 
-`v0.9.0-beta.4` adds opt-in native remote startup and Core Knowledge / Codex Memories compatibility. It remains a beta; see [acceptance and limits](docs/BETA-4-ACCEPTANCE.md).
+`v0.9.0-beta.5` addresses native Codex CLI `0.157.1` socket compatibility and
+safe default-home startup. It validates the native socket alias, recognizes
+missing temporary targets after container loss, and avoids a redundant
+`CODEX_HOME` override when the default symlink already selects persistent state.
+See [beta.5 acceptance and limits](docs/BETA-5-ACCEPTANCE.md) for fresh validation
+and release evidence; previous lifecycle passes do not establish a new beta.5
+restart result. The earlier [beta.4 record](docs/BETA-4-ACCEPTANCE.md) covers
+opt-in remote startup and Core Knowledge / Codex Memories compatibility.
+
+If a new smartphone voice chat cannot find its remote home, follow the
+[explicit-folder procedure](docs/REMOTE-STARTUP.md#smartphone-voice-startup-with-an-explicit-folder).
+The operator confirmed that creating a new chat in the correct explicitly
+chosen folder and then starting voice works; existing-chat voice also works.
+Automatic home detection remains unresolved on the reference iPhone;
+the suspected client-side cause is unproven.
 On the reference system, the existing remote chat's command and file tools
 worked after the operator selected Full access and sent the next message.
 No new conversation or container restart was needed. A successful stored-config
@@ -159,6 +173,8 @@ All public user and engineering documentation is maintained in English.
 - [Evidence matrix](docs/EVIDENCE-MATRIX.md)
 - [Detailed security model](docs/SECURITY.md)
 - [Release policy](docs/RELEASES.md)
+- [Native remote startup and smartphone procedure](docs/REMOTE-STARTUP.md)
+- [Native remote compatibility decision](docs/entscheidungen/ADR-001-NATIVE-REMOTE-COMPATIBILITY.md)
 - [Backlog](docs/BACKLOG.md)
 - [Third-party and trademark statement](THIRD_PARTY.md)
 - [Changelog](CHANGELOG.md)
@@ -185,7 +201,10 @@ host lifecycle evidence remains a separate acceptance step.
 
 ## Next beta development plan
 
-See the [two-sprint development plan](docs/DEVELOPMENT-PLAN.md) for remote recovery, recent platform-update evidence, regression and smoke coverage, and the next documented beta release.
+The [two-sprint development plan](docs/DEVELOPMENT-PLAN.md) records beta.4
+remote recovery and evidence work. The [project plan](docs/PROJECT-PLAN.md) and
+[beta.5 acceptance record](docs/BETA-5-ACCEPTANCE.md) track the current native
+compatibility follow-up and its remaining client behavior.
 
 ## Native remote startup and memory compatibility
 

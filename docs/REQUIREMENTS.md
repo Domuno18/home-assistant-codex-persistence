@@ -47,7 +47,10 @@
 - Normal startup performs no package download or executable upgrade.
 - The runtime root must be a narrow persistent path below `/data`, `/config`,
   or `/share`, outside every Git checkout.
-- All Codex processes must be closed during installation or upgrade.
+- All Codex processes must be closed during initial installation or runtime
+  migration. A verified already-active installation may refresh only its HACP
+  bootstrap/configured launcher without migrating state or restarting Codex;
+  see the bounded maintenance procedure in INSTALLATION.md.
 - Container-access configuration supplies defaults, not an override of the
   active chat. Client-selected permissions and approval behavior must be
   verified in the actual local or remote response. Updating permissions for
@@ -72,3 +75,37 @@ rejection. AC-016 requires complete validation, public-content review and
 verified release artifacts. Current evidence is in
 [BETA-4-ACCEPTANCE.md](BETA-4-ACCEPTANCE.md); earlier lifecycle passes do not
 establish a post-repair restart or native memory recall.
+
+## Beta.5 compatibility requirements
+
+| ID | Requirement | Acceptance |
+|---|---|---|
+| REQ-I-006 | Read the original native CLI control socket through either the supported direct socket or its exact deterministic Linux alias; classify a safely validated missing temporary target as stale and delegate recovery to native Codex. | AC-017, TC-029 |
+| REQ-I-007 | Use the native default Codex home only when its existing symlink resolves to the verified persistent home; otherwise pass that persistent home explicitly. Preserve other environment values and launch from the runtime root's parent. | AC-018, TC-030 |
+| REQ-O-007 | Document an explicit-folder smartphone startup procedure and distinguish observed client behavior from backend checks and unproven causes. | AC-019, TC-031 |
+| REQ-Q-005 | Keep both repository lines at the same product version, code, tests and shared documentation, permitting only enumerated historical provenance and publication metadata differences. | AC-020, TC-032 |
+
+- AC-017: Accept the expected native alias and legacy direct socket; reject
+  wrong hashes, owners, modes, symlink chains, and untrusted ancestors. Missing
+  native temporary directory/socket after container loss yields `stale` only
+  for the validated alias. A refused connection requires absent kernel-listener
+  evidence before stale recovery; permission and inspection failures stay
+  `unreachable`. Status itself performs no recovery or deletion.
+- AC-018: With a verified matching default symlink, omit only `CODEX_HOME` from
+  the child environment. Missing, unrelated, regular-directory, or dangling
+  default paths retain the explicit persistent value. Keep `HOME`, unrelated
+  environment values, and native model/approval selection unchanged; verify
+  the child's working directory independently of client folder selection.
+- AC-019: The guide identifies the intended remote host, an existing remote
+  folder, chat creation, and voice startup in sequence. Evidence records
+  existing-chat voice, the complete new-chat-in-explicit-folder-to-voice
+  workaround, and automatic-home startup separately, distinguishing operator
+  reports from automated checks and stating the client platform and uncertainty.
+- AC-020: The parity checker reports zero unexplained inventory, executable,
+  version or product-content differences; both release candidates are clean.
+  Drift blocks build/tag creation. No whole product file is exempted.
+
+Fresh candidate validation passed; subsequent release and deployment outcomes are recorded in
+[BETA-5-ACCEPTANCE.md](BETA-5-ACCEPTANCE.md). These requirements do not promise
+that a backend compatibility change repairs the client's automatic folder
+selection. OPEN-REMOTE-001 tracks that unresolved behavior.

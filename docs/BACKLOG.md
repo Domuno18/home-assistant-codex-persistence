@@ -77,3 +77,16 @@
       exact HACP defaults through the guarded `configure-access` interface,
       pass the authenticated follow-up audit, and document the absent `bwrap`
       boundary without installing packages or rebuilding beta.4.
+
+## Beta.5 and client follow-up
+
+- [ ] BL-027 — Complete fresh beta.5 compatibility, security, and release
+      verification for REQ-I-006/007 and TC-029/030; record candidate-specific
+      results in BETA-5-ACCEPTANCE.md.
+- [ ] BL-028 / OPEN-REMOTE-001 — Investigate automatic remote-home selection
+      on the reference smartphone. The complete new-chat-in-explicit-folder-
+      to-voice workaround and existing-chat voice are operator-confirmed;
+      automatic selection still fails. The supplied screenshot shows app
+      version `1.2026.258`. An iOS cause is suspected but unproven; record each
+      reproduction independently and do not infer other-platform
+      behavior or close the issue from server-side checks. REQ-O-007, TC-031.

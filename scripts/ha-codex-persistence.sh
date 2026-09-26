@@ -10,7 +10,7 @@
 
 set -u
 
-PROGRAM_VERSION=0.9.0-beta.4
+PROGRAM_VERSION=0.9.0-beta.5
 RUNTIME_ROOT=${HACP_RUNTIME_ROOT:-/data/codex-persistence}
 CODEX_SOURCE=${HACP_CODEX_SOURCE:-/root/.codex}
 GH_SOURCE=${HACP_GH_SOURCE:-/root/.config/gh}

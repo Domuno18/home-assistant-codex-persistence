@@ -77,3 +77,23 @@ any invariant violation --> BLOCK without destructive cleanup
 | DOM-R-016 | Core Knowledge never overlaps native memory by path or case, merges stores or redirects legacy guidance silently. | TC-028 |
 | DOM-R-017 | Status and audit have no HACP filesystem mutations; native service logging is outside that assertion. | TC-015 |
 | DOM-R-018 | Release archives match their commit/version manifest and contain only regular safe source members. | TC-027 |
+
+## Beta.5 native compatibility rules
+
+| ID | Invariant | Evidence |
+|---|---|---|
+| DOM-R-019 | A native rendezvous alias is trusted only when its owner and private control directory are verified and its target exactly matches `/tmp/codex-daemon-<uid>/<sha256>` for the canonical alias path. Target ownership, `0700` directory mode, root-owned sticky `/tmp`, and safe ancestors remain mandatory. | TC-029 |
+| DOM-R-020 | Removing a child-process `CODEX_HOME` override requires an existing native default symlink to the same persistent home. Other cases retain the explicit persistent home; child working directory and client-selected folder are separate concepts. | TC-030 |
+| DOM-R-021 | Remote transport connection, native home-directory access, explicit-folder chat startup, and automatic-home voice startup are distinct observations; one does not prove the others. | TC-031 |
+| DOM-R-022 | Both repository lines contain the same product files and behavior; only the enumerated provenance fields in REPOSITORY-PARITY.md may differ. | TC-032 |
+
+A **native rendezvous alias** is the persistent control-path symlink created by
+the original CLI. Its **physical socket** lives in a private host-local temporary
+directory and may disappear on container replacement. A validated missing
+physical target is `stale`, not evidence that private persistent state was lost.
+A refused connection is stale only when the kernel has no corresponding socket
+entry. Unsupported or unsafe aliases and inconclusive checks remain
+`unreachable`; HACP never reclaims the endpoint itself.
+
+The exact compatibility decision and failure boundaries are recorded in
+[ADR-001](entscheidungen/ADR-001-NATIVE-REMOTE-COMPATIBILITY.md).

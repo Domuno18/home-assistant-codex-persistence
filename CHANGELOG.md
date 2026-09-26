@@ -2,6 +2,38 @@
 
 All notable public changes are documented here. Versions follow Semantic Versioning.
 
+## 0.9.0-beta.5 — 2026-09-26
+
+### Fixed
+
+- Recognize the original Codex CLI `0.157.1` deterministic local socket alias
+  without accepting arbitrary symlinks. Validate its exact path hash, ownership,
+  private directory modes, and trusted parent paths before connecting.
+- Recognize a validated persistent alias whose temporary socket directory or
+  socket disappeared during container replacement as stale. Native Codex still
+  owns recovery; HACP does not delete endpoints or stop unrelated processes.
+- Avoid a redundant `CODEX_HOME` override only when the native default
+  `~/.codex` symlink resolves to the same verified persistent home. Otherwise
+  retain the explicit persistent home. Start the native command from the runtime
+  root's parent instead of inheriting an arbitrary working directory.
+
+### Documentation and acceptance
+
+- Keep both repository lines at the same product state, with a required clean
+  peer-checkout parity gate before release build/tag creation. Only explicit
+  historical provenance and publication metadata differences are permitted.
+- Add the smartphone procedure for selecting the correct remote host and an
+  existing remote folder before starting voice inside the chat.
+- Record the operator-confirmed workaround of creating a new chat in the
+  correct explicitly selected remote folder and then starting voice, alongside
+  existing-chat voice. Automatic remote-home selection still fails; an iOS issue is a
+  hypothesis, not an established cause or a claim about other platforms.
+- Record requirements, rejection cases, and the decision in
+  `docs/entscheidungen/ADR-001-NATIVE-REMOTE-COMPATIBILITY.md`.
+- Candidate validation, repository parity, release artifacts, and operational
+  limits are tracked separately in `docs/BETA-5-ACCEPTANCE.md`; earlier beta
+  results do not establish a fresh beta.5 lifecycle pass.
+
 ## 0.9.0-beta.4 — 2026-09-19
 
 ### Post-release documentation addendum

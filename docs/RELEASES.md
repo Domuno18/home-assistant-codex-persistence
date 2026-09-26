@@ -2,8 +2,10 @@
 
 ## Current status
 
-`0.9.0-beta.4` is the current beta target. `0.9.0-beta.3` remains the previous
-maintenance prerelease.
+`0.9.0-beta.5` is the current beta target. `0.9.0-beta.4` remains the previous
+published prerelease. Candidate checks and publication results are recorded in
+[BETA-5-ACCEPTANCE.md](BETA-5-ACCEPTANCE.md); a target version is not proof of
+publication or operational acceptance.
 
 Changing a version file, building an artifact, pushing Git commits, publishing
 a release, and changing repository visibility are deliberately separate
@@ -26,7 +28,7 @@ platform coverage and possible migration work before a later release.
 
 ## Beta release gate
 
-Before publishing any beta, including `v0.9.0-beta.3`:
+Before publishing any beta, including `v0.9.0-beta.5`:
 
 1. Finish the English public-documentation review.
 2. Run `./scripts/validate.sh` and
@@ -56,13 +58,26 @@ never part of a release.
 1. Update `VERSION`, the program version, this policy, and `CHANGELOG.md`.
 2. Run all validation and security gates.
 3. Commit the complete candidate and obtain explicit release approval.
-4. `./scripts/release.sh` creates a public release candidate; in the private
-   repository, `./scripts/release.sh --private` creates the private candidate
-   without granting public-release permission.
-5. Inspect the artifact and manifest.
-6. Push the reviewed tag to the public repository only after explicit release approval.
-7. Create the GitHub prerelease from the matching `CHANGELOG.md` section and
-   inspect it as a separately approved action.
+4. Set `HACP_PEER_REPO` to the other local repository and invoke the root
+   release entry point. Both worktrees must be clean and pass the documented
+   parity check before the release can build or tag:
+
+   ```sh
+   HACP_PEER_REPO=/path/to/other-repository ./release.sh
+   ```
+
+   In the private repository, use `./release.sh --private` with the same
+   environment variable. This selects a private candidate; it grants no public
+   publication permission. The permitted metadata/provenance exceptions are
+   defined in [REPOSITORY-PARITY.md](REPOSITORY-PARITY.md).
+5. Inspect the artifact and manifest, verify their commit/version binding, and
+   validate a clean extraction. Record private and public results separately.
+6. Publish public commits and the reviewed tag through explicit `git push`
+   commands only after owner authorization. The administrative `publish.sh`
+   helper is private-only and must not be used to publish the public repository.
+7. Create the public GitHub prerelease using an explicit `gh release create`
+   operation with the matching `CHANGELOG.md` section and verified artifacts;
+   inspect the resulting release. Publication remains separate from installation.
 
 ## Beta.4 acceptance
 
@@ -78,3 +93,16 @@ The 2026-09-19 post-release documentation addendum records the current Studio
 Code Server `7.1.1` running state and explicit native-memory activation. It does
 not rebuild or replace the published beta.4 archives. Release-page text may link
 to the corrected main-branch documentation but must preserve that distinction.
+
+## Beta.5 acceptance
+
+The beta.5 changes preserve the original CLI and its package ownership. The
+source release includes HACP's compatibility adapter and regression evidence,
+not native executables or private operational state. The
+[beta.5 acceptance record](BETA-5-ACCEPTANCE.md) must identify fresh validation,
+repository parity, source/artifact checks, and the remaining client behavior.
+
+The operator-confirmed new-chat-in-explicit-folder-to-voice workaround and
+existing-chat voice do not establish successful automatic home selection. A suspected iOS client issue is not a proven cause,
+and untested platforms or a new container replacement must not be presented as
+accepted merely because earlier beta lifecycle checks passed.

@@ -62,9 +62,13 @@ the Home Assistant reference system.
 ./scripts/validate.sh
 ```
 
-## Planned next-beta coverage
+## Beta.4 coverage plan
 
-[DEVELOPMENT-PLAN.md](DEVELOPMENT-PLAN.md) reserves TC-019 through TC-028, includes TC-015, and defines SM-01 through SM-09. These checks are planned, not yet implemented or passed. Extend `scripts/validate.sh` without dropping existing checks; keep real lifecycle acceptance separate.
+[DEVELOPMENT-PLAN.md](DEVELOPMENT-PLAN.md) assigned TC-019 through TC-028,
+included TC-015, and defined SM-01 through SM-09. The resulting beta.4 regression
+coverage is described below; its executed outcomes are recorded in the dated
+acceptance document. Later changes extend `scripts/validate.sh` without dropping
+existing checks and keep real lifecycle acceptance separate.
 
 ## Beta.4 regression execution
 
@@ -81,3 +85,23 @@ archive checks under TC-026/027. TC-025 retains TC-018 without widening access.
 Connection failure states use test doubles; actual transport reconnect, native
 memory recall and interactive client approvals require separate live evidence.
 The exact smoke results are in [BETA-4-ACCEPTANCE.md](BETA-4-ACCEPTANCE.md).
+
+## Beta.5 native compatibility and smartphone checks
+
+| ID | Covers | Action and expected result | Status |
+|---|---|---|---|
+| TC-029 | REQ-I-006, AC-017, DOM-R-019 | Test direct sockets and exact native aliases; reject wrong targets, ownership, modes, ancestors, and symlink chains. Simulate loss of the temporary directory/socket; verify safe stale classification. Compare refused connections with and without kernel entries, and retain `unreachable` for permission or inspection failures. | passed in 108-test candidate validation |
+| TC-030 | REQ-I-007, AC-018, DOM-R-020 | Test matching, missing, dangling, unrelated, and non-symlink default home paths; verify explicit fallback, preservation of unrelated environment, and native command cwd without model/approval overrides. | passed in 108-test candidate validation |
+| TC-031 | REQ-O-007, AC-019, DOM-R-021 | Review the smartphone steps; record the operator-confirmed new-chat-in-explicit-folder-to-voice sequence, existing-chat voice, automatic-home startup, and client platform separately. Backend status/home checks must not close a failed client scenario. | reference iPhone observations recorded; automatic-home startup remains open |
+| TC-032 | REQ-Q-005, AC-020, DOM-R-022 | Compare both product inventories, executable status and normalized content. Reject code/version/shared-doc drift, extra files, wrong line identity, dirty release candidates and symlinks; allow only precise provenance fields. | automated; clean release-pair comparison recorded in BETA-5-ACCEPTANCE.md |
+
+The operator confirmed the complete sequence of creating a new chat in the
+correct explicitly chosen remote folder and then starting voice, as well as
+voice in an existing chat. This is an operator-reported client acceptance, not
+an automated or server-side reproduction. The supplied screenshot shows app
+version `1.2026.258`. Automatic home selection still fails on the reference
+phone; no Android, desktop, or general iOS compatibility result is inferred.
+
+The candidate's complete automated results, fresh runtime checks, and artifact
+verification belong to [BETA-5-ACCEPTANCE.md](BETA-5-ACCEPTANCE.md). A synthetic
+stale-alias test does not replace a real beta.5 container-replacement test.

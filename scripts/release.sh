@@ -23,8 +23,15 @@ grep -qF "## $VERSION" CHANGELOG.md \
   || { echo "ERROR: CHANGELOG entry for $VERSION is missing."; exit 1; }
 
 ./scripts/validate.sh "$VALIDATE_MODE"
+[ -n "${HACP_PEER_REPO:-}" ] \
+  || { echo "ERROR: Set HACP_PEER_REPO to the other reviewed repository checkout."; exit 1; }
+if [ "$MODE" = --private ]; then
+  python3 scripts/check_repository_parity.py --private "$PWD" --public "$HACP_PEER_REPO" --clean
+else
+  python3 scripts/check_repository_parity.py --private "$HACP_PEER_REPO" --public "$PWD" --clean
+fi
 ./scripts/build.sh
 git tag -a "$TAG" -m "Release $VERSION"
 
 echo "✔ Local release $VERSION created with tag $TAG."
-echo "  Publication is separate: ./scripts/publish.sh"
+echo "  Publication is separate; follow docs/RELEASES.md."

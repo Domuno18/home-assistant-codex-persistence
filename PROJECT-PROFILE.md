@@ -49,3 +49,17 @@ empty placeholder documents are intentionally not retained.
       active by the original Codex CLI; generation and retrieval remain unverified
 - [x] Public-beta publication and release controls approved
 - [x] Home Assistant host cold start accepted under TC-012
+
+## Beta.5 acceptance boundary
+
+The beta.5 scope is native CLI `0.157.1` control-socket and startup-environment
+compatibility, with a documented smartphone explicit-folder procedure.
+Requirements REQ-I-006/007 and REQ-O-007, rules DOM-R-019–021, and TC-029–031
+provide traceability. Fresh release verification is pending until recorded in
+[the beta.5 acceptance record](docs/BETA-5-ACCEPTANCE.md).
+
+The operator confirmed the complete new-chat-in-explicit-folder-to-voice
+workaround and existing-chat voice on the reference phone. This is client
+acceptance reported by the operator, not automated verification. Automatic
+remote-home selection remains open; a suspected
+iOS client cause and broader platform compatibility are not established.

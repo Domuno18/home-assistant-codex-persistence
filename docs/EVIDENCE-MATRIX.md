@@ -120,3 +120,29 @@ This matches DOM-O-008, REQ-F-006 and REQ-I-005: add-on protection is the outer
 boundary and HACP manages only the guarded Codex defaults. Current-session
 client overrides, interactive approval behavior and BL-020 are not proven by
 the stored-profile audit. No reinstall, restart or release rebuild occurred.
+
+## Beta.5 compatibility evidence
+
+| Requirement | Acceptance | Domain | Architecture | Work package | Test/evidence | Status |
+|---|---|---|---|---|---|---|
+| REQ-I-006 | AC-017 | DOM-R-019 | native remote adapter; ADR-001 | AP-200, AP-300, AP-400 | TC-029 | 108-test candidate validation passed |
+| REQ-I-007 | AC-018 | DOM-R-020 | native remote adapter; ADR-001 | AP-200, AP-300, AP-400 | TC-030 | 108-test candidate validation passed |
+| REQ-O-007 | AC-019 | DOM-R-021 | client/backend boundary; ADR-001 | AP-100, AP-400, AP-500 | TC-031; smartphone procedure | observations below; automatic-home startup open |
+| REQ-Q-005 | AC-020 | DOM-R-022 | release parity gate | AP-400, AP-500 | TC-032; check_repository_parity.py | automated; final pair comparison in BETA-5-ACCEPTANCE.md |
+
+On 2026-09-26, the reference operator confirmed the complete workaround:
+create a new chat in the correct explicitly selected remote folder, then start
+voice in that chat. Voice in an existing chat also works. These are
+operator-reported client results, not automated or server-side reproductions.
+The supplied screenshot shows app version `1.2026.258`.
+
+Automatic remote-home selection still fails on the reference iPhone client.
+Broader platform coverage and a client-side root cause are not established;
+a suspected iOS client issue remains a hypothesis under OPEN-REMOTE-001.
+
+[ADR-001](entscheidungen/ADR-001-NATIVE-REMOTE-COMPATIBILITY.md) records the
+compatibility decision. [BETA-5-ACCEPTANCE.md](BETA-5-ACCEPTANCE.md) is the
+candidate-specific authority for fresh automated checks, runtime observations,
+repository parity, and release artifact results. Earlier lifecycle evidence
+remains valid for its original scope and does not establish a beta.5 restart or
+successful automatic-home voice startup.

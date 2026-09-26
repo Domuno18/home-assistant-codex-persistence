@@ -16,6 +16,7 @@ class ReleaseContractTests(unittest.TestCase):
     def test_candidate_version_and_documentation_are_consistent(self):
         version=(ROOT/'VERSION').read_text().strip()
         self.assertIn('PROGRAM_VERSION='+version,(ROOT/'scripts/ha-codex-persistence.sh').read_text())
+        self.assertIn('"version": "'+version+'"',(ROOT/'scripts/hacp_remote.py').read_text())
         self.assertIn('## '+version,(ROOT/'CHANGELOG.md').read_text())
         for name in ('README.md','docs/PROJECT-PLAN.md','docs/TEST-PLAN.md'):
             self.assertIn('DEVELOPMENT-PLAN.md',(ROOT/name).read_text())

@@ -145,3 +145,18 @@ Core Knowledge remains outside native Codex home. Existing safe legacy stores
 and supported workspace startup rules are preserved. Native state is persisted
 without interpretation or synchronization. See [REMOTE-STARTUP.md](REMOTE-STARTUP.md)
 and [MEMORY-COMPATIBILITY.md](MEMORY-COMPATIBILITY.md).
+
+## Native control-path and startup compatibility
+
+Codex CLI `0.157.1` advertises a persistent rendezvous alias to a private
+host-local socket. The remote adapter validates the deterministic mapping and
+connects to the validated physical socket. Container replacement may remove the
+temporary target while leaving the alias; read-only status can identify that
+safe stale case, and the original CLI remains responsible for recovery.
+
+The adapter omits `CODEX_HOME` only when the default `~/.codex` symlink selects
+the same persistent home. Otherwise it supplies that persistent home explicitly.
+Its child working directory is the runtime root's parent; neither choice changes
+`HOME` or guarantees the mobile client's automatic folder detection. See
+[ADR-001](entscheidungen/ADR-001-NATIVE-REMOTE-COMPATIBILITY.md) and
+[the smartphone procedure](REMOTE-STARTUP.md#smartphone-voice-startup-with-an-explicit-folder).

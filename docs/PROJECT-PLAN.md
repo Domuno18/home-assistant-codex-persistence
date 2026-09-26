@@ -34,3 +34,11 @@
 ## Next beta development
 
 The next two sprints, regression coverage, live smoke checks, update-evidence requirements and dual-repository beta release gates are defined in [DEVELOPMENT-PLAN.md](DEVELOPMENT-PLAN.md). Both beta.4 delivery sprints are complete with documented beta coverage limits. See [BETA-4-ACCEPTANCE.md](BETA-4-ACCEPTANCE.md).
+
+## Beta.5 compatibility follow-up
+
+AP-100/AP-200 cover REQ-I-006/007, REQ-O-007, DOM-R-019–021, and ADR-001.
+AP-300/AP-400 cover TC-029/030 and the existing remote regressions; AP-400/AP-500
+separate TC-031 smartphone observations from native status and home checks.
+Fresh candidate validation passed; subsequent release and deployment evidence is recorded
+in [BETA-5-ACCEPTANCE.md](BETA-5-ACCEPTANCE.md).

@@ -46,10 +46,16 @@
 - Create releases only through `./release.sh`; installation remains a
   separate operator action described in `docs/INSTALLATION.md`.
 - Preserve unrelated existing changes.
+- Keep both repository lines at the same product version, code, tests and
+  shared documentation. Run `scripts/check_repository_parity.py` against both
+  checkouts before release-related pushes. Only the exact provenance and
+  publication metadata exceptions in `docs/REPOSITORY-PARITY.md` may differ.
 
 ## Language and quality
 
 - Public project documentation is written in English.
+- Keep HACP product documentation and release text neutral in both lines;
+  do not name internal project templates or private review frameworks.
 - Keep code identifiers and user-facing messages consistently English.
 - State units, time bases, time zones, signs, and tolerances explicitly.
 - Tests cover normal behavior, boundaries, and relevant failure behavior.

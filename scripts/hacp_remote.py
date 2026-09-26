@@ -109,13 +109,57 @@ def mutation_lock(root: Path):
         os.close(fd)
 
 
+def native_socket_path(path: Path, *, allow_missing_alias: bool = False) -> Path:
+    """Accept a private socket or the deterministic native Linux rendezvous alias."""
+    private_path(path.parent, directory=True)
+    entry = path.lstat()
+    if stat.S_ISLNK(entry.st_mode):
+        uid = os.getuid()
+        if entry.st_uid != uid or stat.S_IMODE(path.parent.stat().st_mode) != 0o700:
+            raise RemoteError("unsafe native socket alias")
+        for ancestor in path.parent.parents:
+            info = ancestor.lstat()
+            if (not stat.S_ISDIR(info.st_mode) or info.st_uid not in {0, uid}
+                    or (info.st_mode & 0o022
+                        and not (info.st_uid == 0 and info.st_mode & stat.S_ISVTX))):
+                raise RemoteError("unsafe native socket alias ancestor")
+        root = Path("/").lstat()
+        temporary = Path("/tmp").lstat()
+        if (not stat.S_ISDIR(root.st_mode) or root.st_uid != 0 or root.st_mode & 0o022
+                or not stat.S_ISDIR(temporary.st_mode) or temporary.st_uid != 0
+                or not temporary.st_mode & stat.S_ISVTX):
+            raise RemoteError("unsafe native temporary socket root")
+        directory = Path("/tmp") / f"codex-daemon-{uid}"
+        canonical_alias = path.parent.resolve(strict=True) / path.name
+        expected = directory / hashlib.sha256(os.fsencode(canonical_alias)).hexdigest()
+        if os.readlink(path) != str(expected):
+            raise RemoteError("unexpected native socket alias target")
+        try:
+            directory_info = directory.lstat()
+        except FileNotFoundError:
+            if allow_missing_alias:
+                return expected
+            raise
+        if (not stat.S_ISDIR(directory_info.st_mode) or directory_info.st_uid != uid
+                or stat.S_IMODE(directory_info.st_mode) != 0o700):
+            raise RemoteError("unsafe native socket directory")
+        path = expected
+        try:
+            entry = path.lstat()
+        except FileNotFoundError:
+            if allow_missing_alias:
+                return expected
+            raise
+    if (entry.st_uid != os.getuid() or not stat.S_ISSOCK(entry.st_mode)
+            or entry.st_mode & 0o022):
+        raise RemoteError("unsafe native control socket")
+    return path
+
+
 class RemoteSocket:
     """Bounded WebSocket JSON-RPC over the native private Unix socket."""
     def __init__(self, path: Path):
-        private_path(path.parent, directory=True)
-        endpoint = path.stat()
-        if path.is_symlink() or endpoint.st_uid != os.getuid() or not stat.S_ISSOCK(endpoint.st_mode):
-            raise RemoteError("native control endpoint is not a socket")
+        path = native_socket_path(path)
         self.sock = socket.socket(socket.AF_UNIX)
         self.deadline = time.monotonic() + 8
         self.sock.settimeout(5)
@@ -189,7 +233,7 @@ class RemoteSocket:
 
     def status(self) -> dict:
         self.send(json.dumps({"id": 1, "method": "initialize", "params": {
-            "clientInfo": {"name": "hacp-status", "version": "0.9.0-beta.4"},
+            "clientInfo": {"name": "hacp-status", "version": "0.9.0-beta.5"},
             "capabilities": {"experimentalApi": True}}}).encode())
         self.result(1)
         self.send(b'{"method":"initialized"}')
@@ -200,26 +244,59 @@ class RemoteSocket:
         return {"daemon": "running", "connection": status}
 
 
+def kernel_socket_paths() -> set[str]:
+    """Unknown kernel evidence must never authorize stale endpoint recovery."""
+    lines = Path("/proc/net/unix").read_text(errors="surrogateescape").splitlines()
+    if not lines or lines[0].split() != ["Num", "RefCount", "Protocol", "Flags", "Type", "St", "Inode", "Path"]:
+        raise RemoteError("unrecognized kernel socket table")
+    paths = set()
+    for line in lines[1:]:
+        fields = line.split(maxsplit=7)
+        if len(fields) not in {7, 8} or not fields[0].endswith(":"):
+            raise RemoteError("unrecognized kernel socket entry")
+        try:
+            for field in (fields[0][:-1], *fields[1:6]):
+                int(field, 16)
+            int(fields[6], 10)
+        except ValueError as exc:
+            raise RemoteError("unrecognized kernel socket entry") from exc
+        if len(fields) == 8:
+            paths.add(fields[7])
+    return paths
+
+
 def remote_status(root: Path) -> dict:
     endpoint = root / "current/codex-home/app-server-control/app-server-control.sock"
-    if not endpoint.exists() and not endpoint.is_symlink():
-        return {"daemon": "stopped", "connection": "unavailable"}
     try:
+        if not endpoint.exists() and not endpoint.is_symlink():
+            # Absence is a first-start condition only below a safe control path.
+            # Preserve conflicting paths instead of asking Codex to replace them.
+            for parent in (endpoint.parent, *endpoint.parent.parents):
+                if parent.is_symlink():
+                    raise RemoteError("symlinked control path rejected")
+            if endpoint.parent.exists():
+                private_path(endpoint.parent, directory=True)
+            return {"daemon": "stopped", "connection": "unavailable"}
+        physical = native_socket_path(endpoint, allow_missing_alias=True)
+        if physical != endpoint and not physical.exists():
+            # Container replacement can remove /tmp while the validated native
+            # rendezvous alias remains. Native Codex owns endpoint recovery.
+            return {"daemon": "stale", "connection": "unavailable"}
         channel = RemoteSocket(endpoint)
         try:
             return channel.status()
         finally:
             channel.sock.close()
     except OSError as exc:
-        if exc.errno == errno.ECONNREFUSED and endpoint.is_socket() and not endpoint.is_symlink():
-            # A crashed container can leave a socket inode on persistent storage.
-            # Cross-check the kernel table; let native Codex reclaim its endpoint.
-            # Never unlink the endpoint or terminate a process ourselves.
+        if exc.errno == errno.ECONNREFUSED:
+            # Revalidate before consulting kernel evidence; do not unlink
+            # endpoints or terminate their processes ourselves.
             try:
-                paths = {line.split(maxsplit=7)[-1] for line in Path("/proc/net/unix").read_text().splitlines()[1:] if len(line.split(maxsplit=7)) == 8}
-                if str(endpoint) not in paths and str(endpoint.resolve()) not in paths:
+                physical = native_socket_path(endpoint, allow_missing_alias=True)
+                paths = kernel_socket_paths()
+                if str(endpoint) not in paths and str(physical) not in paths:
                     return {"daemon": "stale", "connection": "unavailable"}
-            except OSError:
+            except (OSError, RemoteError):
                 pass
         return {"daemon": "unreachable", "connection": "unknown"}
     except (RemoteError, json.JSONDecodeError):
@@ -240,6 +317,20 @@ def native_cli(root: Path) -> Path:
     if st.st_mode & 0o022 or st.st_nlink != 1 or not os.access(cli, os.X_OK):
         raise RemoteError("unsafe official managed CLI executable")
     return cli
+
+
+def native_environment(root: Path) -> dict:
+    """Use the native default alias only when it is the same persistent home."""
+    home = (root / "current/codex-home").resolve(strict=True)
+    environment = {**os.environ, "CODEX_HOME": str(home)}
+    alias = Path.home() / ".codex"
+    try:
+        if alias.is_symlink() and alias.resolve(strict=True) == home:
+            environment.pop("CODEX_HOME", None)
+    except (OSError, RuntimeError):
+        # Older Python versions report symlink loops as RuntimeError.
+        pass
+    return environment
 
 
 def start(root: Path) -> dict:
@@ -265,7 +356,7 @@ def start(root: Path) -> dict:
         # Delegate lifecycle, package selection and updater behavior to OpenAI.
         # No replacement CLI, direct daemon implementation or model override.
         subprocess.run([str(cli), "remote-control", "start", "--json"],
-                       env={**os.environ, "CODEX_HOME": str(root / "current/codex-home")},
+                       env=native_environment(root), cwd=root.parent,
                        stdin=subprocess.DEVNULL, capture_output=True, timeout=45,
                        check=True, start_new_session=True)
         state = remote_status(root)

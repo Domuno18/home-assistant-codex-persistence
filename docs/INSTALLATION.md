@@ -204,6 +204,39 @@ read-only and can be repeated after a restart, host reboot, or add-on update.
 
 ## Normal operation
 
+### Updating the HACP maintenance scripts on an active installation
+
+For an already-active, healthy HACP runtime, beta.5 can refresh its bootstrap
+and explicitly enabled remote launcher without migrating the runtime or
+replacing an upstream CLI. Retain private copies of the old HACP scripts and
+Supervisor options outside Git, verify the release archive and manifest, then
+run these commands from the extracted release. Substitute your runtime path:
+
+```sh
+HACP_RUNTIME_ROOT=/data/codex-persistence HACP_CHECK_AUTH=YES \
+  sh /data/codex-persistence/bootstrap/ha-codex-persistence.sh audit
+HACP_RUNTIME_ROOT=/data/codex-persistence HACP_INSTALL_OK=YES \
+  sh scripts/ha-codex-persistence.sh install
+python3 scripts/hacp_remote.py configure --enable \
+  --runtime-root /data/codex-persistence \
+  --cli /data/codex-persistence/current/codex-home/packages/standalone/current/bin/codex
+HACP_RUNTIME_ROOT=/data/codex-persistence HACP_CHECK_AUTH=YES \
+  sh /data/codex-persistence/bootstrap/ha-codex-persistence.sh audit
+python3 /data/codex-persistence/bootstrap/hacp_remote.py status \
+  --runtime-root /data/codex-persistence
+```
+
+The remote command is only for an operator who wants remote startup enabled;
+skip it when remote is disabled. The existing-install branch verifies the
+active generation and preserves persisted tools/state. If that verification
+blocks, investigate without bypassing the guard. This maintenance path does
+not restart an existing native daemon or claim a new container-lifecycle pass.
+Close all Codex processes for initial installation or actual runtime migration.
+Existing daemons retain their original environment until a later native
+restart; updating HACP alone does not change their advertised home.
+
+### Routine use
+
 After successful installation:
 
 - restart the add-on normally;
@@ -289,6 +322,16 @@ authenticated persistence audit passed afterward. See
 
 ## Troubleshooting
 
+### Smartphone voice cannot find the remote home folder
+
+Follow the [explicit-folder smartphone procedure](REMOTE-STARTUP.md#smartphone-voice-startup-with-an-explicit-folder):
+connect to the intended remote host, create a chat in the correct existing remote
+folder, establish it with a text message, and start voice inside that chat.
+`/config` is the Home Assistant reference example, not a universal path.
+The operator confirmed that this new-chat-in-explicit-folder-to-voice sequence
+works, as does voice from an existing chat. Automatic home detection remains
+unresolved on the reference iPhone client.
+
 ### `boot` reports not installed
 
 Do not create links manually. Complete the guarded installation or restore a
@@ -331,7 +374,7 @@ The private runtime contains credentials and native sessions. Never place it in
 Git or an unencrypted mirror. Backup and restore require a separately reviewed
 encrypted workflow, followed by a successful authenticated audit.
 
-## Beta.4 remote startup and memory paths
+## Native remote startup and memory paths
 
 New installations use Core Knowledge in `<workspace>/core-knowledge`. Existing
 safe `<workspace>/Memories` stores remain unchanged. Native Codex Memories are
