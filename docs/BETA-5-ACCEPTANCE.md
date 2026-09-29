@@ -64,9 +64,11 @@ the measures above are local acceptance criteria.
   causation nor a server-side cause has been established.
 - Use [the explicit-folder voice procedure](REMOTE-STARTUP.md#smartphone-voice-startup-with-an-explicit-folder)
   for the confirmed workaround. Other smartphone clients are unverified.
-- No new whole-add-on restart, container replacement or Home Assistant host
-  reboot is claimed for beta.5. Stale temporary-socket behavior is covered by
-  isolated tests; older lifecycle evidence remains attributed to its own release.
+- At publication on 2026-09-26, no new whole-add-on restart, container
+  replacement or Home Assistant host reboot was claimed for beta.5. The dated
+  2026-09-29 addendum below supplies fresh real add-on update evidence. A
+  separate beta.5 host reboot remains untested; older lifecycle evidence retains
+  its original scope.
 - A separate fresh installation on another host, broad platform coverage,
   native memory generation/retrieval and interactive client approval behavior
   remain outside this maintenance-release evidence.
@@ -94,3 +96,17 @@ as pending; this addendum and the
 [published release record](https://github.com/Domuno18/home-assistant-codex-persistence/releases/tag/v0.9.0-beta.5)
 record the completed checks. Published archives and tags are not rebuilt or
 replaced by this documentation update. OPEN-REMOTE-001 remains open.
+
+## Post-release Studio Code Server 7.2.0 acceptance — 2026-09-29
+
+HACP beta.5 passed the reference installation's actual `7.1.1` to `7.2.0`
+add-on update. The updated editor reports `code-server 4.139.1` / Code `1.139.1`.
+Authenticated persistence, add-on configuration and stored access-profile audits
+passed. Session-file count was preserved, the native remote daemon was
+`running/connected`, and continued-chat commands worked without a sandbox or
+`bwrap` error. This establishes support for 7.2.0 on this tested installation.
+
+The [dated update record](REFERENCE-UPDATE-7.2.0.md) gives the checks and limits.
+There was no HACP code change or manual repair during the post-update check.
+The original release tag/assets are retained; this addendum does not claim a
+separate host reboot, another-host installation or a fix for OPEN-REMOTE-001.

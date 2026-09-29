@@ -10,7 +10,7 @@
 | Ownership and priorities | Repository maintainers |
 | Operational acceptance | Operator of the Home Assistant reference system |
 | First beta target | 2026-07-30 |
-| Status | Installation, add-on restart, updates `6.0.1` to `7.0.0` and `7.0.0` to `7.1.0`, current `7.1.1` post-repair restart, container replacement, and Home Assistant host cold start accepted |
+| Status | Installation, add-on restart, updates `6.0.1` to `7.0.0` and `7.0.0` to `7.1.0`, historical `7.1.1` post-repair restart, update `7.1.1` to `7.2.0` with beta.5, container replacement, and Home Assistant host cold start accepted |
 | Visibility | Published community-beta source repository |
 
 ## Scope references
@@ -43,8 +43,12 @@ empty placeholder documents are intentionally not retained.
 - [x] Real add-on update from `7.0.0` to `7.1.0`, containing
       `code-server 4.137.0`, accepted under TC-012 with Codex sessions,
       projects, GitHub access, and manual memory preserved
-- [x] Current Studio Code Server `7.1.1` running state and post-repair restart
+- [x] Historical Studio Code Server `7.1.1` running state and post-repair restart
       accepted; the exact intermediate update path remains explicitly unknown
+- [x] Studio Code Server `7.1.1` to `7.2.0` update accepted on 2026-09-29
+      with HACP beta.5: persistence/authentication/startup/access audits passed,
+      remote connected and continued-chat commands worked; see
+      [the 7.2.0 record](docs/REFERENCE-UPDATE-7.2.0.md)
 - [x] Native Codex Memories explicitly enabled by the operator and reported as
       active by the original Codex CLI; generation and retrieval remain unverified
 - [x] Public-beta publication and release controls approved

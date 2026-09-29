@@ -107,3 +107,17 @@ The operator-confirmed new-chat-in-explicit-folder-to-voice workaround and
 existing-chat voice do not establish successful automatic home selection. A suspected iOS client issue is not a proven cause,
 and untested platforms or a new container replacement must not be presented as
 accepted merely because earlier beta lifecycle checks passed.
+
+## Beta.5 post-release compatibility addendum — 2026-09-29
+
+Studio Code Server `7.2.0` is supported on the tested reference installation.
+The real `7.1.1` to `7.2.0` update passed the authenticated HACP audit, startup
+and access-profile checks; remote control was connected and commands worked
+without a sandbox or `bwrap` error. The
+[7.2.0 acceptance record](REFERENCE-UPDATE-7.2.0.md) is authoritative for this
+fresh evidence and its limits.
+
+Both beta.5 release pages receive the same dated compatibility addendum linking
+to the new main-branch evidence. This documentation update leaves the version,
+release tag and published archives unchanged; the original tagged documentation
+predates the 7.2.0 acceptance.

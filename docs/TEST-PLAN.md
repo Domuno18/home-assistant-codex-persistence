@@ -51,10 +51,16 @@ the Home Assistant reference system.
   preserved the existing Codex conversation, projects, GitHub access,
   sessions, and manual memory. The authenticated post-update persistence
   audit completed without a blocker.
-- **Current follow-up:** Studio Code Server `7.1.1` is running and its
+- **2026-09-19 follow-up:** Studio Code Server `7.1.1` is running and its
   post-repair add-on restart passed. Native Codex Memories were then enabled
   by explicit operator choice and are reported active by a fresh CLI process.
   This verifies configuration activation, not memory generation or retrieval.
+
+- **2026-09-29 follow-up:** the real `7.1.1` to `7.2.0` update passed with
+  HACP beta.5. Authenticated persistence, startup and access-profile audits
+  passed, native remote was connected and continued-chat commands succeeded
+  without a sandbox or `bwrap` error. See
+  [the dated checks and limits](REFERENCE-UPDATE-7.2.0.md).
 
 ## Execution
 

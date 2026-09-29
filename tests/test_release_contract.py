@@ -22,13 +22,13 @@ class ReleaseContractTests(unittest.TestCase):
             self.assertIn('DEVELOPMENT-PLAN.md',(ROOT/name).read_text())
         self.assertIn('Codex Memories',(ROOT/'docs/MEMORY-COMPATIBILITY.md').read_text())
 
-    def test_current_711_and_native_memory_activation_are_bounded(self):
+    def test_historical_711_and_native_memory_activation_are_bounded(self):
         readme=(ROOT/'README.md').read_text()
         profile=(ROOT/'PROJECT-PROFILE.md').read_text()
         memory=(ROOT/'docs/MEMORY-COMPATIBILITY.md').read_text()
         evidence=(ROOT/'docs/BETA-4-ACCEPTANCE.md').read_text()
         self.assertIn('Studio Code Server `7.1.1`',readme)
-        self.assertIn('current `7.1.1` post-repair restart',profile)
+        self.assertIn('historical `7.1.1` post-repair restart',profile)
         self.assertIn('disabled | enabled',memory)
         self.assertIn('explicit operator approval',memory)
         self.assertIn('Live generation/retrieval remains unverified',evidence)

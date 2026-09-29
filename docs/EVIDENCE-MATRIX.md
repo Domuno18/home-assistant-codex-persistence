@@ -144,5 +144,18 @@ a suspected iOS client issue remains a hypothesis under OPEN-REMOTE-001.
 compatibility decision. [BETA-5-ACCEPTANCE.md](BETA-5-ACCEPTANCE.md) is the
 candidate-specific authority for fresh automated checks, runtime observations,
 repository parity, and release artifact results. Earlier lifecycle evidence
-remains valid for its original scope and does not establish a beta.5 restart or
-successful automatic-home voice startup.
+remains valid for its original scope. The dated 7.2.0 addendum below provides
+fresh beta.5 update evidence; automatic-home voice startup remains unresolved.
+
+## Studio Code Server 7.2.0 update — 2026-09-29
+
+TC-012: the operator completed the `7.1.1` to `7.2.0` update with HACP beta.5.
+Supervisor reports the updated add-on started; code-server reports `4.139.1` /
+Code `1.139.1`. The authenticated HACP audit, startup configuration and stored
+access profile passed. Session-file count matched the pre-update baseline and
+native remote status was `running/connected`.
+
+TC-018 scope: actual commands in the continued remote chat succeeded without a
+sandbox or `bwrap` error. Interactive approval prompts, other client overrides,
+a separate host reboot and memory recall were not tested. See
+[REFERENCE-UPDATE-7.2.0.md](REFERENCE-UPDATE-7.2.0.md) for the complete boundary.

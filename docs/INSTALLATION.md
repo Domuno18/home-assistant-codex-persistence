@@ -307,6 +307,10 @@ The reference system has passed:
   `code-server 4.137.0` and including container recreation;
 - current Studio Code Server `7.1.1` running state and the documented
   post-repair add-on restart; the exact update path to `7.1.1` is unknown;
+- Studio Code Server update from `7.1.1` to `7.2.0` with HACP beta.5:
+  authenticated persistence/startup/access audits passed, remote connected,
+  and continued-chat commands worked without a sandbox or `bwrap` error;
+  see [the 7.2.0 acceptance record](REFERENCE-UPDATE-7.2.0.md);
 - a subsequent container restart;
 - a complete Home Assistant host cold start.
 

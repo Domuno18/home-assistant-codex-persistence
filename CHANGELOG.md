@@ -4,6 +4,17 @@ All notable public changes are documented here. Versions follow Semantic Version
 
 ## 0.9.0-beta.5 — 2026-09-26
 
+### Post-release compatibility acceptance — 2026-09-29
+
+- Confirm Studio Code Server `7.2.0` (`code-server 4.139.1`, Code `1.139.1`)
+  support on the reference installation after its real update from `7.1.1`.
+- Record passing persistence, authentication, startup and access-profile audits,
+  preserved session-file count and native remote `running/connected` state.
+- Confirm actual commands in the continued remote chat worked without a sandbox
+  or `bwrap` error; interactive approval behavior remains a separate boundary.
+- See `docs/REFERENCE-UPDATE-7.2.0.md`. This adds operational evidence to beta.5;
+  product code, release tag and existing archives are unchanged.
+
 ### Fixed
 
 - Recognize the original Codex CLI `0.157.1` deterministic local socket alias

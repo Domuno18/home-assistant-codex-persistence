@@ -82,7 +82,7 @@ sessions, and manual memory remained available. The post-update authenticated
 persistence audit passed without a blocker. See the
 [7.1.0 lifecycle evidence](docs/REFERENCE-UPDATE-7.1.0.md).
 
-The reference system now runs Studio Code Server `7.1.1`. A read-only
+The earlier reference check covered Studio Code Server `7.1.1`. A read-only
 Supervisor check confirmed the add-on is started, and the documented
 post-repair restart preserved the persistent workspace and native remote
 connection. The exact intermediate update path is not inferred. After explicit
@@ -91,13 +91,19 @@ Codex feature flag while Core Knowledge remained separate. This proves
 activation and persistent configuration, not deterministic memory generation
 or retrieval. See the [7.1.1 evidence](docs/REFERENCE-UPDATE-7.1.1.md).
 
+The reference system now runs **Studio Code Server 7.2.0**, supported by HACP
+`0.9.0-beta.5` on this tested installation. The real `7.1.1` to `7.2.0` update
+passed the authenticated persistence, startup and access-profile checks. Native
+remote control returned `running/connected`, and commands in the continued chat
+worked without a sandbox or `bwrap` error. See the dated
+[7.2.0 acceptance record](docs/REFERENCE-UPDATE-7.2.0.md).
+
 `v0.9.0-beta.5` addresses native Codex CLI `0.157.1` socket compatibility and
 safe default-home startup. It validates the native socket alias, recognizes
 missing temporary targets after container loss, and avoids a redundant
 `CODEX_HOME` override when the default symlink already selects persistent state.
 See [beta.5 acceptance and limits](docs/BETA-5-ACCEPTANCE.md) for fresh validation
-and release evidence; previous lifecycle passes do not establish a new beta.5
-restart result. The earlier [beta.4 record](docs/BETA-4-ACCEPTANCE.md) covers
+and release evidence, including the dated 7.2.0 post-update acceptance. The earlier [beta.4 record](docs/BETA-4-ACCEPTANCE.md) covers
 opt-in remote startup and Core Knowledge / Codex Memories compatibility.
 
 If a new smartphone voice chat cannot find its remote home, follow the
@@ -125,15 +131,15 @@ start.
 | Memory | 16 GB RAM |
 | Storage | 128 GB SSD |
 | Platform | Home Assistant OS |
-| Editor | Studio Code Server community add-on `7.1.1` |
-| Editor runtime | `code-server 4.137.0` |
+| Editor | Studio Code Server community add-on `7.2.0` |
+| Editor runtime | `code-server 4.139.1` / Code `1.139.1` |
 | Agent | OpenAI Codex IDE extension and CLI |
 | Git integration | GitHub CLI |
 
 ✅ Successfully tested for installation, add-on updates from `6.0.1` to
 `7.0.0` and from `7.0.0` to `7.1.0`, container replacement, a subsequent
-container restart, a complete Home Assistant host cold start, and the current
-`7.1.1` post-repair restart on this environment. The exact update path to
+container restart, a complete Home Assistant host cold start, the historical
+`7.1.1` post-repair restart, and the `7.1.1` to `7.2.0` add-on update on this environment. The exact update path to
 `7.1.1` remains unknown.
 
 Other architectures and hardware combinations are welcome as community test
@@ -212,7 +218,7 @@ compatibility follow-up and its remaining client behavior.
 its native update and model behavior, including Astra where available. No custom
 CLI is introduced. [Core Knowledge and Codex Memories](docs/MEMORY-COMPATIBILITY.md)
 use separate stores; existing safe memory content remains in place. The current
-[update investigation](docs/REFERENCE-UPDATE-7.1.1.md) distinguishes persistence
+[update acceptance](docs/REFERENCE-UPDATE-7.2.0.md) distinguishes persistence
 from remote connectivity.
 
 ## Post-release container-access verification
