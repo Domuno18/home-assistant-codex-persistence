@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve this community beta. Bug reports, tested hardware
+Thanks for helping improve Home Assistant Codex Persistence. Bug reports, tested hardware
 reports, documentation fixes, and pull requests are welcome.
 
 ## Before opening an issue

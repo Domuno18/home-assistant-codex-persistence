@@ -2,12 +2,12 @@
 
 > A persistent, restart-safe AI engineering workspace for Home Assistant.
 
-**Community beta candidate · Self-hosted · GitHub-ready · Core Knowledge included**
+**Stable release 0.9.0 · Self-hosted · Core Knowledge included**
 
 Home Assistant Codex Persistence keeps a complete local Codex engineering workspace alive when the Studio Code Server container restarts or is recreated. Sessions, sign-ins, configuration, tools, GitHub access, projects, and the Core Knowledge remain available from persistent storage. Codex-managed local Memories also remain persistent when the operator enables that separate Codex feature.
 
 > [!WARNING]
-> This is an independent community beta. Back up your Home Assistant system,
+> Back up your Home Assistant system,
 > read the installation steps, and test on non-critical infrastructure first.
 
 ## Why
@@ -66,7 +66,9 @@ It is **not**:
 
 It distributes only this project code and neutral templates. It does not redistribute Home Assistant, Studio Code Server, OpenAI Codex, Visual Studio Code, or GitHub CLI. This is an independent community project and is not affiliated with or endorsed by OpenAI, Home Assistant, Microsoft, or GitHub. See [THIRD_PARTY.md](THIRD_PARTY.md) for the compatibility and license review.
 
-## Current beta status
+## Release and verification
+
+HACP 0.9.0 is the current stable release. On the reference installation with Studio Code Server 7.2.0, the authenticated audit passed, the current session remained in persistent storage, and native Remote stayed connected. This release check ran in the active add-on. The earlier update and restart checks below identify the versions they exercised. See the [release record](docs/RELEASES.md).
 
 The reference system has been migrated successfully. A real Studio Code
 Server add-on update from `6.0.1` to `7.0.0`, including container replacement
@@ -91,8 +93,8 @@ Codex feature flag while Core Knowledge remained separate. This proves
 activation and persistent configuration, not deterministic memory generation
 or retrieval. See the [7.1.1 evidence](docs/REFERENCE-UPDATE-7.1.1.md).
 
-The reference system now runs **Studio Code Server 7.2.0**, supported by HACP
-`0.9.0-beta.5` on this tested installation. The real `7.1.1` to `7.2.0` update
+The reference installation first qualified **Studio Code Server 7.2.0**
+with HACP `0.9.0-beta.5`. The real `7.1.1` to `7.2.0` update
 passed the authenticated persistence, startup and access-profile checks. Native
 remote control returned `running/connected`, and commands in the continued chat
 worked without a sandbox or `bwrap` error. See the dated
@@ -102,7 +104,7 @@ worked without a sandbox or `bwrap` error. See the dated
 safe default-home startup. It validates the native socket alias, recognizes
 missing temporary targets after container loss, and avoids a redundant
 `CODEX_HOME` override when the default symlink already selects persistent state.
-See [beta.5 acceptance and limits](docs/BETA-5-ACCEPTANCE.md) for fresh validation
+See [beta.5 acceptance and limits](docs/BETA-5-ACCEPTANCE.md) for its validation
 and release evidence, including the dated 7.2.0 post-update acceptance. The earlier [beta.4 record](docs/BETA-4-ACCEPTANCE.md) covers
 opt-in remote startup and Core Knowledge / Codex Memories compatibility.
 
@@ -118,9 +120,7 @@ No new conversation or container restart was needed. A successful stored-config
 audit alone did not prove that access. Client approval settings are separate;
 see [the required access level and verification](docs/INSTALLATION.md#required-codex-access-level-local-and-remote).
 
-Independent installation feedback remains valuable beta evidence. The
-reference environment has now also passed a complete Home Assistant host cold
-start.
+The reference environment also passed a complete Home Assistant host cold start. Reports from other installations help establish compatibility across hardware.
 
 ## Tested environment
 
@@ -155,7 +155,7 @@ troubleshooting, and recovery guidance.
 Do not install from abbreviated commands copied into issues or discussions.
 The guarded procedure and its safety conditions belong to that guide.
 
-## Community beta
+## Community feedback
 
 Feedback, issues, tested-environment reports, and pull requests are welcome.
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md)
@@ -205,12 +205,11 @@ host lifecycle evidence remains a separate acceptance step.
 - [GitHub CLI authentication](https://cli.github.com/manual/gh_auth_login)
 - [GitHub CLI authentication status](https://cli.github.com/manual/gh_auth_status)
 
-## Next beta development plan
+## Development history
 
 The [two-sprint development plan](docs/DEVELOPMENT-PLAN.md) records beta.4
 remote recovery and evidence work. The [project plan](docs/PROJECT-PLAN.md) and
-[beta.5 acceptance record](docs/BETA-5-ACCEPTANCE.md) track the current native
-compatibility follow-up and its remaining client behavior.
+[beta.5 acceptance record](docs/BETA-5-ACCEPTANCE.md) record the native compatibility work and remaining client behavior at that time.
 
 ## Native remote startup and memory compatibility
 
