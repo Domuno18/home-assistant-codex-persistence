@@ -1,6 +1,6 @@
 # Installation and operation
 
-This guide is for beta testers who already run the Home Assistant Studio Code
+This guide is for operators who already run the Home Assistant Studio Code
 Server community add-on.
 
 This is the canonical installation, normal-operation, troubleshooting, and
@@ -206,7 +206,7 @@ read-only and can be repeated after a restart, host reboot, or add-on update.
 
 ### Updating the HACP maintenance scripts on an active installation
 
-For an already-active, healthy HACP runtime, beta.5 can refresh its bootstrap
+For an already-active, healthy HACP runtime, the installer can refresh its bootstrap
 and explicitly enabled remote launcher without migrating the runtime or
 replacing an upstream CLI. Retain private copies of the old HACP scripts and
 Supervisor options outside Git, verify the release archive and manifest, then
@@ -283,7 +283,7 @@ generation controls remain native Codex settings. Enabling the feature does
 not prove that generation or retrieval has already occurred, and neither
 memory layer grants permissions.
 
-## Beta feedback
+## Installation feedback
 
 When reporting a result, include only:
 

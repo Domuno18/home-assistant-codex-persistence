@@ -2,8 +2,8 @@
 
 ## Supported version
 
-The project is currently a beta. Security fixes target the latest commit on
-`main` and the newest published beta, once one exists.
+Security fixes target the current stable release and the latest commit on
+`main`. See the [release policy](docs/RELEASES.md).
 
 ## Reporting a vulnerability
 
