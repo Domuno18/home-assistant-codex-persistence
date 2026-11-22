@@ -2,6 +2,15 @@
 
 All notable public changes are documented here. Versions follow Semantic Versioning.
 
+## 0.9.0 — 2026-11-22
+
+- Check the native Remote endpoint with explicit filesystem metadata calls.
+  Only an absent entry can be treated as a stopped or stale endpoint.
+  Failed inspection continues to prevent automatic startup, including on
+  Python 3.14.
+- Include the beta.6 runtime-layout diagnostic, archive recovery procedure
+  and regression coverage in the regular release.
+
 ## 0.9.0-beta.6 — 2026-11-22
 
 - Explain how to resolve a runtime ownership diagnostic caused by files or

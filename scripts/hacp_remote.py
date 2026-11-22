@@ -37,7 +37,7 @@ class RemoteError(ValueError):
 
 def private_path(path: Path, *, directory: bool = False) -> None:
     for parent in (path, *path.parents):
-        if parent.is_symlink():
+        if stat.S_ISLNK(parent.lstat().st_mode):
             raise RemoteError("symlinked control path rejected")
     st = path.stat()
     if st.st_uid != os.getuid() or st.st_mode & 0o022:
@@ -233,7 +233,7 @@ class RemoteSocket:
 
     def status(self) -> dict:
         self.send(json.dumps({"id": 1, "method": "initialize", "params": {
-            "clientInfo": {"name": "hacp-status", "version": "0.9.0-beta.6"},
+            "clientInfo": {"name": "hacp-status", "version": "0.9.0"},
             "capabilities": {"experimentalApi": True}}}).encode())
         self.result(1)
         self.send(b'{"method":"initialized"}')
@@ -265,20 +265,29 @@ def kernel_socket_paths() -> set[str]:
     return paths
 
 
+def optional_lstat(path: Path) -> os.stat_result | None:
+    """Distinguish a missing endpoint from failed filesystem inspection."""
+    try:
+        return path.lstat()
+    except FileNotFoundError:
+        return None
+
+
 def remote_status(root: Path) -> dict:
     endpoint = root / "current/codex-home/app-server-control/app-server-control.sock"
     try:
-        if not endpoint.exists() and not endpoint.is_symlink():
+        if optional_lstat(endpoint) is None:
             # Absence is a first-start condition only below a safe control path.
             # Preserve conflicting paths instead of asking Codex to replace them.
             for parent in (endpoint.parent, *endpoint.parent.parents):
-                if parent.is_symlink():
+                entry = optional_lstat(parent)
+                if entry is not None and stat.S_ISLNK(entry.st_mode):
                     raise RemoteError("symlinked control path rejected")
-            if endpoint.parent.exists():
+            if optional_lstat(endpoint.parent) is not None:
                 private_path(endpoint.parent, directory=True)
             return {"daemon": "stopped", "connection": "unavailable"}
         physical = native_socket_path(endpoint, allow_missing_alias=True)
-        if physical != endpoint and not physical.exists():
+        if physical != endpoint and optional_lstat(physical) is None:
             # Container replacement can remove /tmp while the validated native
             # rendezvous alias remains. Native Codex owns endpoint recovery.
             return {"daemon": "stale", "connection": "unavailable"}

@@ -2,8 +2,8 @@
 
 ## Current status
 
-`0.9.0-beta.6` is the release line for the runtime-layout diagnostic and
-recovery regression coverage. The
+`0.9.0` is the regular release for the runtime-layout diagnostic and
+Python 3.14 Remote endpoint compatibility. It follows `0.9.0-beta.6`. The
 [7.2.0 maintenance verification](REFERENCE-UPDATE-7.2.0.md#maintenance-verification--2026-11-22)
 records the running-system repair on the previous beta. Release artifacts,
 installation, and restart verification have separate evidence.
@@ -23,7 +23,7 @@ Versions follow `MAJOR.MINOR.PATCH` with optional prerelease identifiers.
 | compatible bug fix after a stable release | `0.9.1` | patch release |
 | backward-compatible feature | `0.10.0` | minor release |
 | breaking path, startup contract, runtime format, or migration change | next `MAJOR.0.0` | major release with migration instructions |
-| first stable public contract | `1.0.0` | only after public beta evidence and explicit approval |
+| first major public compatibility contract | `1.0.0` | only after public beta evidence and explicit approval |
 
 Beta means real-world testing is welcome, but operators must expect incomplete
 platform coverage and possible migration work before a later release.

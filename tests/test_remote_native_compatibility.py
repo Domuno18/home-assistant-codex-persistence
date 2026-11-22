@@ -187,6 +187,20 @@ class NativeSocketCompatibility(unittest.TestCase):
         self.nodes[self.root] = metadata(stat.S_IFLNK, 0o777)
         self.assertEqual(self.state()['daemon'], 'unreachable')
 
+    def test_endpoint_access_failure_is_not_reported_as_stopped(self):
+        with self.filesystem():
+            inspect = Path.lstat
+
+            def denied(path, *args, **kwargs):
+                if path == self.alias:
+                    raise PermissionError(errno.EACCES, 'synthetic endpoint permission failure')
+                return inspect(path, *args, **kwargs)
+
+            with patch.object(Path, 'lstat', denied), patch.object(remote, 'RemoteSocket') as connect:
+                self.assertEqual(remote.remote_status(self.root),
+                                 {'daemon': 'unreachable', 'connection': 'unknown'})
+                connect.assert_not_called()
+
     def test_missing_endpoint_under_safe_or_missing_control_parent_is_stopped(self):
         del self.nodes[self.alias]
         self.assertEqual(self.state(), {'daemon': 'stopped', 'connection': 'unavailable'})
