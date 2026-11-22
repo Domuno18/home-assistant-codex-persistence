@@ -10,7 +10,7 @@
 
 set -u
 
-PROGRAM_VERSION=0.9.0-beta.5
+PROGRAM_VERSION=0.9.0-beta.6
 RUNTIME_ROOT=${HACP_RUNTIME_ROOT:-/data/codex-persistence}
 CODEX_SOURCE=${HACP_CODEX_SOURCE:-/root/.codex}
 GH_SOURCE=${HACP_GH_SOURCE:-/root/.config/gh}
@@ -362,7 +362,7 @@ claim_runtime_root() {
         if runtime_owner_marker_valid; then
             if ! runtime_top_level_is_managed; then
                 report BLOCK runtime-owner "$RUNTIME_ROOT" \
-                    "claimed runtime contains an unknown top-level entry"
+                    "claimed runtime contains an unknown top-level entry; inspect the runtime root and keep operator-managed files in separate protected persistent storage"
                 return 1
             fi
             report OK runtime-owner "$RUNTIME_ROOT" \
@@ -446,7 +446,7 @@ verify_runtime_layout() {
     fi
     if ! runtime_top_level_is_managed; then
         report BLOCK runtime-owner "$RUNTIME_ROOT" \
-            "claimed runtime contains an unknown top-level entry"
+            "claimed runtime contains an unknown top-level entry; inspect the runtime root and keep operator-managed files in separate protected persistent storage"
         return 1
     fi
     for path in "$RUNTIME_ROOT" "$STATE_ROOT" "$LOCK_ROOT" "$BOOTSTRAP_ROOT"

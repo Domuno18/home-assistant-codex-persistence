@@ -53,6 +53,29 @@ on other hosts remains subject to their own checks.
 This post-release documentation addendum applies to the existing beta.5 code.
 The release tag and published source archives retain their original contents.
 
+## Maintenance verification — 2026-11-22
+
+The official add-on catalogue and the refreshed Home Assistant Supervisor
+offer agreed on 7.2.0. The add-on was already started at that version.
+The two separately installed OpenAI editor extensions were updated to
+26.1117.41037. The active Codex Remote daemon remained connected on 0.171.0.
+
+The HACP audit initially reported `BLOCK runtime-owner`. An operator archive
+directory had been placed directly in the managed runtime root. HACP checks
+that layout at startup to ensure it owns the paths it manages. Keep
+operator-managed archives in a separate protected persistent location. When
+the directory and its custody are verified, move it outside the managed
+runtime while preserving its permissions. Then repeat the authenticated
+persistence and add-on configuration audit shown above.
+
+The archive was relocated on the same filesystem and its file identity,
+metadata and restrictive permissions were preserved. The authenticated
+audit then passed with exit status 0, including the managed startup command,
+persistent runtime links, session storage, Core Knowledge, and both logins.
+The current session was present in persistent storage, and the enabled
+native-memory store was present. This was a running-system verification.
+Restart and native-memory recall were outside this check.
+
 ## Upstream release
 
 [Studio Code Server v7.2.0](https://github.com/hassio-addons/app-vscode/releases/tag/v7.2.0)

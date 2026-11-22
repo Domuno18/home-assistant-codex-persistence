@@ -702,6 +702,32 @@ class CodexPersistenceTests(unittest.TestCase):
         self.assertFalse((foreign_runtime / ".hacp-runtime-owner").exists())
         self.assertFalse((foreign_runtime / "state").exists())
 
+    def test_owned_runtime_rejects_operator_archive_until_relocated(self) -> None:
+        self.harness.seed_logged_in_state()
+        installed = self.harness.install()
+        self.assertEqual(installed.returncode, 0, installed.stdout + installed.stderr)
+        archive = self.harness.runtime / "synthetic-operator-archive"
+        archive.mkdir(mode=0o700)
+        sentinel = archive / "sample.txt"
+        sentinel.write_bytes(b"operator data stays private")
+        sentinel.chmod(0o600)
+        before = sentinel.stat()
+
+        for result in (self.harness.audit(), self.harness.boot()):
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("BLOCK\truntime-owner\t", result.stdout)
+            self.assertIn("separate protected persistent storage", result.stdout)
+            self.assertNotIn(archive.name, result.stdout)
+        self.assertEqual(sentinel.read_bytes(), b"operator data stays private")
+
+        moved = self.harness.runtime.parent / archive.name
+        archive.rename(moved)
+        after = (moved / sentinel.name).stat()
+        self.assertEqual((after.st_ino, after.st_mode, after.st_size),
+                         (before.st_ino, before.st_mode, before.st_size))
+        for result in (self.harness.boot(), self.harness.audit()):
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_invalid_runtime_owner_marker_is_never_replaced(self) -> None:
         self.harness.seed_logged_in_state()
         foreign_runtime = self.harness.base / "invalid-owned-runtime"

@@ -2,6 +2,17 @@
 
 All notable public changes are documented here. Versions follow Semantic Versioning.
 
+## 0.9.0-beta.6 — 2026-11-22
+
+- Explain how to resolve a runtime ownership diagnostic caused by files or
+  archives placed at the top level of a managed runtime. Preserve the startup
+  check and leave operator-managed files untouched.
+- Add a regression test for blocked startup and audit, protected archive
+  relocation, and successful startup and audit after relocation.
+- Record the reference-system running check with Studio Code Server 7.2.0 and
+  the authenticated HACP audit after the layout correction.
+  See [the maintenance verification](docs/REFERENCE-UPDATE-7.2.0.md#maintenance-verification--2026-11-22).
+
 ## 0.9.0-beta.5 — 2026-09-26
 
 ### Post-release compatibility acceptance — 2026-09-29

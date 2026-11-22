@@ -233,7 +233,7 @@ class RemoteSocket:
 
     def status(self) -> dict:
         self.send(json.dumps({"id": 1, "method": "initialize", "params": {
-            "clientInfo": {"name": "hacp-status", "version": "0.9.0-beta.5"},
+            "clientInfo": {"name": "hacp-status", "version": "0.9.0-beta.6"},
             "capabilities": {"experimentalApi": True}}}).encode())
         self.result(1)
         self.send(b'{"method":"initialized"}')

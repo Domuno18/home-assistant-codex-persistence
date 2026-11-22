@@ -2,11 +2,12 @@
 
 ## Current status
 
-`0.9.0-beta.5` is published in both repository lines and installed on the
-reference system. `0.9.0-beta.4` is the previous prerelease. Verification and
-publication results are recorded in
-[BETA-5-ACCEPTANCE.md](BETA-5-ACCEPTANCE.md); a target version is not proof of
-publication or operational acceptance.
+`0.9.0-beta.6` is the release line for the runtime-layout diagnostic and
+recovery regression coverage. The
+[7.2.0 maintenance verification](REFERENCE-UPDATE-7.2.0.md#maintenance-verification--2026-11-22)
+records the running-system repair on the previous beta. Release artifacts,
+installation, and restart verification have separate evidence.
+[BETA-5-ACCEPTANCE.md](BETA-5-ACCEPTANCE.md) retains the earlier release results.
 
 Changing a version file, building an artifact, pushing Git commits, publishing
 a release, and changing repository visibility are deliberately separate
@@ -29,7 +30,7 @@ platform coverage and possible migration work before a later release.
 
 ## Beta release gate
 
-Before publishing any beta, including `v0.9.0-beta.5`:
+Before publishing a beta:
 
 1. Finish the English public-documentation review.
 2. Run `./scripts/validate.sh` and
