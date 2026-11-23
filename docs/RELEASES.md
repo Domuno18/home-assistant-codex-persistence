@@ -2,7 +2,11 @@
 
 ## Current status
 
-`0.9.0` is the regular release for the runtime-layout diagnostic and
+`0.9.1` is a stable diagnostic hotfix for `0.9.0`. It corrects how HACP
+reports the scope of its access-profile check. The check reads stored
+configuration. Each worker must verify its own effective sandbox and tools.
+
+`0.9.0` was the regular release for the runtime-layout diagnostic and
 Python 3.14 Remote endpoint compatibility. It follows `0.9.0-beta.6`. The
 [7.2.0 maintenance verification](REFERENCE-UPDATE-7.2.0.md#maintenance-verification--2026-11-22)
 records the running-system repair on the previous beta. Release artifacts,

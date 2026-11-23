@@ -166,6 +166,26 @@ A `bwrap: Failed to make / slave: Permission denied` result means the command
 path is still trying the unavailable nested sandbox. Report that path as
 unresolved even if another tool succeeds.
 
+### When a background worker reports a sandbox error
+
+A background worker can request its own sandbox for each task. A successful
+interactive chat and a passing HACP access audit check different paths. First
+run the persistence audit below. Then use the worker's normal entry point
+to write and read back a disposable marker in its assigned workspace. Check
+that the marker is present, remove it and record the worker's result.
+
+If Bubblewrap itself reports `Failed to make / slave: Permission denied`
+before a command starts, mount setup was denied in that execution environment.
+The message alone does not identify the responsible kernel policy. Record this
+as a worker isolation failure separately from persistence and Remote status.
+Keep the worker's required isolation in place. A worker that requires isolated
+workspaces must demonstrate access to its own workspace and denial of access
+to a different test workspace before it accepts concurrent work.
+
+A `codex-access-key` diagnostic identifies which stored default is missing or
+conflicting. Unsupported files or file layouts can instead produce the general
+access-profile diagnostic. Review the configuration before changing it.
+
 Separately verify the persistent configuration without changing state:
 
 ```sh

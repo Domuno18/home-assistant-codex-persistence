@@ -2,7 +2,7 @@
 
 > A persistent, restart-safe AI engineering workspace for Home Assistant.
 
-**Stable release 0.9.0 · Self-hosted · Core Knowledge included**
+**Stable release 0.9.1 · Self-hosted · Core Knowledge included**
 
 Home Assistant Codex Persistence keeps a complete local Codex engineering workspace alive when the Studio Code Server container restarts or is recreated. Sessions, sign-ins, configuration, tools, GitHub access, projects, and the Core Knowledge remain available from persistent storage. Codex-managed local Memories also remain persistent when the operator enables that separate Codex feature.
 
@@ -68,7 +68,7 @@ It distributes only this project code and neutral templates. It does not redistr
 
 ## Release and verification
 
-HACP 0.9.0 is the current stable release. On the reference installation with Studio Code Server 7.2.0, the authenticated audit passed, the current session remained in persistent storage, and native Remote stayed connected. This release check ran in the active add-on. The earlier update and restart checks below identify the versions they exercised. See the [release record](docs/RELEASES.md).
+HACP 0.9.1 corrects the access audit so it reports exactly what was verified in persistent configuration. See [background worker diagnostics](docs/INSTALLATION.md#when-a-background-worker-reports-a-sandbox-error). For HACP 0.9.0 on the reference installation with Studio Code Server 7.2.0, the authenticated audit passed, the current session remained in persistent storage, and native Remote stayed connected. This release check ran in the active add-on. The earlier update and restart checks below identify the versions they exercised. See the [release record](docs/RELEASES.md).
 
 The reference system has been migrated successfully. A real Studio Code
 Server add-on update from `6.0.1` to `7.0.0`, including container replacement

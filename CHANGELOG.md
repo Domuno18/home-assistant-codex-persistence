@@ -2,6 +2,15 @@
 
 All notable public changes are documented here. Versions follow Semantic Versioning.
 
+## 0.9.1 — 2026-11-23
+
+- Correct the success messages from `configure-access` and the optional access
+  audit. They report stored defaults and identify the effective permissions of
+  a running task as untested. For a missing or conflicting default, the audit
+  identifies the affected key without disclosing configuration values.
+- Document how to distinguish a persistence problem from a denied nested
+  sandbox operation when troubleshooting an automation worker.
+
 ## 0.9.0 — 2026-11-22
 
 - Check the native Remote endpoint with explicit filesystem metadata calls.

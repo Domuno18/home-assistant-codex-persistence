@@ -10,7 +10,7 @@
 | Ownership and priorities | Repository maintainers |
 | Operational acceptance | Operator of the Home Assistant reference system |
 | First beta target | 2026-07-30 |
-| Status | Stable release 0.9.0. Installation, add-on restart, updates `6.0.1` to `7.0.0` and `7.0.0` to `7.1.0`, historical `7.1.1` post-repair restart, update `7.1.1` to `7.2.0` with beta.5, container replacement, and Home Assistant host cold start accepted |
+| Status | Stable release 0.9.1. Installation, add-on restart, updates `6.0.1` to `7.0.0` and `7.0.0` to `7.1.0`, historical `7.1.1` post-repair restart, update `7.1.1` to `7.2.0` with beta.5, container replacement, and Home Assistant host cold start accepted |
 | Visibility | Community project with publicly released source |
 
 ## Scope references

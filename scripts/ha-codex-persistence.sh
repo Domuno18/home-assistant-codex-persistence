@@ -10,7 +10,7 @@
 
 set -u
 
-PROGRAM_VERSION=0.9.0
+PROGRAM_VERSION=0.9.1
 RUNTIME_ROOT=${HACP_RUNTIME_ROOT:-/data/codex-persistence}
 CODEX_SOURCE=${HACP_CODEX_SOURCE:-/root/.codex}
 GH_SOURCE=${HACP_GH_SOURCE:-/root/.config/gh}
@@ -676,22 +676,33 @@ codex_access_profile_matches() (
     ! grep -q "$(printf '\r')" "$config_path" || return 1
     ! grep -Fq "$(printf '\047\047\047')" "$config_path" || return 1
     ! grep -Fq "$(printf '\042\042\042')" "$config_path" || return 1
-    awk '
-        BEGIN { section = 0; sandbox = 0; approval = 0; reviewer = 0; bad = 0 }
+    awk -v explain="${2:-no}" '
+        BEGIN { section = 0; sandbox = 0; approval = 0; reviewer = 0 }
         /^[[:space:]]*\[/ { section = 1 }
         /^[[:space:]]*sandbox_mode[[:space:]]*=/ {
             sandbox++
-            if (section || $0 !~ /^[[:space:]]*sandbox_mode[[:space:]]*=[[:space:]]*"danger-full-access"[[:space:]]*(#[^[:cntrl:]]*)?$/) bad = 1
+            if (section || $0 !~ /^[[:space:]]*sandbox_mode[[:space:]]*=[[:space:]]*"danger-full-access"[[:space:]]*(#[^[:cntrl:]]*)?$/) invalid_sandbox = 1
         }
         /^[[:space:]]*approval_policy[[:space:]]*=/ {
             approval++
-            if (section || $0 !~ /^[[:space:]]*approval_policy[[:space:]]*=[[:space:]]*"on-request"[[:space:]]*(#[^[:cntrl:]]*)?$/) bad = 1
+            if (section || $0 !~ /^[[:space:]]*approval_policy[[:space:]]*=[[:space:]]*"on-request"[[:space:]]*(#[^[:cntrl:]]*)?$/) invalid_approval = 1
         }
         /^[[:space:]]*approvals_reviewer[[:space:]]*=/ {
             reviewer++
-            if (section || $0 !~ /^[[:space:]]*approvals_reviewer[[:space:]]*=[[:space:]]*"user"[[:space:]]*(#[^[:cntrl:]]*)?$/) bad = 1
+            if (section || $0 !~ /^[[:space:]]*approvals_reviewer[[:space:]]*=[[:space:]]*"user"[[:space:]]*(#[^[:cntrl:]]*)?$/) invalid_reviewer = 1
         }
-        END { exit !(!bad && sandbox == 1 && approval == 1 && reviewer == 1) }
+        function check_key(key, count, invalid) {
+            if (count == 1 && !invalid) return
+            failed = 1
+            if (explain == "yes")
+                print "BLOCK\tcodex-access-key\t" key "\t" (count == 0 ? "missing top-level default" : "conflicting, nested or unsupported default")
+        }
+        END {
+            check_key("sandbox_mode", sandbox, invalid_sandbox)
+            check_key("approval_policy", approval, invalid_approval)
+            check_key("approvals_reviewer", reviewer, invalid_reviewer)
+            exit failed
+        }
     ' "$config_path"
 )
 
@@ -749,7 +760,7 @@ configure_codex_access_profile() (
         return 1
     fi
     if codex_access_profile_matches "$config_path"; then
-        report OK codex-access "$config_path"             "container access profile already active"
+        report OK codex-access "$config_path"             "container access defaults already stored"
         return 0
     fi
 
@@ -789,7 +800,7 @@ configure_codex_access_profile() (
         report BLOCK codex-access "$config_path"             "published access profile failed verification"
         return 1
     fi
-    report OK codex-access "$config_path"         "outer-container mode active; approvals remain on-request with the user"
+    report OK codex-access "$config_path"         "stored container access defaults with on-request user approvals"
 )
 validate_codex_storage_rules() (
     root=$1
@@ -2804,7 +2815,7 @@ configure_access_all() {
         return 8
     }
     configure_codex_access_profile "$CODEX_TARGET/config.toml" || return 8
-    report OK result codex-access         "profile applies to new Codex sessions; add-on protection unchanged"
+    report OK result codex-access         "verify effective permissions in the client or worker that runs the task"
     return 0
 }
 
@@ -2856,9 +2867,9 @@ audit_all() {
     fi
     case "${HACP_CHECK_CODEX_ACCESS:-NO}" in
         YES)
-            if codex_access_profile_matches "$CODEX_TARGET/config.toml"; then
+            if codex_access_profile_matches "$CODEX_TARGET/config.toml" yes; then
                 report OK codex-access "$CODEX_TARGET/config.toml" \
-                    "exact outer-container profile active"
+                    "stored container access defaults match; effective task permissions untested"
             else
                 report BLOCK codex-access "$CODEX_TARGET/config.toml" \
                     "exact access profile missing or ambiguous"

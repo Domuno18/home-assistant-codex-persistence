@@ -1823,10 +1823,13 @@ exec {real_flock} "$@"
 
         audited = self.harness.audit(check_auth=False, check_access=True)
         self.assertEqual(audited.returncode, 0, audited.stdout + audited.stderr)
-        self.assertIn("exact outer-container profile active", audited.stdout)
+        self.assertIn("stored container access defaults match; effective task permissions untested", audited.stdout)
+        self.assertIn("stored container access defaults with on-request user approvals", configured.stdout)
 
         configured_again = self.harness.configure_access()
         self.assertEqual(configured_again.returncode, 0)
+        self.assertIn("container access defaults already stored", configured_again.stdout)
+        self.assertIn("verify effective permissions in the client or worker", configured_again.stdout)
         self.assertEqual(persistent_config.read_text(encoding="utf-8"), content)
 
     def test_ambiguous_container_access_config_blocks_unchanged(self) -> None:
@@ -1871,6 +1874,9 @@ exec {real_flock} "$@"
 
         self.assertNotEqual(audited.returncode, 0)
         self.assertIn("exact access profile missing or ambiguous", audited.stdout)
+        self.assertIn("BLOCK\tcodex-access-key\tapprovals_reviewer\t", audited.stdout)
+        self.assertNotIn("BLOCK\tcodex-access-key\tsandbox_mode\t", audited.stdout)
+        self.assertNotIn("guardian_subagent", audited.stdout)
         self.assertEqual(persistent_config.read_bytes(), before)
 
 
