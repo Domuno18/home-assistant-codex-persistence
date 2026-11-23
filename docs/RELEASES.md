@@ -4,7 +4,11 @@
 
 `0.9.1` is a stable diagnostic hotfix for `0.9.0`. It corrects how HACP
 reports the scope of its access-profile check. The check reads stored
-configuration. Each worker must verify its own effective sandbox and tools.
+configuration. On the reference installation, the authenticated persistence and
+startup audit passed and native Remote remained connected. The optional
+access-profile audit reported a mismatch in the stored approval policy. A worker
+that requests its own sandbox must verify its effective permissions separately.
+See the [audit and worker procedures](INSTALLATION.md#verify-the-stored-access-defaults).
 
 `0.9.0` was the regular release for the runtime-layout diagnostic and
 Python 3.14 Remote endpoint compatibility. It follows `0.9.0-beta.6`. The
@@ -81,9 +85,10 @@ never part of a release.
 6. Publish public commits and the reviewed tag through explicit `git push`
    commands only after owner authorization. The administrative `publish.sh`
    helper is private-only and must not be used to publish the public repository.
-7. Create the public GitHub prerelease using an explicit `gh release create`
-   operation with the matching `CHANGELOG.md` section and verified artifacts;
-   inspect the resulting release. Publication remains separate from installation.
+7. Create the GitHub release with an explicit `gh release create` operation,
+   using the matching `CHANGELOG.md` section and verified artifacts. Use
+   `--prerelease` for versions with a prerelease suffix only. Inspect the
+   published release. Publication and installation are separate steps.
 
 ## Beta.4 acceptance
 

@@ -166,40 +166,41 @@ A `bwrap: Failed to make / slave: Permission denied` result means the command
 path is still trying the unavailable nested sandbox. Report that path as
 unresolved even if another tool succeeds.
 
-### When a background worker reports a sandbox error
+### Verify the stored access defaults
 
-A background worker can request its own sandbox for each task. A successful
-interactive chat and a passing HACP access audit check different paths. First
-run the persistence audit below. Then use the worker's normal entry point
-to write and read back a disposable marker in its assigned workspace. Check
-that the marker is present, remove it and record the worker's result.
-
-If Bubblewrap itself reports `Failed to make / slave: Permission denied`
-before a command starts, mount setup was denied in that execution environment.
-The message alone does not identify the responsible kernel policy. Record this
-as a worker isolation failure separately from persistence and Remote status.
-Keep the worker's required isolation in place. A worker that requires isolated
-workspaces must demonstrate access to its own workspace and denial of access
-to a different test workspace before it accepts concurrent work.
-
-A `codex-access-key` diagnostic identifies which stored default is missing or
-conflicting. Unsupported files or file layouts can instead produce the general
-access-profile diagnostic. Review the configuration before changing it.
-
-Separately verify the persistent configuration without changing state:
+Run the optional access-profile and startup checks without changing state:
 
 ```sh
 HACP_CHECK_CODEX_ACCESS=YES \
 HACP_CHECK_ADDON_CONFIG=YES \
 sh /data/codex-persistence/bootstrap/ha-codex-persistence.sh audit
 ```
-The add-on check confirms exactly one managed HACP boot command and rejects the
-retired HACP `rm -rf` command. Audit never repairs Supervisor options; rerun a
-confirmed installation to apply that narrow cleanup.
 
-The access-profile audit reads the stored configuration. It does not inspect
-the active remote turn or execute its command/file tools; a successful audit
-must not be described as end-to-end chat access acceptance.
+The startup check confirms exactly one managed HACP boot command and checks for
+the retired startup command. The access-profile check compares the stored
+defaults with the profile written by `configure-access`. A
+`codex-access-key` message identifies a missing or conflicting key. Unsupported
+file layouts can produce the general access-profile diagnostic instead.
+
+An intentionally different approval policy also makes this optional check
+return a nonzero exit status. To verify sign-in, persistence, and startup
+independently, rerun the audit with `HACP_CHECK_AUTH=YES` and
+`HACP_CHECK_ADDON_CONFIG=YES`, omitting `HACP_CHECK_CODEX_ACCESS`. Review any
+profile difference before applying `configure-access`.
+
+### When a background worker reports a sandbox error
+
+A background worker can request its own sandbox for each task. Start with the
+[persistence audit](#6-audit) and the startup check above. Then use the
+worker's normal entry point to write and read back a disposable marker in its
+assigned test workspace. Remove the marker and record the worker's result.
+
+If Bubblewrap reports `Failed to make / slave: Permission denied` before the
+command starts, the worker's execution environment denied mount setup. Diagnose
+that path separately from persistence, Remote connectivity, and chat
+permissions. When the worker requires isolated workspaces, keep that isolation
+in place and verify that it can access its own test workspace and cannot access
+a second test workspace before enabling concurrent work.
 
 ### Service access is checked separately
 
